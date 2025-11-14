@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useLocation } from 'react-router-dom';
 import { Link } from 'react-router-dom';
+import { NavLink } from 'react-router-dom';
 import {
     FiShoppingCart,
     FiSearch,
@@ -15,7 +16,13 @@ const Navbar = () => {
     const [scrolled, setScrolled] = useState(false);
     const location = useLocation();
 
-    const navItems = ['NEW', 'PROMOS', 'APPAREL', 'ACCESSORIES', 'FOOTWEAR'];
+    const navItems = [
+        {label: 'NEW', path: '/new'},
+        {label: 'PROMOS', path: '/promos' },
+        {label: 'APPAREL', path: '/apparel' },
+        {label: 'ACCESSORIES', path: '/accessories' },
+        {label: 'FOOTWEAR', path: '/footwear' }
+    ];
 
     useEffect(() => {
         const handleScroll = () => {
@@ -36,36 +43,31 @@ const Navbar = () => {
                 <button className="md:hidden" onClick={() => setMenuOpen(true)}>
                     <FiMenu size={24} className="text-white" />
                 </button>
-                <img src="/assets/KavantiLogo.svg" alt="Logo" className="h-40 w-auto" />
+                <img src="/assets/KavantiLogo.svg" alt="Logo" className="h-16 sm:h-24 md:h-32 lg:h-40 w-auto" />
             </div>
 
             {/* Center Navigation Links */}
             <div className="hidden md:flex flex-grow justify-center gap-6 text-sm font-light text-white">
-                {navItems.map((item) => {
-                    // <Link
-                    //     key={item}
-                    //     href={`#${item.toLowerCase()}`}
-                    //     className="relative text-white transition-all duration-300 hover:text-white hover:after:content-[''] hover:after:absolute hover:after:left-0 hover:after:bottom-[-1.5rem] hover:after:w-full hover:after:h-0.5 hover:after:bg-white"
-                    // >
-                    //     {item}
-                    // </Link>
-                    return (
-                        <Link
-                            key={item}
-                            to={`/${item.toLowerCase()}`} // Adjust this path to match your route
-                            className="relative text-white transition-all duration-300 hover:text-white hover:after:content-[''] hover:after:absolute hover:after:left-0 hover:after:bottom-[-1.5rem] hover:after:w-full hover:after:h-0.5 hover:after:bg-white"
-                        >
-                            {item}
-                        </Link>
-                    )
-                })}
+                {navItems.map(({ label, path }) => (
+                    <NavLink
+                        key={label}
+                        to={path}
+                        className={({ isActive }) =>
+                            `relative transition-all duration-300 ${
+                                isActive ? 'text-yellow-400 after:bg-yellow-400' : 'text-white'
+                            } hover:text-yellow-400 hover:after:bg-yellow-400 after:content-[''] after:absolute after:left-0 after:bottom-[-0.5rem] after:w-full after:h-0.5`
+                        }
+                    >
+                        {label}
+                    </NavLink>
+                ))}
             </div>
 
             {/* Right Icons */}
             <div className="flex items-center gap-4 flex-shrink-0">
-                <FiUser size={24} className="cursor-pointer text-white" />
-                <FiSearch size={24} className="cursor-pointer text-white" />
-                <FiShoppingCart size={24} className="cursor-pointer text-yellow-400" />
+                <Link to="/login"> <FiUser size={24} className="cursor-pointer text-white"/> </Link>
+                <Link to="/search"> <FiSearch size={24} className="cursor-pointer text-white"/> </Link>
+                <Link to="/cart"> <FiShoppingCart size={24} className="cursor-pointer text-yellow-400"/> </Link>
             </div>
 
             {/* Overlay */}
@@ -92,39 +94,28 @@ const Navbar = () => {
                         <FiX size={24} />
                     </button>
                 </div>
-                {/*<ul className="flex flex-col p-4 gap-4 text-sm font-medium">*/}
-                {/*    {navItems.map((item) => (*/}
-                {/*        <li*/}
-                {/*            key={item}*/}
-                {/*            className="border-b pb-4"*/}
-                {/*            style={{ borderColor: 'rgb(206, 206, 206)' }}*/}
-                {/*        >*/}
-                {/*            <button*/}
-                {/*                onClick={() => setMenuOpen(false)}*/}
-                {/*                className="w-full flex justify-between items-center text-left"*/}
-                {/*            >*/}
-                {/*                {item}*/}
-                {/*                <FiChevronRight size={20} />*/}
-                {/*            </button>*/}
-                {/*        </li>*/}
-                {/*    ))}*/}
-                {/*</ul>*/}
+
                 <ul className="flex flex-col p-4 gap-4 text-sm font-medium">
-                    {navItems.map(function (item) {
+                    {navItems.map(function ({ label, path }) {
                         return (
                             <li
-                                key={item}
+                                key={label}
                                 className="border-b pb-4"
                                 style={{ borderColor: 'rgb(206, 206, 206)' }}
                             >
-                                <Link
-                                    to={`/${item.toLowerCase()}`} // Adjust this path to match your route
+                                <NavLink
+                                    to={path}
                                     onClick={() => setMenuOpen(false)}
-                                    className="w-full flex justify-between items-center text-left"
+                                    className={({isActive}) =>
+                                        `w-full flex justify-between items-center text-left hover:text-yellow-400 ${
+                                            isActive ? 'text-yellow-400' : 'text-black'
+                                        }`
+                                    }
                                 >
-                                    {item}
+
+                                {label}
                                     <FiChevronRight size={20} />
-                                </Link>
+                                </NavLink>
                             </li>
                         );
                     })}
@@ -133,23 +124,13 @@ const Navbar = () => {
                     className="absolute bottom-0 w-full p-4 border-t"
                     style={{ borderColor: 'rgb(206, 206, 206)' }}
                 >
-                    {/*<button*/}
-                    {/*    onClick={() => setMenuOpen(false)}*/}
-                    {/*    className="w-full flex justify-between items-center text-left"*/}
-                    {/*>*/}
-                    {/*    <span className="flex items-center gap-2">*/}
-                    {/*        <FiUser />*/}
-                    {/*        LOGIN*/}
-                    {/*    </span>*/}
-                    {/*</button>*/}
-
                     <Link
                         to="/login"
                         onClick={() => setMenuOpen(false)}
                         className="w-full flex justify-between items-center text-left"
                     >
                         <span className="flex items-center gap-2">
-                            <FiUser />
+                            <FiUser/>
                             LOGIN
                         </span>
                     </Link>
