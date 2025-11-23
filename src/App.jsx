@@ -3,7 +3,7 @@ import Navbar from './components/Navbar';
 import PaymentMethods from './components/PaymentMethod';
 import Home from './pages/Home';
 import ProductPage from './pages/ProductPage.jsx';
-import CartProvider from './components/CartProvider';
+import CartProvider from './components/CartProvider.jsx';
 import OurStory from './components/OurStory';
 import New from "./pages/New.jsx";
 import Promos from "./pages/Promos.jsx";
@@ -11,6 +11,9 @@ import Apparel from "./pages/Apparel.jsx";
 import Accessories from "./pages/Accessories.jsx";
 import Footwear from "./pages/Footwear.jsx";
 import LoginSignup from "./pages/LoginSignup.jsx";
+import Login from "./pages/Login.jsx";
+import CartPage from "./components/CartPage.jsx";
+import Layout from "./components/Layout.jsx";
 
 const App = () => (
     <CartProvider>
@@ -19,16 +22,18 @@ const App = () => (
             <Navbar />
 
             <Routes>
-                <Route path="/" element={<Home />} />
-                <Route path="/products/:productSlug" element={<ProductPage />} />
+
+                <Route path="/" element={<Layout><Home /></Layout>} />
+                <Route path="/products/:productSlug" element={<Layout><ProductPage /></Layout>} />
                 <Route path="/our-story" element={<OurStory />} />
                 <Route path="/new" element={<New />} />
                 <Route path="/promos" element={<Promos />} />
                 <Route path="/apparel" element={<Apparel />} />
                 <Route path="/accessories" element={<Accessories />} />
                 <Route path="/footwear" element={<Footwear />} />
-                <Route path="/cart" element={<CartProvider />} />
-                <Route path="/login" element={<LoginSignup />} />
+                <Route path="/cart" element={<CartPage />} />
+                <Route path="/signup" element={<LoginSignup />} />
+                <Route path="/login" element={<Login />} />
             </Routes>
 
             {/* Floating Chat Button */}

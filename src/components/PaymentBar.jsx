@@ -12,3 +12,5 @@ const PaymentBar = () => (
         </div>
     </div>
 );
+
+export default PaymentBar
