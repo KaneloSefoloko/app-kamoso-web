@@ -9,11 +9,13 @@ import {
     FiChevronRight
 } from 'react-icons/fi';
 import { CartContext } from './CartContext';
+import {useUI} from "./UIContext.jsx";
 
 const Navbar = () => {
-    const [menuOpen, setMenuOpen] = useState(false);
-    const [cartOpen, setCartOpen] = useState(false);
-    const [scrolled, setScrolled] = useState(false);
+
+    const { menuOpen, setMenuOpen, cartOpen, setCartOpen } = useUI();
+
+    const [scrolled, setScrolled] = useState(false); // keep this local
     const location = useLocation();
     const { cart, removeFromCart, updateQuantity } = useContext(CartContext);
 
@@ -22,6 +24,7 @@ const Navbar = () => {
         window.addEventListener("scroll", handleScroll);
         return () => window.removeEventListener("scroll", handleScroll);
     }, []);
+
 
     const hideNavbarRoutes = ["/signup", "/login"];
     if (hideNavbarRoutes.includes(location.pathname)) return null;
@@ -34,17 +37,18 @@ const Navbar = () => {
         { label: 'FOOTWEAR', path: '/footwear' }
     ];
 
-    const navBg = scrolled ? "bg-black/60 backdrop-blur-sm" : "bg-black";
     const cartCount = cart.reduce((sum, item) => sum + item.quantity, 0);
 
     return (
         <>
             {/* Navbar */}
             <nav
-                className={`fixed inset-x-0 top-0 z-50 h-20 sm:h-24 md:h-28 lg:h-32 px-4 md:px-8 flex items-center justify-between
-                 transition-colors duration-300 ${navBg} hover:bg-black/60 hover:backdrop-blur-sm ${menuOpen ? "hidden" : ""}`}
+                className={`fixed inset-x-0 top-8 z-40 h-20 sm:h-24 md:h-28 lg:h-32 px-4 md:px-8 flex items-center justify-between
+         transition-colors duration-300 ${scrolled ? "bg-black/60 backdrop-blur-sm" : "bg-black"}
+         hover:bg-black/60 hover:backdrop-blur-sm ${menuOpen ? "hidden" : ""}`}
             >
-                {/* Left Section */}
+
+            {/* Left Section */}
                 <div className="flex items-center gap-4 md:gap-12 flex-shrink-0">
                     <button className="md:hidden" onClick={() => setMenuOpen(true)}>
                         <FiMenu size={24} className="text-white" />
@@ -91,11 +95,12 @@ const Navbar = () => {
 
             {/* Cart Drawer */}
             <div
-                className={`fixed top-0 right-0 h-full w-80 bg-white shadow-lg z-50 transform transition-transform duration-300 ${
+                className={`fixed top-0 right-0 h-full w-80 bg-white shadow-lg z-60 transform transition-transform duration-300 ${
                     cartOpen ? "translate-x-0" : "translate-x-full"
                 }`}
             >
-                <div className="flex justify-between items-center p-4 border-b">
+
+            <div className="flex justify-between items-center p-4 border-b">
                     <h2 className="text-lg font-bold">Your Cart</h2>
                     <button onClick={() => setCartOpen(false)}>
                         <FiX size={24} />
@@ -138,34 +143,43 @@ const Navbar = () => {
             {/* Overlays (fixed) */}
             {cartOpen && (
                 <div
-                    className="fixed inset-0 bg-black/30 z-40"
+                    className="fixed inset-0 bg-black/30 z-50"
                     onClick={() => setCartOpen(false)}
                 />
             )}
 
             {menuOpen && (
                 <div
-                    className="fixed inset-0 bg-black/30 z-30 md:hidden"
+                    className="fixed inset-0 bg-black/30 z-50 md:hidden"
                     onClick={() => setMenuOpen(false)}
                 />
             )}
 
             {/* Mobile Sidebar */}
             <div
-                className={`fixed top-0 left-0 h-full w-4/5 max-w-xs bg-gray-100 border-r z-40 transform transition-transform duration-300 ease-in-out ${
+                className={`fixed top-0 left-0 h-full w-4/5 max-w-xs bg-gray-100 border-r z-60 transform transition-transform duration-300 ease-in-out ${
                     menuOpen ? "translate-x-0" : "-translate-x-full"
                 } md:hidden`}
-                style={{ borderColor: "rgb(206, 206, 206)" }}
+                style={{borderColor: "rgb(206, 206, 206)"}}
             >
                 <div
-                    className="flex justify-between items-center p-4 border-b"
-                    style={{ borderColor: "rgb(206, 206, 206)" }}
+                    className="flex justify-between items-center p-4"
+                    style={{borderColor: "rgb(206, 206, 206)"}}
                 >
                     <button onClick={() => setMenuOpen(false)}>
-                        <FiX size={24} />
+                        <FiX size={24}/>
                     </button>
                 </div>
-                <ul className="flex flex-col p-4 gap-4 text-sm font-medium">
+
+                <div className="p-4 border-b" style={{ borderColor: "rgb(206, 206, 206)" }}>
+                    <input
+                        type="text"
+                        placeholder="Search products..."
+                        className="w-full px-4 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-yellow-400"
+                    />
+                </div>
+
+                <ul className="font-sans font-sans antialiased md:subpixel-antialiased flex flex-col p-4 gap-4 text-sm font-light">
                     {navItems.map(({ label, path }) => (
                         <li key={label} className="border-b pb-4" style={{ borderColor: "rgb(206, 206, 206)" }}>
                             <NavLink

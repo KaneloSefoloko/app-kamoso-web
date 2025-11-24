@@ -14,9 +14,12 @@ import LoginSignup from "./pages/LoginSignup.jsx";
 import Login from "./pages/Login.jsx";
 import CartPage from "./components/CartPage.jsx";
 import Layout from "./components/Layout.jsx";
+import {UIProvider} from "./components/UIContext.jsx";
 
 const App = () => (
+
     <CartProvider>
+        <UIProvider>
         <>
             <PaymentMethods />
             <Navbar />
@@ -44,6 +47,7 @@ const App = () => (
                 💬
             </button>
         </>
+            </UIProvider>
     </CartProvider>
 );
 
