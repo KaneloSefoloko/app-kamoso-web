@@ -24,10 +24,10 @@ export const products = [
         name: 'Gray Hoodie',
         price: 799,
         image: '/assets/person.jpeg',
-        hoverImage: '/assets/yourself.jpeg',
+        hoverImage: '/assets/Positive.svg',
         gallery: [
             '/assets/person.jpeg',
-            '/assets/yourself.jpeg',
+            '/assets/Positive.svg',
             '/assets/front.jpeg', // optional extra
         ],
         description: 'A stylish gray hoodie for everyday wear.',
@@ -38,14 +38,14 @@ export const products = [
         care: ['Cold machine wash', 'Do not tumble dry', 'Iron on low'],
         inStock: true,
         related: [
-            { slug: 'black-ratanda-t-shirt', name: 'Black Ratanda T-Shirt', price: 449, image: '/assets/tshirt.jpeg' },
-            { slug: 'black-courage-t-shirt', name: 'Black Courage T-Shirt', price: 699, image: '/assets/yourself.jpeg' },
+            { slug: 'black-ratanda-t-shirt', name: 'Ratanda T-Shirt', price: 449, image: '/assets/tshirt.jpeg' },
+            { slug: 'black-courage-t-shirt', name: 'Courage T-Shirt', price: 699, image: '/assets/yourself.jpeg' },
         ],
     },
     {
         id: 2,
         slug: 'black-ratanda-t-shirt',
-        name: 'Black Ratanda T-Shirt',
+        name: 'Ratanda T-Shirt',
         price: 449,
         image: '/assets/tshirt.jpeg',
         hoverImage: '/assets/front.jpeg',
@@ -62,14 +62,14 @@ export const products = [
         care: ['Cold wash', 'Do not tumble dry', 'Iron inside-out'],
         inStock: true,
         related: [
-            { slug: 'black-rose-t-shirt', name: 'Black Rose T-Shirt', price: 449, image: '/assets/front.jpeg' },
+            { slug: 'black-rose-t-shirt', name: 'Rose T-Shirt', price: 449, image: '/assets/front.jpeg' },
             { slug: 'gray-hoodie', name: 'Gray Hoodie', price: 799, image: '/assets/person.jpeg' },
         ],
     },
     {
         id: 3,
         slug: 'black-rose-t-shirt',
-        name: 'Black Rose T-Shirt',
+        name: 'Rose T-Shirt',
         price: 449,
         image: '/assets/front.jpeg',
         hoverImage: '/assets/tshirt.jpeg',
@@ -85,20 +85,20 @@ export const products = [
         care: ['Gentle cycle', 'Dry flat', 'Do not bleach'],
         inStock: true,
         related: [
-            { slug: 'black-ratanda-t-shirt', name: 'Black Ratanda T-Shirt', price: 449, image: '/assets/tshirt.jpeg' },
-            { slug: 'black-courage-t-shirt', name: 'Black Courage T-Shirt', price: 699, image: '/assets/yourself.jpeg' },
+            { slug: 'black-ratanda-t-shirt', name: 'Ratanda T-Shirt', price: 449, image: '/assets/tshirt.jpeg' },
+            { slug: 'black-courage-t-shirt', name: 'Courage T-Shirt', price: 699, image: '/assets/yourself.jpeg' },
         ],
     },
     {
         id: 4,
         slug: 'black-courage-t-shirt',
-        name: 'Black Courage T-Shirt',
+        name: 'Courage T-Shirt',
         price: 699,
         image: '/assets/yourself.jpeg',
-        hoverImage: '/assets/person.jpeg',
+        hoverImage: '/assets/design.svg',
         gallery: [
             '/assets/yourself.jpeg',
-            '/assets/person.jpeg',
+            '/assets/design.svg',
         ],
         description: 'Bold design for those who embrace courage.',
         sizes: ['S', 'M', 'L', 'XL'],
@@ -109,7 +109,7 @@ export const products = [
         inStock: true,
         related: [
             { slug: 'gray-hoodie', name: 'Gray Hoodie', price: 799, image: '/assets/person.jpeg' },
-            { slug: 'black-rose-t-shirt', name: 'Black Rose T-Shirt', price: 449, image: '/assets/front.jpeg' },
+            { slug: 'black-rose-t-shirt', name: 'Rose T-Shirt', price: 449, image: '/assets/front.jpeg' },
         ],
     },
 ];

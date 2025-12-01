@@ -21,7 +21,7 @@ function makeCloudinaryUrl(baseSrc, { width }) {
         const isVideo = u.pathname.includes("/video/upload/");
         const transform = isImage
             ? `c_fill,g_auto,w_${width},dpr_auto,f_auto,q_auto`
-            : `f_auto,q_auto,br_auto`;
+            : `vc_auto,q_auto`;
 
         u.pathname = u.pathname.replace(
             /(\/(image|video)\/upload)\/?/,
@@ -176,9 +176,9 @@ const Hero = () => {
                 <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-8 w-full">
                     <div className="bg-white rounded-lg overflow-hidden shadow-lg hover:shadow-xl transition cursor-pointer">
                         <img
-                            src="/assets/section1.jpg"
+                            src="/assets/BlackAndWhite.svg"
                             alt="Streetwear"
-                            className="w-full h-60 object-cover"
+                            className="w-full h-60 object-contain"
                         />
                         <div className="p-4 text-center">
                             <h3 className="font-semibold text-lg">Streetwear</h3>
@@ -190,9 +190,9 @@ const Hero = () => {
 
                     <div className="bg-white rounded-lg overflow-hidden shadow-lg hover:shadow-xl transition cursor-pointer">
                         <img
-                            src="/assets/section2.jpg"
+                            src="/assets/design.svg"
                             alt="Casual"
-                            className="w-full h-60 object-cover"
+                            className="w-full h-60 object-contain"
                         />
                         <div className="p-4 text-center">
                             <h3 className="font-semibold text-lg">Casual</h3>
@@ -204,9 +204,9 @@ const Hero = () => {
 
                     <div className="bg-white rounded-lg overflow-hidden shadow-lg hover:shadow-xl transition cursor-pointer">
                         <img
-                            src="/assets/section3.jpg"
+                            src="/assets/Positive.svg"
                             alt="Accessories"
-                            className="w-full h-60 object-cover"
+                            className="w-full h-60 object-contain"
                         />
                         <div className="p-4 text-center">
                             <h3 className="font-semibold text-lg">Accessories</h3>

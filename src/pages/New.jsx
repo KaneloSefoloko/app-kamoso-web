@@ -8,12 +8,12 @@ const categories = [
 ];
 
 const products = [
-    { id: 1, name: "Black Heavy Tee", price: 499, image: "/assets/product1.jpg", createdAt: "2025-11-30" },
-    { id: 2, name: "Olive Cargo Pants", price: 899, image: "/assets/product2.jpg", createdAt: "2025-11-29" },
-    { id: 3, name: "White Logo Hoodie", price: 799, image: "/assets/product3.jpg", createdAt: "2025-11-28" },
-    { id: 4, name: "Oversized Track Jacket", price: 1299, image: "/assets/product4.jpg", createdAt: "2025-11-27" },
-    { id: 5, name: "Black Puffer Vest", price: 1199, image: "/assets/product5.jpg", createdAt: "2025-11-26" },
-    { id: 6, name: "Grey Sweatpants", price: 699, image: "/assets/product6.jpg", createdAt: "2025-11-25" },
+    { id: 1, name: "Black Heavy Tee", price: 499, image: "/assets/BlackAndWhite.svg", createdAt: "2025-11-30" },
+    { id: 2, name: "Olive Mirror Tee", price: 699, image: "/assets/design.svg", createdAt: "2025-11-29" },
+    { id: 3, name: "Black Logo Hoodie", price: 799, image: "/assets/Positive.svg", createdAt: "2025-11-28" },
+    { id: 4, name: "Oversized Track Hoodie", price: 799, image: "/assets/BlazeHoodie.svg", createdAt: "2025-11-27" },
+    { id: 5, name: "Black Puffer Tee", price: 499, image: "/assets/yourself.jpeg", createdAt: "2025-11-26" },
+    { id: 6, name: "Beige Hoodie ", price: 899, image: "/assets/person.jpeg", createdAt: "2025-11-25" },
 ];
 
 const New = () => {
