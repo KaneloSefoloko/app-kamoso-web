@@ -1,0 +1,15 @@
+/*
+  Content-Security-Policy: default-src 'self';
+    script-src 'self' https://apis.google.com;
+    object-src 'none';
+    img-src 'self' data: blob: https://res.cloudinary.com https://firebasestorage.googleapis.com https://www.gstatic.com;
+    media-src 'self' https://res.cloudinary.com;
+    style-src 'self';
+    font-src 'self' https://fonts.gstatic.com data:;
+    connect-src 'self' https://firestore.googleapis.com https://identitytoolkit.googleapis.com https://securetoken.googleapis.com https://www.googleapis.com https://apis.google.com;
+    worker-src 'self';
+    frame-src 'self';
+    frame-ancestors 'none';
+    base-uri 'self';
+    form-action 'self';
+    upgrade-insecure-requests

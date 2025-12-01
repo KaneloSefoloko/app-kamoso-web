@@ -5,18 +5,18 @@ import { FaHeadset, FaTruck, FaCreditCard, FaUndoAlt } from 'react-icons/fa';
 
 const Footer = () => {
     const quicklinks = [
-        'FAQ’s',
-        'Track my Order',
-        'Log a Return',
-        'Returns Policy',
-        'Shipping',
-        'Collection',
-        'Payments',
-        'Contact Us',
-        'Careers & Opportunities',
-        'Blog | Gazette',
-        'Our Story',
-        'Gallery',
+        { label: 'FAQ’s', slug: 'faqs' },
+        { label: 'Track my Order', slug: 'track-my-order' },
+        { label: 'Log a Return', slug: 'return' },
+        { label: 'Returns Policy', slug: 'returns-policy' },
+        { label: 'Shipping', slug: 'shipping' },
+        { label: 'Collection', slug: 'collection' },
+        { label: 'Payments', slug: 'payments' },
+        { label: 'Contact Us', slug: 'contact' },
+        { label: 'Careers & Opportunities', slug: 'careers-opportunities' },
+        { label: 'Blog | Gazette', slug: 'blog-gazette' },
+        { label: 'Our Story', slug: 'our-story' },
+        { label: 'Gallery', slug: 'gallery' },
     ];
 
     return (
@@ -61,12 +61,11 @@ const Footer = () => {
                 <h4 className="text-lg font-semibold mb-6 text-center">Quicklinks</h4>
                 <ul className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-2 text-center mb-6">
                     {quicklinks.map((link) => (
-                        <li key={link}>
+                        <li key={link.slug}>
                             <a
-                                href={`/${link.toLowerCase().replace(/\s*\|\s*/g, '-').replace(/\s+/g, '-').replace(/[^a-z0-9\-]/g, '')}`}
-                                className="text-gray-700 hover:text-black text-sm"
+                                href={`/${link.slug}`} className="text-gray-700 hover:text-black text-sm"
                             >
-                                {link}
+                                {link.label}
                             </a>
                         </li>
                     ))}

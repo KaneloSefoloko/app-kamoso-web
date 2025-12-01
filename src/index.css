@@ -1,1 +1,21 @@
 @import "tailwindcss";
+
+/* Custom Animations (no Tailwind config needed) */
+
+@keyframes fadeInCustom {
+    from { opacity: 0; }
+    to { opacity: 1; }
+}
+
+@keyframes scaleInCustom {
+    from { transform: scale(0.95); opacity: 0; }
+    to { transform: scale(1); opacity: 1; }
+}
+
+.fade-in {
+    animation: fadeInCustom .25s ease-out forwards;
+}
+
+.scale-in {
+    animation: scaleInCustom .25s ease-out forwards;
+}

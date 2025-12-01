@@ -1,5 +1,22 @@
 // src/data/products.js
 
+//This is make multi-color selection ************
+// const product = {
+//     name: "Black Heavy Tee",
+//     slug: "black-heavy-tee",
+//     price: 499,
+//     images: {
+//         black: "/assets/product-black.jpg",
+//         white: "/assets/product-white.jpg",
+//         beige: "/assets/product-beige.jpg",
+//     },
+//     hoverImages: {
+//         black: "/assets/product-black-hover.jpg",
+//         white: "/assets/product-white-hover.jpg",
+//         beige: "/assets/product-beige-hover.jpg",
+//     },
+// };
+
 export const products = [
     {
         id: 1,
