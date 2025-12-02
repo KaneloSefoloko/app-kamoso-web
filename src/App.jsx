@@ -44,6 +44,7 @@ import NotAvailable from "./pages/NotAvailable";
 import AccountLayout from "./layout/AccountLayout";
 import RequireAuth from "./routes/RequireAuth";
 import CategoryPage from "./pages/CategoryPage.jsx";
+import AccountProfilePage from "./account/AccountProfilePage.jsx";
 
 const App = () => (
     <SafeErrorBoundary>
@@ -91,9 +92,10 @@ const App = () => (
                         {/* Protected Routes */}
                     <Route element={<RequireAuth />}>
                         <Route path="/orders" element={<AccountLayout><OrdersPage /></AccountLayout>} />
+                        <Route path="/account/profile" element={<AccountLayout><AccountProfilePage /></AccountLayout>} />
                     </Route>
 
-                        {/* Placeholder routes */}
+                    {/* Placeholder routes */}
                     <Route path="/track-my-order" element={<NotAvailable />} />
                     <Route path="/gallery" element={<NotAvailable />} />
                     <Route path="/careers-opportunities" element={<NotAvailable />} />

@@ -18,7 +18,6 @@ function makeCloudinaryUrl(baseSrc, { width }) {
     try {
         const u = new URL(baseSrc);
         const isImage = u.pathname.includes("/image/upload/");
-        const isVideo = u.pathname.includes("/video/upload/");
         const transform = isImage
             ? `c_fill,g_auto,w_${width},dpr_auto,f_auto,q_auto`
             : `vc_auto,q_auto`;
