@@ -3,7 +3,7 @@ import { NavLink, useNavigate } from "react-router-dom";
 import { useAuth } from "../context/AuthContext";
 
 const SideNav = () => {
-    const { user, profile } = useAuth();
+    const { user, profile, logout } = useAuth(); // Make sure logout exists
     const navigate = useNavigate();
     const [displayName, setDisplayName] = useState("User");
     const [avatar, setAvatar] = useState("/assets/default-avatar.png");
@@ -27,7 +27,7 @@ const SideNav = () => {
     };
 
     return (
-        <aside className="w-64 bg-white border-r border-gray-200 flex flex-col">
+        <aside className="w-full md:w-64 bg-white border-b md:border-b-0 md:border-r border-gray-200 flex flex-col">
             {/* Profile Section */}
             <div className="p-6 border-b flex flex-col items-center text-center">
                 <div className="relative group">
@@ -39,7 +39,7 @@ const SideNav = () => {
                     <button
                         onClick={() => navigate("/account/profile")}
                         className="absolute bottom-0 right-0 bg-black text-white text-xs px-2 py-1 rounded
-                       opacity-0 group-hover:opacity-100 transition"
+                           opacity-0 group-hover:opacity-100 transition"
                     >
                         Edit
                     </button>
