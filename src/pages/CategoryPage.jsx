@@ -1,128 +1,118 @@
-// src/pages/CategoryPage.jsx
-import React, { useState, useEffect } from 'react';
-import { collection, getDocs } from 'firebase/firestore';
-import { db } from '../../firebase'; // Your Firebase setup
-import ProductCard from '../components/ProductCard'; // The ProductCard you already have
+import React, { useEffect, useState } from "react";
+import { useParams, Link } from "react-router-dom";
+import { products } from "../data/products";
+import ProductCard from "../components/ProductCard";
+import { motion } from "framer-motion";
 
-const CategoryPage = ({ category }) => {
-    const [products, setProducts] = useState([]);
+const CategoryPage = () => {
+    const { category } = useParams();
     const [filteredProducts, setFilteredProducts] = useState([]);
+
     const [filters, setFilters] = useState({
-        size: '',
-        color: '',
-        price: ''
+        size: "",
+        color: "",
+        price: "",
     });
 
-    // Fetch products from Firestore
+    // Filter by category
     useEffect(() => {
-        const fetchProducts = async () => {
-            try {
-                const querySnapshot = await getDocs(collection(db, category));
-                const fetchedProducts = querySnapshot.docs.map(doc => doc.data());
-                setProducts(fetchedProducts);
-                setFilteredProducts(fetchedProducts);
-            } catch (error) {
-                console.error('Error fetching products:', error);
-            }
-        };
-
-        fetchProducts();
+        const filtered = products.filter(
+            (p) => p.category && p.category.toLowerCase() === category.toLowerCase()
+        );
+        setFilteredProducts(filtered);
     }, [category]);
 
-    // Filter products based on selected filters
+    // Apply filters
     useEffect(() => {
-        let tempFilteredProducts = [...products];
+        let temp = products.filter(
+            (p) => p.category && p.category.toLowerCase() === category.toLowerCase()
+        );
 
-        if (filters.size) {
-            tempFilteredProducts = tempFilteredProducts.filter(
-                product => product.size.includes(filters.size)
-            );
-        }
+        if (filters.size) temp = temp.filter((p) => p.sizes.includes(filters.size));
+        if (filters.color) temp = temp.filter((p) => p.color === filters.color);
+        if (filters.price) temp = temp.filter((p) => p.price <= Number(filters.price));
 
-        if (filters.color) {
-            tempFilteredProducts = tempFilteredProducts.filter(
-                product => product.color === filters.color
-            );
-        }
-
-        if (filters.price) {
-            tempFilteredProducts = tempFilteredProducts.filter(
-                product => product.price <= filters.price
-            );
-        }
-
-        setFilteredProducts(tempFilteredProducts);
-    }, [filters, products]);
+        setFilteredProducts(temp);
+    }, [filters, category]);
 
     const handleFilterChange = (e) => {
-        setFilters({
-            ...filters,
-            [e.target.name]: e.target.value
-        });
+        setFilters({ ...filters, [e.target.name]: e.target.value });
     };
 
     return (
-        <div className="category-page container mx-auto py-10">
+        <div className="container mx-auto py-10 px-4">
+            <h1 className="text-lg font-bold mb-8 capitalize tracking-tight">
+                {category} Collection
+            </h1>
+
             <div className="grid grid-cols-12 gap-6">
-                {/* Filter Sidebar */}
-                <div className="col-span-3 p-4 bg-gray-50 rounded-lg shadow-md">
-                    <h2 className="text-lg font-bold mb-4">Filters</h2>
+                {/* FILTERS */}
+                <motion.div
+                    initial={{ opacity: 0, x: -20 }}
+                    animate={{ opacity: 1, x: 0 }}
+                    transition={{ duration: 0.3 }}
+                    className="col-span-12 md:col-span-3 p-6 bg-gray-50 rounded-xl shadow-md"
+                >
+                    <h2 className="text-lg font-semibold mb-4">Filters</h2>
 
-                    {/* Size Filter */}
-                    <label htmlFor="size" className="block mb-2">Size</label>
-                    <select
-                        id="size"
-                        name="size"
-                        className="w-full border p-2 mb-4"
-                        onChange={handleFilterChange}
-                        value={filters.size}
-                    >
-                        <option value="">All Sizes</option>
-                        <option value="S">Small</option>
-                        <option value="M">Medium</option>
-                        <option value="L">Large</option>
-                        <option value="XL">XL</option>
-                    </select>
+                    <div className="flex flex-col space-y-4">
+                        <div>
+                            <label className="block font-medium mb-1">Size</label>
+                            <select
+                                name="size"
+                                onChange={handleFilterChange}
+                                className="w-full border p-2 rounded-lg"
+                            >
+                                <option value="">All Sizes</option>
+                                <option value="S">S</option>
+                                <option value="M">M</option>
+                                <option value="L">L</option>
+                                <option value="XL">XL</option>
+                            </select>
+                        </div>
 
-                    {/* Color Filter */}
-                    <label htmlFor="color" className="block mb-2">Color</label>
-                    <select
-                        id="color"
-                        name="color"
-                        className="w-full border p-2 mb-4"
-                        onChange={handleFilterChange}
-                        value={filters.color}
-                    >
-                        <option value="">All Colors</option>
-                        <option value="Black">Black</option>
-                        <option value="White">White</option>
-                        <option value="Red">Red</option>
-                    </select>
+                        <div>
+                            <label className="block font-medium mb-1">Color</label>
+                            <select
+                                name="color"
+                                onChange={handleFilterChange}
+                                className="w-full border p-2 rounded-lg"
+                            >
+                                <option value="">All Colors</option>
+                                <option value="Black">Black</option>
+                                <option value="Gray">Gray</option>
+                            </select>
+                        </div>
 
-                    {/* Price Filter */}
-                    <label htmlFor="price" className="block mb-2">Price</label>
-                    <input
-                        type="number"
-                        id="price"
-                        name="price"
-                        className="w-full border p-2 mb-4"
-                        onChange={handleFilterChange}
-                        value={filters.price}
-                        placeholder="Max Price"
-                    />
-                </div>
+                        <div>
+                            <label className="block font-medium mb-1">Max Price</label>
+                            <input
+                                name="price"
+                                type="number"
+                                placeholder="500"
+                                onChange={handleFilterChange}
+                                className="w-full border p-2 rounded-lg"
+                            />
+                        </div>
+                    </div>
+                </motion.div>
 
-                {/* Product Grid */}
-                <div className="col-span-9">
-                    <h1 className="text-2xl font-bold mb-4">{category} Collection</h1>
-
+                {/* PRODUCT GRID */}
+                <div className="col-span-12 md:col-span-9">
                     <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
-                        {filteredProducts.length > 0 ? (
+                        {filteredProducts.length ? (
                             filteredProducts.map((product) => (
-                                <ProductCard key={product.id} product={product} />
+                                <motion.div
+                                    key={product.id}
+                                    initial={{ opacity: 0, y: 20 }}
+                                    animate={{ opacity: 1, y: 0 }}
+                                    transition={{ duration: 0.3 }}
+                                >
+                                    <ProductCard product={product} />
+                                </motion.div>
                             ))
                         ) : (
-                            <p>No products available for the selected filters.</p>
+                            <p>No products found.</p>
                         )}
                     </div>
                 </div>

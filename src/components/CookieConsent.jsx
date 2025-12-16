@@ -36,7 +36,7 @@ const CookieConsent = ({ open, onClose }) => {
     return (
         <div className="fixed inset-0 bg-black/40 backdrop-blur-sm z-50 flex items-center justify-center p-4 fade-in">
 
-            <div className="bg-white rounded-xl shadow-xl w-full max-w-md max-h-[80vh] overflow-y-auto p-6 relative scale-in">
+            <div className="bg-white rounded-sm shadow-xl w-full max-w-md max-h-[80vh] overflow-y-auto p-6 relative scale-in">
 
                 {/* Close */}
                 <button
@@ -90,7 +90,7 @@ const CookieConsent = ({ open, onClose }) => {
                 {/* Save Button */}
                 <button
                     onClick={handleSave}
-                    className="w-full py-3 bg-black text-white font-semibold rounded-lg hover:bg-gray-800 transition"
+                    className="w-full py-3 bg-black text-white font-semibold rounded-sm hover:bg-gray-800 transition"
                 >
                     Save Preferences
                 </button>

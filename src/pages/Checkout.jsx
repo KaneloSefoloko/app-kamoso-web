@@ -44,10 +44,10 @@ const Checkout = () => {
 
     return (
         <div className="min-h-screen bg-gray-50 py-8 px-4">
-            <div className="max-w-4xl mx-auto bg-white shadow-lg rounded-lg overflow-hidden md:flex">
+            <div className="max-w-4xl mx-auto bg-white shadow-lg rounded-sm overflow-hidden md:flex">
                 {/* Left: Form */}
                 <div className="w-full md:w-2/3 p-8 space-y-6">
-                    <h2 className="text-2xl font-semibold">Delivery Details</h2>
+                    <h2 className="text-lg font-semibold">Delivery Details</h2>
                     <form className="space-y-4" onSubmit={(e) => e.preventDefault()}>
                         {/* Name */}
                         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -101,7 +101,12 @@ const Checkout = () => {
                                 <option>Gauteng</option>
                                 <option>Western Cape</option>
                                 <option>KwaZulu-Natal</option>
-                                <option>Other</option>
+                                <option>Eastern Cape</option>
+                                <option>Limpopo</option>
+                                <option>North West</option>
+                                <option>Northern Cape</option>
+                                <option>FreeState</option>
+                                <option>Mpumalanga</option>
                             </select>
                             <input
                                 type="text"
@@ -127,7 +132,7 @@ const Checkout = () => {
                             type="button"
                             onClick={handleProceedToPayment}
                             disabled={cart.length === 0}
-                            className={`w-full py-3 mt-4 font-semibold rounded-lg transition ${
+                            className={`w-full py-3 mt-4 font-light  rounded-sm transition ${
                                 cart.length > 0
                                     ? "bg-black text-white hover:bg-gray-800"
                                     : "bg-gray-300 text-gray-500 cursor-not-allowed"
@@ -140,14 +145,15 @@ const Checkout = () => {
 
                 {/* Right: Order Summary */}
                 <div className="w-full md:w-1/3 bg-gray-100 p-6 border-l border-gray-200">
-                    <h3 className="text-xl font-semibold mb-4">Order Summary</h3>
+                    <h3 className="text-lg font-semibold mb-4">Order Summary</h3>
                     <div className="space-y-4">
                         {cart.map((item) => (
-                            <div key={item.id} className="flex items-center">
+                            <div key={`${item.id}-${item.size || "ONE_SIZE"}`} className="flex items-center">
                                 <img src={item.image} alt={item.name} className="w-16 h-16 object-cover rounded" />
                                 <div className="ml-4 flex-1">
                                     <p className="font-medium">{item.name}</p>
                                     <p className="text-gray-600">Qty: {item.quantity}</p>
+                                    <p className="text-gray-600">Size: {item.size}</p>
                                 </div>
                                 <p className="font-semibold">R{item.price * item.quantity}</p>
                             </div>
@@ -155,7 +161,7 @@ const Checkout = () => {
                     </div>
                     <div className="border-t border-gray-300 mt-6 pt-4">
                         <p className="text-gray-700 mb-2">Total:</p>
-                        <p className="text-2xl font-bold">R{total}</p>
+                        <p className="text-xl font-semibold">R{total}</p>
                     </div>
                 </div>
             </div>

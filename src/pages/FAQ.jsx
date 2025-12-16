@@ -72,7 +72,7 @@ const FAQ = () => {
                                 setActiveCategory(cat);
                                 setOpenIndex(null);
                             }}
-                            className={`px-6 py-2 rounded-full border text-sm font-medium transition-all
+                            className={`px-6 py-2 rounded-sm border text-sm font-medium transition-all
                                 ${activeCategory === cat
                                 ? "bg-black text-white border-black"
                                 : "bg-white text-gray-700 border-gray-300 hover:border-black"

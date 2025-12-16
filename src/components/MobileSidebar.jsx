@@ -14,7 +14,7 @@ const categories = [
     { title: "TOPS", items: ["T-Shirts", "Hoodies", "Long Sleeves"] },
     { title: "BOTTOMS", items: ["Oversize Pants", "Shorts"] },
     { title: "ACCESSORIES", items: ["Hats", "Bags", "Sunglasses"] },
-    { title: "NEW RELEASES", items: ["Latest Drops", "Trending Items"] },
+    { title: "NEW RELEASES", items: ["Trending Items"] },
 ];
 
 const MobileSidebar = ({ isOpen, closeSidebar }) => {

@@ -5,7 +5,7 @@ const PolicyModal = ({ open, onClose, title, children }) => {
 
     return (
         <div className="fixed inset-0 bg-black/60 backdrop-blur-sm bg-opacity-40 z-50 flex items-center justify-center p-4">
-            <div className="bg-white rounded-xl shadow-xl w-full max-w-lg p-6 relative">
+            <div className="bg-white rounded-sm shadow-xl w-full max-w-lg p-6 relative">
                 <button
                     onClick={onClose}
                     className="absolute top-4 right-4 text-gray-600 hover:text-gray-900 text-lg"

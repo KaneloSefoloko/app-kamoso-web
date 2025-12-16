@@ -137,7 +137,7 @@ const LogReturn = () => {
                     <button
                         type="submit"
                         disabled={status === "submitting" || !isFormValid}
-                        className={`w-full py-3 rounded-lg font-semibold transition
+                        className={`w-full py-3 rounded-sm font-semibold transition
                              ${isFormValid ? "bg-black text-white hover:bg-gray-900" : "bg-gray-300 text-gray-500 cursor-not-allowed"}`}
                     >
                         {status === "submitting" ? "Submitting..." : "Submit Return"}

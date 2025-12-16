@@ -6,7 +6,7 @@ import { products } from '../data/products';
 const Home = () => (
     <div>
         <Hero />
-        <ProductGrid products={products} />
+        <ProductGrid products={products} limit = {4}/>
         <Footer />
     </div>
 );

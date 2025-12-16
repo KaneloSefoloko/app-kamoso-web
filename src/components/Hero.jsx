@@ -204,7 +204,7 @@ const Hero = () => {
 
                     <button
                         onClick={() => navigate(currentSlide.link)}
-                        className={`z-10 px-8 py-4 rounded-md text-base font-light tracking-widest border border-white hover:bg-white hover:text-black transition mt-[540px] mb-8 ${
+                        className={`z-10 px-8 py-4 rounded-sm text-base font-light tracking-widest border border-white hover:bg-white hover:text-black transition mt-[540px] mb-8 ${
                             isMobile ? "text-black bg-white" : "bg-transparent text-white"
                         }`}
                     >
@@ -215,7 +215,7 @@ const Hero = () => {
                 {/* Scroll-down button */}
                 <button
                     onClick={() => nextSectionRef.current?.scrollIntoView({ behavior: "smooth" })}
-                    className="absolute bottom-0 left-1/2 transform -translate-x-1/2 translate-y-1/2 z-20 bg-white text-black w-12 h-12 md:w-16 md:h-16 rounded-full shadow-md hover:bg-gray-200 transition font-light text-xl hover:animate-bounce"
+                    className="absolute bottom-0 left-1/2 transform -translate-x-1/2 translate-y-1/2 z-20 bg-white text-black w-12 h-12 md:w-16 md:h-16 rounded-sm shadow-md hover:bg-gray-200 transition font-light text-xl hover:animate-bounce"
                 >
                     ↓
                 </button>
@@ -237,7 +237,7 @@ const Hero = () => {
                 <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-8 w-full">
                     <CategoryCard src="/assets/BlackAndWhite.svg" title="Streetwear" />
                     <CategoryCard src="/assets/design.svg" title="Casual" />
-                    <CategoryCard src="/assets/Positive.svg" title="Accessories" />
+                    <CategoryCard src="/assets/kamoso-sunglasses.jpeg" title="Accessories" />
                 </div>
             </section>
         </>

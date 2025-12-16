@@ -17,8 +17,17 @@ const ProductPage = () => {
         const foundProduct = products.find(p => p.slug === productSlug);
         setProduct(foundProduct || null);
         setMainImage(foundProduct?.image || null);
-        if (foundProduct?.sizes?.length) setSelectedSize(foundProduct.sizes[0]);
+
+        // ONLY auto-select if the product truly has one size
+        if (foundProduct?.sizes?.length === 1) {
+            setSelectedSize(foundProduct.sizes[0]);
+        } else {
+            setSelectedSize(""); // force user selection
+        }
+
+        setQuantity(1);
     }, [productSlug]);
+
 
     if (!product) {
         return (
@@ -35,11 +44,16 @@ const ProductPage = () => {
         : [product.hoverImage, product.image].filter(Boolean);
 
     const handleAddToCart = () => {
-        if (!selectedSize && product.sizes?.length) {
-            alert('Please select a size.');
+        if (product.sizes.length > 1 && !selectedSize) {
+            alert("Please select a size.");
             return;
         }
-        addToCart({ ...product, quantity, size: selectedSize });
+
+        addToCart({
+            ...product,
+            size: selectedSize,   // 👈 DO NOT DEFAULT HERE
+            quantity              // 👈 you were also ignoring quantity
+        });
     };
 
     return (

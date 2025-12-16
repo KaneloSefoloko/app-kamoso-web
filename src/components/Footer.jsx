@@ -74,7 +74,7 @@ const Footer = () => {
                 {/* Social Media Icons */}
                 <div className="flex justify-center gap-6 mb-6">
                     <a
-                        href="https://www.facebook.com/share/17GGxNBvUi/?mibextid=wwXlfr"
+                        href="https://www.facebook.com/share/1Wd7oAQynZ/?mibextid=wwXlfr"
                         target="_blank"
                         rel="noopener noreferrer"
                         className="text-gray-600 hover:text-blue-600 transition"

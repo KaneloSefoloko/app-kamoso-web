@@ -1,6 +1,6 @@
 // src/components/ProductCard.jsx
 import React, { useContext, useState } from "react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { CartContext } from "./CartContext.jsx";
 import { FiShoppingCart } from "react-icons/fi";
 import { Swiper, SwiperSlide } from "swiper/react";
@@ -10,6 +10,7 @@ import "swiper/css/pagination";
 
 const ProductCard = ({ product }) => {
     const { addToCart } = useContext(CartContext);
+    const navigate = useNavigate();
     const [selectedColor, setSelectedColor] = useState("black");
 
     const colors = [
@@ -18,22 +19,45 @@ const ProductCard = ({ product }) => {
         { name: "Beige", value: "beige" },
     ];
 
+    /* ---------------------------------------------
+       QUICK ADD HANDLER (CORE FIX)
+    --------------------------------------------- */
+    const handleQuickAdd = (e) => {
+        e.preventDefault();
+        e.stopPropagation();
+
+        // If product has multiple sizes → force product page
+        if (product.sizes?.length > 1) {
+            navigate(`/products/${product.slug}`);
+            return;
+        }
+
+        // ONE_SIZE or accessories
+        addToCart({
+            ...product,
+            size: product.sizes?.[0], // safe: CartProvider allows this
+            quantity: 1,
+        });
+    };
+
     return (
         <div className="group relative border border-transparent p-2 transition w-full max-w-sm mx-auto bg-transparent">
             {/* IMAGE CONTAINER */}
-            <Link to={`/products/${product.slug}`} className="block relative w-full h-72 md:h-[22rem] overflow-hidden">
-
-                {/* Desktop hover effect */}
+            <Link
+                to={`/products/${product.slug}`}
+                className="block relative w-full h-72 md:h-[22rem] overflow-hidden"
+            >
+                {/* Desktop hover */}
                 <div className="hidden md:block relative w-full h-full">
                     <img
                         src={product.image}
                         alt={product.name}
-                        className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 h-full w-auto object-contain transition-opacity duration-300 ease-in-out group-hover:opacity-0"
+                        className="absolute inset-0 m-auto h-full w-auto object-contain transition-opacity duration-300 group-hover:opacity-0"
                     />
                     <img
                         src={product.hoverImage}
                         alt={`${product.name} hover`}
-                        className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 h-full w-auto object-contain opacity-0 transition-opacity duration-300 ease-in-out group-hover:opacity-100"
+                        className="absolute inset-0 m-auto h-full w-auto object-contain opacity-0 transition-opacity duration-300 group-hover:opacity-100"
                     />
                 </div>
 
@@ -46,24 +70,26 @@ const ProductCard = ({ product }) => {
                         slidesPerView={1}
                         className="h-72"
                     >
-                        <SwiperSlide>
-                            <img src={product.image} alt={product.name} className="w-full h-72 object-contain" />
-                        </SwiperSlide>
-                        <SwiperSlide>
-                            <img src={product.hoverImage} alt={`${product.name} hover`} className="w-full h-72 object-contain" />
-                        </SwiperSlide>
+                        {[product.image, product.hoverImage].map(
+                            (img, i) =>
+                                img && (
+                                    <SwiperSlide key={i}>
+                                        <img
+                                            src={img}
+                                            alt={product.name}
+                                            className="w-full h-72 object-contain"
+                                        />
+                                    </SwiperSlide>
+                                )
+                        )}
                     </Swiper>
                 </div>
 
-                {/* UNIFIED CART BUTTON */}
+                {/* QUICK ADD BUTTON */}
                 <div className="absolute bottom-2 md:bottom-4 right-2 md:right-4 z-20">
                     <button
-                        onClick={(e) => {
-                            e.preventDefault();
-                            e.stopPropagation();
-                            addToCart(product);
-                        }}
-                        className="bg-yellow-400 p-2 md:p-3 rounded-full cursor-pointer transition-transform duration-200 hover:scale-110 shadow-md opacity-100 md:opacity-0 group-hover:md:opacity-100"
+                        onClick={handleQuickAdd}
+                        className="bg-yellow-400 p-2 md:p-3 rounded-sm transition-transform hover:scale-110 shadow-md opacity-100 md:opacity-0 group-hover:md:opacity-100"
                         aria-label="Add to cart"
                     >
                         <FiShoppingCart size={20} className="text-black" />
@@ -85,8 +111,10 @@ const ProductCard = ({ product }) => {
                     <label
                         key={color.value}
                         onClick={() => setSelectedColor(color.value)}
-                        className={`w-4 h-4 border cursor-pointer transition-transform duration-200 ${
-                            selectedColor === color.value ? "scale-110 border-yellow-400" : "border-gray-300"
+                        className={`w-4 h-4 border cursor-pointer transition-transform ${
+                            selectedColor === color.value
+                                ? "scale-110 border-yellow-400"
+                                : "border-gray-300"
                         }`}
                         style={{
                             backgroundColor:
@@ -94,7 +122,7 @@ const ProductCard = ({ product }) => {
                                     ? "#000"
                                     : color.value === "white"
                                         ? "#fff"
-                                        : "#f5f5dc", // beige
+                                        : "#f5f5dc",
                         }}
                     >
                         <span className="sr-only">{color.name}</span>

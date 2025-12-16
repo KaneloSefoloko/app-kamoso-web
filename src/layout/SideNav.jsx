@@ -38,7 +38,7 @@ const SideNav = () => {
                     />
                     <button
                         onClick={() => navigate("/account/profile")}
-                        className="absolute bottom-0 right-0 bg-black text-white text-xs px-2 py-1 rounded
+                        className="absolute bottom-0 right-0 bg-black text-white text-xs px-2 py-1 rounded-sm
                            opacity-0 group-hover:opacity-100 transition"
                     >
                         Edit
