@@ -53,6 +53,7 @@ import AccountProfilePage from "./account/AccountProfilePage.jsx";
 // 🔥 Chat system
 import ChatDrawer from "./components/ChatDrawer";
 import ChatButton from "./components/ChatButton";
+import SearchPage from "./pages/SearchPage.jsx";
 
 const App = () => {
     const [chatOpen, setChatOpen] = useState(false);
@@ -89,6 +90,7 @@ const App = () => {
                     <Route path="/forgot-password" element={<Layout><ForgotPassword/></Layout>}/>
                     <Route path="/mfa-challenge" element={<MFAChallenge/>}/>
                     <Route path="/setup-mfa" element={<Layout><SetupMFA/></Layout>}/>
+                    <Route path="/search" element={<SearchPage />} />
 
                     {/* Policies */}
                     <Route path="/policies/privacy-policy" element={<Layout><PrivacyPolicy/></Layout>}/>

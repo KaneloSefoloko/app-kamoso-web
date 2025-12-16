@@ -1,17 +1,20 @@
 import React, { useState, useContext } from "react";
 import { useNavigate } from "react-router-dom";
 import { CartContext } from "../components/CartContext";
+import { auth, db } from "../../firebase";
+import { collection, addDoc, serverTimestamp } from "firebase/firestore";
 
 const PaymentPage = () => {
     const { checkoutInfo, clearCart } = useContext(CartContext);
     const navigate = useNavigate();
+
     const [copied, setCopied] = useState(false);
-
-    const { cart = [], total = 0, userInfo = {} } = checkoutInfo || {};
-
+    const [success, setSuccess] = useState(false);
+    const [submitting, setSubmitting] = useState(false);
     const [proof, setProof] = useState(null);
     const [error, setError] = useState("");
 
+    const { cart = [], total = 0, userInfo = {}, shipping = {} } = checkoutInfo || {};
     const orderNumber = `KAV-${Date.now().toString().slice(-6)}`;
 
     if (!cart.length) {
@@ -19,36 +22,129 @@ const PaymentPage = () => {
         return null;
     }
 
-    const handleWhatsAppSubmit = () => {
+    const orderItemsText = cart
+        .map(
+            (item) =>
+                `• ${item.name} (${item.size || "ONE SIZE"}) x${item.quantity} — R${
+                    item.price * item.quantity
+                }`
+        )
+        .join("\n");
+
+    const fullName =
+        shipping?.firstName && shipping?.lastName
+            ? `${shipping.firstName} ${shipping.lastName}`
+            : userInfo?.name || "Customer";
+
+    const fullAddress = `
+${shipping.address || ""}
+${shipping.apartment ? ", " + shipping.apartment : ""}
+${shipping.city || ""}
+${shipping.province || ""}
+${shipping.postalCode || ""}
+`.trim();
+
+    /* ============================
+       SUCCESS SCREEN
+    ============================ */
+    if (success) {
+        return (
+            <div className="min-h-screen flex items-center justify-center bg-gray-50 px-4">
+                <div className="bg-white max-w-md w-full p-8 rounded-xl shadow-lg text-center">
+                    <div className="text-green-600 text-4xl mb-4">✓</div>
+
+                    <h2 className="text-xl font-semibold mb-2">
+                        Order placed successfully
+                    </h2>
+
+                    <p className="text-gray-600 text-sm mb-6">
+                        Your order has been received and is pending payment
+                        verification. We’ll notify you once it’s confirmed.
+                    </p>
+
+                    <div className="bg-gray-100 rounded-lg p-3 text-sm mb-6">
+                        <strong>Order number:</strong>
+                        <div className="font-mono mt-1">{orderNumber}</div>
+                    </div>
+
+                    <button
+                        onClick={() => navigate("/orders")}
+                        className="w-full bg-black text-white py-2 rounded hover:bg-gray-800 transition"
+                    >
+                        View my orders
+                    </button>
+                </div>
+            </div>
+        );
+    }
+
+    /* ============================
+       SUBMIT HANDLER
+    ============================ */
+    const handleWhatsAppSubmit = async () => {
+        if (submitting) return;
+
         if (!proof) {
-            setError("⚠️ Please upload proof of payment before continuing.");
+            setError("Please upload proof of payment before continuing.");
             return;
         }
 
-        setError("");
+        if (!shipping?.address || !shipping?.city) {
+            setError("Delivery details are missing. Please return to checkout.");
+            return;
+        }
 
-        const message = `🧾 *NEW EFT ORDER*
-                                    Order Number: ${orderNumber}
+        try {
+            setSubmitting(true);
 
-                                   👤 Name: ${userInfo?.name || "Customer"}
-                                   📧 Email: ${userInfo?.email || "N/A"}
+            const orderData = {
+                userId: auth.currentUser.uid,
+                orderNumber,
+                items: cart,
+                total,
+                deliveryAddress: shipping,
+                proofName: proof.name,
+                status: "pending",
+                createdAt: serverTimestamp(),
+            };
 
-                                   📍 Delivery Address:
-                                   ${userInfo?.address || "N/A"}
+            await addDoc(collection(db, "orders"), orderData);
 
-                                   💰 Amount Paid: R${total}
+            const message = `
+🧾 *NEW EFT ORDER*
 
-                                   ⚠️ Proof of payment attached`;
+🆔 Order Number: ${orderNumber}
 
-        const phone = "27627833498";
-        const encodedMessage = encodeURIComponent(message);
+👤 Name: ${fullName}
+📧 Email: ${userInfo?.email || "N/A"}
+📞 Phone: ${shipping?.phone || "N/A"}
 
-        window.open(`https://wa.me/${phone}?text=${encodedMessage}`, "_blank");
+📍 *Delivery Address*
+${fullAddress || "Not provided"}
 
-        // Optional: clear cart AFTER WhatsApp opens
-        clearCart();
+🛍 *Order Items*
+${orderItemsText}
+
+💰 *Amount Paid*: R${total}
+            `;
+
+            const phone = "27627833498";
+            const encodedMessage = encodeURIComponent(message);
+            window.open(`https://wa.me/${phone}?text=${encodedMessage}`, "_blank");
+
+            clearCart();
+            setSuccess(true);
+        } catch (err) {
+            console.error(err);
+            setError("Something went wrong. Please try again.");
+        } finally {
+            setSubmitting(false);
+        }
     };
 
+    /* ============================
+       PAGE UI
+    ============================ */
     return (
         <div className="min-h-screen bg-gray-50 px-4 py-8">
             <div className="max-w-5xl mx-auto grid md:grid-cols-2 gap-8">
@@ -58,8 +154,10 @@ const PaymentPage = () => {
                     <h2 className="text-xl font-semibold mb-4">Order Summary</h2>
 
                     {cart.map(item => (
-                        <div key={`${item.id}-${item.size || "ONE_SIZE"}`} className="flex justify-between mb-2 text-sm">
-                            <span>{item.name} × {item.size}</span>
+                        <div
+                            key={`${item.id}-${item.size || "ONE_SIZE"}`}
+                            className="flex justify-between mb-2 text-sm"
+                        >
                             <span>{item.name} × {item.quantity}</span>
                             <span>R{item.price * item.quantity}</span>
                         </div>
@@ -79,52 +177,38 @@ const PaymentPage = () => {
                     <div className="bg-gray-100 rounded-lg p-4 mb-4 text-sm space-y-1">
                         <p className="font-semibold mb-2">Banking Details</p>
 
-                        <div className="flex justify-between items-center">
+                        <div className="flex justify-between">
                             <span>Bank:</span>
                             <span>Capitec Bank</span>
                         </div>
 
-                        <div className="flex justify-between items-center">
+                        <div className="flex justify-between">
                             <span>Account Name:</span>
                             <span>Kavanti</span>
                         </div>
 
-                        <div className="flex justify-between items-center gap-2 flex-nowrap">
-                            <span className="shrink-0">Account Number:</span>
-
-                            <div className="flex items-center gap-2 whitespace-nowrap">
-                                <span className="font-mono text-sm sm:text-base">
-                                      119 746 0347
-                                </span>
-
+                        <div className="flex justify-between items-center gap-2">
+                            <span>Account Number:</span>
+                            <div className="flex items-center gap-2">
+                                <span className="font-mono">119 746 0347</span>
                                 <button
                                     onClick={() => {
                                         navigator.clipboard.writeText("1197460347");
                                         setCopied(true);
                                         setTimeout(() => setCopied(false), 2000);
                                     }}
-                                    className="shrink-0 text-xs px-2 py-1 border rounded-sm hover:bg-gray-200 transition">
-                                        {copied ? "Copied ✓" : "Copy"}
+                                    className="text-xs px-2 py-1 border rounded hover:bg-gray-200"
+                                >
+                                    {copied ? "Copied ✓" : "Copy"}
                                 </button>
                             </div>
                         </div>
 
-
-                        <div className="flex justify-between items-center">
-                            <span>Account Type:</span>
-                            <span>Savings</span>
-                        </div>
-
-                        <div className="flex justify-between items-center">
+                        <div className="flex justify-between">
                             <span>Reference:</span>
                             <span className="font-semibold">{orderNumber}</span>
                         </div>
-
-                        <p className="text-xs text-gray-500 mt-2">
-                            ⚠️ Please use the reference exactly as shown to avoid delays.
-                        </p>
                     </div>
-
 
                     {/* PROOF UPLOAD */}
                     <div className="mb-3">
@@ -139,16 +223,18 @@ const PaymentPage = () => {
                         />
                     </div>
 
-                    {error && (
-                        <p className="text-red-600 text-sm mb-2">{error}</p>
-                    )}
+                    {error && <p className="text-red-600 text-sm mb-2">{error}</p>}
 
-                    {/* ACTION BUTTON */}
                     <button
+                        disabled={submitting}
                         onClick={handleWhatsAppSubmit}
-                        className="w-full mt-4 py-3 rounded-sm bg-black text-white font-semibold hover:bg-gray-800 transition"
+                        className={`w-full mt-4 py-3 rounded-sm font-semibold transition ${
+                            submitting
+                                ? "bg-gray-400 cursor-not-allowed"
+                                : "bg-black text-white hover:bg-gray-800"
+                        }`}
                     >
-                        I Have Paid – Send via WhatsApp
+                        {submitting ? "Processing..." : "I Have Paid – Send via WhatsApp"}
                     </button>
 
                     <p className="text-xs text-gray-500 mt-3 text-center">

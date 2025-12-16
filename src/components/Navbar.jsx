@@ -4,6 +4,9 @@ import { FiShoppingCart, FiSearch, FiMenu, FiX, FiUser, FiChevronRight } from 'r
 import { CartContext } from './CartContext';
 import { useUI } from "./UIContext.jsx";
 import { useAuth } from "../context/AuthContext";
+import { products } from "../data/products";
+import { useRef } from "react";
+
 
 const Navbar = () => {
     const { user } = useAuth();
@@ -12,12 +15,49 @@ const Navbar = () => {
     const location = useLocation();
     const navigate = useNavigate();
     const { cart, removeFromCart, updateQuantity } = useContext(CartContext);
+    const [searchOpen, setSearchOpen] = useState(false);
+    const [query, setQuery] = useState("");
+    const [results, setResults] = useState([]);
+    const searchRef = useRef(null);
+
 
     useEffect(() => {
         const handleScroll = () => setScrolled(window.scrollY > 10);
         window.addEventListener("scroll", handleScroll);
         return () => window.removeEventListener("scroll", handleScroll);
     }, []);
+
+    useEffect(() => {
+        if (!query.trim()) {
+            setResults([]);
+            return;
+        }
+
+        const filtered = products
+            .filter(p =>
+                p.name.toLowerCase().includes(query.toLowerCase())
+            )
+            .slice(0, 6);
+
+        setResults(filtered);
+    }, [query]);
+
+    useEffect(() => {
+        const handleClickOutside = (e) => {
+            if (searchRef.current && !searchRef.current.contains(e.target)) {
+                setSearchOpen(false);
+            }
+        };
+
+        document.addEventListener("mousedown", handleClickOutside);
+        return () => document.removeEventListener("mousedown", handleClickOutside);
+    }, []);
+
+    useEffect(() => {
+        setSearchOpen(false);
+        setQuery("");
+    }, [location.pathname]);
+
 
     const hideNavbarRoutes = ['/signup', '/login', '/checkout', '/pay'];
     if (hideNavbarRoutes.includes(location.pathname)) return null;
@@ -68,9 +108,68 @@ const Navbar = () => {
                     <Link to={user ? "/orders" : "/signup"}>
                         <FiUser size={24} className="cursor-pointer text-white" />
                     </Link>
-                    <Link to="/search">
-                        <FiSearch size={24} className="cursor-pointer text-white" />
-                    </Link>
+                    <div className="relative" ref={searchRef}>
+                        <button onClick={() => setSearchOpen(!searchOpen)}>
+                            <FiSearch size={24} className="cursor-pointer text-white" />
+                        </button>
+
+                        {searchOpen && (
+                            <div className="absolute right-0 mt-3 w-80 bg-white shadow-xl rounded-md z-50 p-3">
+                                <input
+                                    type="text"
+                                    placeholder="Search products..."
+                                    value={query}
+                                    onChange={(e) => setQuery(e.target.value)}
+                                    onKeyDown={(e) => {
+                                        if (e.key === "Enter") {
+                                            e.preventDefault();
+                                        }
+
+                                        if (e.key === "Enter" && results.length > 0) {
+                                            navigate(`/product/${results[0].id}`);
+                                            setSearchOpen(false);
+                                            setQuery("");
+                                        }
+                                    }}
+                                    className="w-full border px-3 py-2 rounded-md focus:outline-none focus:ring-2 focus:ring-yellow-400"
+                                    autoFocus
+                                />
+
+                                {results.length > 0 && (
+                                    <div className="mt-2 max-h-72 overflow-y-auto">
+                                        {results.map(item => (
+                                            <Link
+                                                key={item.id}
+                                                to={`/product/${item.id}`}
+                                                onClick={() => {
+                                                    setSearchOpen(false);
+                                                    setQuery("");
+                                                }}
+                                                className="flex items-center gap-3 px-3 py-2 hover:bg-gray-100 rounded-md"
+                                            >
+                                                <img
+                                                    src={item.image}
+                                                    alt={item.name}
+                                                    className="w-10 h-10 object-cover rounded"
+                                                />
+                                                <div>
+                                                    <p className="text-sm font-medium">{item.name}</p>
+                                                    <p className="text-xs text-gray-500">R{item.price}</p>
+                                                </div>
+                                            </Link>
+                                        ))}
+                                    </div>
+                                )}
+
+                                {query && results.length === 0 && (
+                                    <p className="text-sm text-gray-500 mt-3 text-center">
+                                        No products found
+                                    </p>
+                                )}
+                            </div>
+                        )}
+                    </div>
+
                     <div className="relative cursor-pointer" onClick={() => setCartOpen(true)}>
                         <FiShoppingCart size={24} className="cursor-pointer text-yellow-400" />
                         {cartCount > 0 && (
@@ -164,7 +263,50 @@ const Navbar = () => {
 
                 {/* Search Input */}
                 <div className="p-4 border-b">
-                    <input type="text" placeholder="Search products..." className="w-full px-4 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-yellow-400"/>
+                    <input
+                        type="text"
+                        placeholder="Search products..."
+                        value={query}
+                        onChange={(e) => setQuery(e.target.value)}
+                        onKeyDown={(e) => {
+                            if (e.key === "Enter") {
+                                e.preventDefault();
+                            }
+
+                            if (e.key === "Enter" && results.length > 0) {
+                                navigate(`/product/${results[0].id}`);
+                                setMenuOpen(false);
+                                setQuery("");
+                            }
+                        }}
+                        className="w-full px-4 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-yellow-400"
+                    />
+
+                    {results.length > 0 && (
+                        <div className="mt-2 bg-white rounded-md shadow">
+                            {results.map(item => (
+                                <Link
+                                    key={item.id}
+                                    to={`/product/${item.id}`}
+                                    onClick={() => {
+                                        setMenuOpen(false);
+                                        setQuery("");
+                                    }}
+                                    className="flex items-center gap-3 px-4 py-2 hover:bg-gray-100"
+                                >
+                                    <img
+                                        src={item.image}
+                                        alt={item.name}
+                                        className="w-10 h-10 object-cover rounded"
+                                    />
+                                    <div>
+                                        <p className="text-sm font-medium">{item.name}</p>
+                                        <p className="text-xs text-gray-500">R{item.price}</p>
+                                    </div>
+                                </Link>
+                            ))}
+                        </div>
+                    )}
                 </div>
 
                 <ul className="flex flex-col p-4 gap-4 text-sm font-sans font-light">
