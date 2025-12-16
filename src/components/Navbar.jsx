@@ -126,7 +126,7 @@ const Navbar = () => {
                                         }
 
                                         if (e.key === "Enter" && results.length > 0) {
-                                            navigate(`/product/${results[0].id}`);
+                                            navigate(`/products/${results[0].slug}`);
                                             setSearchOpen(false);
                                             setQuery("");
                                         }
@@ -140,7 +140,7 @@ const Navbar = () => {
                                         {results.map(item => (
                                             <Link
                                                 key={item.id}
-                                                to={`/product/${item.id}`}
+                                                to={`/products/${item.slug}`}
                                                 onClick={() => {
                                                     setSearchOpen(false);
                                                     setQuery("");
@@ -274,7 +274,7 @@ const Navbar = () => {
                             }
 
                             if (e.key === "Enter" && results.length > 0) {
-                                navigate(`/product/${results[0].id}`);
+                                navigate(`/products/${results[0].slug}`);
                                 setMenuOpen(false);
                                 setQuery("");
                             }
@@ -287,7 +287,7 @@ const Navbar = () => {
                             {results.map(item => (
                                 <Link
                                     key={item.id}
-                                    to={`/product/${item.id}`}
+                                    to={`/products/${item.slug}`}
                                     onClick={() => {
                                         setMenuOpen(false);
                                         setQuery("");

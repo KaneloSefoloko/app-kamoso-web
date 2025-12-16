@@ -52,6 +52,7 @@ function makeCloudinaryUrl(baseSrc, { width }) {
 
 const Hero = () => {
     // ---------------- HOOKS ----------------
+    const videoRef = useRef(null);
     const [isReady, setIsReady] = useState(false);
     const [isAlive, setIsAlive] = useState(true);
     const [slides, setSlides] = useState({ web: [], mobile: [] });
@@ -62,14 +63,25 @@ const Hero = () => {
     const timerRef = useRef(null);
     const nextSectionRef = useRef(null);
     const isMobile = viewportW < 768;
+    const isIOS = useMemo(() => {
+        if (typeof navigator === "undefined") return false;
+        return /iPad|iPhone|iPod/.test(navigator.userAgent) && !window.MSStream;
+    }, []);
+
+    const shouldPreload = sl => sl.type === "image" || !isIOS;
+
 
     // ---------------- EFFECTS ----------------
     // Handle window resize
+    const onResize = useMemo(
+        () => debounce(() => setViewportW(window.innerWidth), 150),
+        []
+    );
+
     useEffect(() => {
-        const onResize = debounce(() => setViewportW(window.innerWidth), 150);
         window.addEventListener("resize", onResize);
         return () => window.removeEventListener("resize", onResize);
-    }, []);
+    }, [onResize]);
 
     // Fetch slides from Firebase + preload
     useEffect(() => {
@@ -87,11 +99,14 @@ const Hero = () => {
                 if (!mounted) return;
 
                 // Preload all assets
-                await Promise.all(
-                    allSlides.map(sl =>
-                        preloadAsset(makeCloudinaryUrl(sl.src, { width: 1200 }), sl.type)
-                    )
+                await Promise.allSettled(
+                    allSlides
+                        .filter(shouldPreload)
+                        .map(sl =>
+                            preloadAsset(makeCloudinaryUrl(sl.src, { width: 1200 }), sl.type)
+                        )
                 );
+
 
                 if (!mounted) return;
 
@@ -105,6 +120,14 @@ const Hero = () => {
         })();
 
         return () => (mounted = false);
+    }, []);
+
+    useEffect(() => {
+        const failSafe = setTimeout(() => {
+            setIsReady(true);
+        }, 3500);
+
+        return () => clearTimeout(failSafe);
     }, []);
 
     // Determine which slides to use
@@ -189,17 +212,19 @@ const Hero = () => {
                             />
                         ) : (
                             <video
+                                ref={videoRef}
                                 key={`vid-${currentIndex}`}
                                 className="absolute inset-0 w-full h-full object-cover bg-black z-0 transition-opacity duration-1000 ease-in-out opacity-100"
                                 autoPlay
                                 muted
+                                onCanPlay={() => videoRef?.current?.play().catch(() => {})}
                                 loop
                                 playsInline
-                                preload={currentIndex === 0 ? "auto" : "metadata"}
+                                preload="metadata"
                                 src={optimizedSrc}
                                 poster={makeCloudinaryUrl(currentSlide.poster || currentSlide.src, { width: displayW })}
                             />
-                        )}
+                    )}
                     </div>
 
                     <button
