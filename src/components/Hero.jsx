@@ -215,7 +215,7 @@ const Hero = () => {
                 {/* Scroll-down button */}
                 <button
                     onClick={() => nextSectionRef.current?.scrollIntoView({ behavior: "smooth" })}
-                    className="absolute bottom-0 left-1/2 transform -translate-x-1/2 translate-y-1/2 z-20 bg-white text-black w-12 h-12 md:w-16 md:h-16 rounded-sm shadow-md hover:bg-gray-200 transition font-light text-xl hover:animate-bounce"
+                    className="absolute bottom-0 left-1/2 transform -translate-x-1/2 translate-y-1/2 z-20 bg-white text-black w-12 h-12 md:w-16 md:h-16 rounded-full shadow-md hover:bg-gray-200 transition font-light text-xl hover:animate-bounce"
                 >
                     ↓
                 </button>
