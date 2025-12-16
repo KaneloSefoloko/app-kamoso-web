@@ -108,7 +108,7 @@ const Navbar = () => {
                     <Link to={user ? "/orders" : "/signup"}>
                         <FiUser size={24} className="cursor-pointer text-white" />
                     </Link>
-                    <div className="relative" ref={searchRef}>
+                    <div className="relative flex items-center" ref={searchRef}>
                         <button onClick={() => setSearchOpen(!searchOpen)}>
                             <FiSearch size={24} className="cursor-pointer text-white" />
                         </button>
