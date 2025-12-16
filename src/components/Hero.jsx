@@ -4,22 +4,18 @@ import { useNavigate } from "react-router-dom";
 import { collection, getDocs } from "firebase/firestore";
 import { db } from "../../firebase.js";
 
-// --- Preload Helper ---
-function preloadAsset(url, type = "image") {
-    return new Promise((resolve, reject) => {
-        if (type === "image") {
-            const img = new Image();
-            img.src = url;
-            img.onload = resolve;
-            img.onerror = reject;
-        } else {
-            const video = document.createElement("video");
-            video.src = url;
-            video.preload = "auto";
-            video.onloadeddata = resolve;
-            video.onerror = reject;
-        }
-    });
+// --- Cloudinary URL helper ---
+function makeCloudinaryUrl(baseSrc, { width }) {
+    try {
+        const u = new URL(baseSrc);
+        u.pathname = u.pathname.replace(
+            /\/image\/upload\/?/,
+            `/image/upload/c_fill,g_auto,w_${width},dpr_auto,f_auto,q_auto/`
+        );
+        return u.toString();
+    } catch {
+        return `${baseSrc}?w=${width}`;
+    }
 }
 
 // Debounce helper
@@ -31,30 +27,9 @@ function debounce(fn, delay = 150) {
     };
 }
 
-// Cloudinary URL helper
-function makeCloudinaryUrl(baseSrc, { width }) {
-    try {
-        const u = new URL(baseSrc);
-        const isImage = u.pathname.includes("/image/upload/");
-        const transform = isImage
-            ? `c_fill,g_auto,w_${width},dpr_auto,f_auto,q_auto`
-            : `vc_auto,q_auto`;
-
-        u.pathname = u.pathname.replace(
-            /(\/(image|video)\/upload)\/?/,
-            `$1/${transform}/`
-        );
-        return u.toString();
-    } catch {
-        return `${baseSrc}?w=${width}&c=fill&g=auto&dpr=auto&f=auto&q=auto`;
-    }
-}
-
 const Hero = () => {
     // ---------------- HOOKS ----------------
-    const videoRef = useRef(null);
     const [isReady, setIsReady] = useState(false);
-    const [isAlive, setIsAlive] = useState(true);
     const [slides, setSlides] = useState({ web: [], mobile: [] });
     const [currentIndex, setCurrentIndex] = useState(0);
     const [viewportW, setViewportW] = useState(() => window.innerWidth);
@@ -62,17 +37,10 @@ const Hero = () => {
     const navigate = useNavigate();
     const timerRef = useRef(null);
     const nextSectionRef = useRef(null);
+
     const isMobile = viewportW < 768;
-    const isIOS = useMemo(() => {
-        if (typeof navigator === "undefined") return false;
-        return /iPad|iPhone|iPod/.test(navigator.userAgent) && !window.MSStream;
-    }, []);
-
-    const shouldPreload = sl => sl.type === "image" || !isIOS;
-
 
     // ---------------- EFFECTS ----------------
-    // Handle window resize
     const onResize = useMemo(
         () => debounce(() => setViewportW(window.innerWidth), 150),
         []
@@ -83,7 +51,7 @@ const Hero = () => {
         return () => window.removeEventListener("resize", onResize);
     }, [onResize]);
 
-    // Fetch slides from Firebase + preload
+    // Fetch slides (IMAGE ONLY)
     useEffect(() => {
         let mounted = true;
 
@@ -92,53 +60,34 @@ const Hero = () => {
                 const webSnap = await getDocs(collection(db, "Web Images"));
                 const mobileSnap = await getDocs(collection(db, "mobile image"));
 
-                const webSlides = webSnap.docs.map(d => d.data());
-                const mobileSlides = mobileSnap.docs.map(d => d.data());
-                const allSlides = [...webSlides, ...mobileSlides];
-
                 if (!mounted) return;
 
-                // Preload all assets
-                await Promise.allSettled(
-                    allSlides
-                        .filter(shouldPreload)
-                        .map(sl =>
-                            preloadAsset(makeCloudinaryUrl(sl.src, { width: 1200 }), sl.type)
-                        )
-                );
+                setSlides({
+                    web: webSnap.docs.map(d => d.data()),
+                    mobile: mobileSnap.docs.map(d => d.data())
+                });
 
-
-                if (!mounted) return;
-
-                setSlides({ web: webSlides, mobile: mobileSlides });
                 setIsReady(true);
-                setIsAlive(true);
             } catch (err) {
-                console.error("Hero preload failed:", err);
-                setIsAlive(false);
+                console.error("Hero load failed:", err);
+                setIsReady(true);
             }
         })();
 
         return () => (mounted = false);
     }, []);
 
-    useEffect(() => {
-        const failSafe = setTimeout(() => {
-            setIsReady(true);
-        }, 3500);
-
-        return () => clearTimeout(failSafe);
-    }, []);
-
-    // Determine which slides to use
+    // Determine slides
     const activeSlides = useMemo(() => {
-        const mobileSlides = slides.mobile?.length ? slides.mobile : null;
-        return isMobile && mobileSlides ? mobileSlides : slides.web || [];
+        return isMobile && slides.mobile.length
+            ? slides.mobile
+            : slides.web;
     }, [slides, isMobile]);
 
-    // Slider rotation with fade
+    // Auto rotation
     useEffect(() => {
         if (!activeSlides.length) return;
+
         timerRef.current = setInterval(() => {
             setCurrentIndex(prev => (prev + 1) % activeSlides.length);
         }, 5000);
@@ -146,36 +95,20 @@ const Hero = () => {
         return () => clearInterval(timerRef.current);
     }, [activeSlides.length]);
 
-    // ---------- EARLY RENDER STATES ----------
+    // ---------- LOADING ----------
     if (!isReady) {
         return (
             <div className="w-full h-screen bg-black flex flex-col items-center justify-center text-white">
-                <div className="w-12 h-12 border-4 border-white border-t-transparent rounded-full animate-spin"></div>
-                <p className="mt-6 text-lg tracking-widest animate-pulse">Loading experience…</p>
-            </div>
-        );
-    }
-
-    if (!isAlive) {
-        return (
-            <div className="w-full h-screen bg-black flex flex-col items-center justify-center text-white">
-                <p className="text-xl mb-6">Could not load media.</p>
-                <button
-                    onClick={() => location.reload()}
-                    className="px-6 py-3 border border-white rounded hover:bg-white hover:text-black transition"
-                >
-                    Retry
-                </button>
+                <div className="w-12 h-12 border-4 border-white border-t-transparent rounded-full animate-spin" />
+                <p className="mt-6 text-lg tracking-widest animate-pulse">
+                    Loading experience…
+                </p>
             </div>
         );
     }
 
     if (!activeSlides.length) {
-        return (
-            <div className="w-full h-screen bg-black flex items-center justify-center text-white">
-                No hero content found.
-            </div>
-        );
+        return null;
     }
 
     // ---------- SLIDE DATA ----------
@@ -186,61 +119,45 @@ const Hero = () => {
         .join(", ");
     const displayW = isMobile ? 600 : 1200;
     const optimizedSrc = makeCloudinaryUrl(currentSlide.src, { width: displayW });
-    const isImage = currentSlide.type === "image";
 
     return (
         <>
             {/* HERO SECTION */}
             <div className="relative">
                 <section className="relative min-h-[60vh] md:min-h-[80vh] w-full flex flex-col items-center justify-center text-white">
-                    {/* Fade transition wrapper */}
                     <div className="absolute inset-0 w-full h-full">
-                        {isImage ? (
-                            <img
-                                key={`img-${currentIndex}`}
-                                src={optimizedSrc}
-                                srcSet={srcSet}
-                                sizes={
-                                    isMobile
-                                        ? "(max-width: 768px) 600px, 768px"
-                                        : "(max-width: 1200px) 1200px, 1600px"
-                                }
-                                alt={currentSlide.label || "Hero image"}
-                                loading={currentIndex === 0 ? "eager" : "lazy"}
-                                decoding="async"
-                                className="absolute inset-0 w-full h-full object-cover bg-black z-0 transition-opacity duration-1000 ease-in-out opacity-100"
-                            />
-                        ) : (
-                            <video
-                                ref={videoRef}
-                                key={`vid-${currentIndex}`}
-                                className="absolute inset-0 w-full h-full object-cover bg-black z-0 transition-opacity duration-1000 ease-in-out opacity-100"
-                                autoPlay
-                                muted
-                                onCanPlay={() => videoRef?.current?.play().catch(() => {})}
-                                loop
-                                playsInline
-                                preload="metadata"
-                                src={optimizedSrc}
-                                poster={makeCloudinaryUrl(currentSlide.poster || currentSlide.src, { width: displayW })}
-                            />
-                    )}
+                        <img
+                            key={`img-${currentIndex}`}
+                            src={optimizedSrc}
+                            srcSet={srcSet}
+                            sizes={
+                                isMobile
+                                    ? "(max-width: 768px) 600px, 768px"
+                                    : "(max-width: 1200px) 1200px, 1600px"
+                            }
+                            alt={currentSlide.label || "Hero image"}
+                            loading={currentIndex === 0 ? "eager" : "lazy"}
+                            decoding="async"
+                            className="absolute inset-0 w-full h-full object-cover bg-black transition-opacity duration-1000"
+                        />
                     </div>
 
                     <button
                         onClick={() => navigate(currentSlide.link)}
                         className={`z-10 px-8 py-4 rounded-sm text-base font-light tracking-widest border border-white hover:bg-white hover:text-black transition mt-[540px] mb-8 ${
-                            isMobile ? "text-black bg-white" : "bg-transparent text-white"
+                            isMobile ? "bg-white text-black" : "bg-transparent text-white"
                         }`}
                     >
                         {currentSlide.label}
                     </button>
                 </section>
 
-                {/* Scroll-down button */}
+                {/* Scroll-down */}
                 <button
-                    onClick={() => nextSectionRef.current?.scrollIntoView({ behavior: "smooth" })}
-                    className="absolute bottom-0 left-1/2 transform -translate-x-1/2 translate-y-1/2 z-20 bg-white text-black w-12 h-12 md:w-16 md:h-16 rounded-full shadow-md hover:bg-gray-200 transition font-light text-xl hover:animate-bounce"
+                    onClick={() =>
+                        nextSectionRef.current?.scrollIntoView({ behavior: "smooth" })
+                    }
+                    className="absolute bottom-0 left-1/2 -translate-x-1/2 translate-y-1/2 z-20 bg-white text-black w-12 h-12 md:w-16 md:h-16 rounded-full shadow-md hover:bg-gray-200 transition text-xl hover:animate-bounce"
                 >
                     ↓
                 </button>
@@ -249,11 +166,12 @@ const Hero = () => {
             {/* NEXT SECTION */}
             <section
                 ref={nextSectionRef}
-                className="min-h-screen bg-gray-100 flex flex-col items-center justify-center px-4 md:px-10 lg:px-20"
+                className="min-h-screen bg-gray-100 flex flex-col items-center justify-center px-4 md:px-10 lg:px-20 pt-24 md:pt-32"
             >
                 <h2 className="text-4xl md:text-5xl font-bold mb-6 text-center">
                     Discover Our Latest Collection
                 </h2>
+
                 <p className="max-w-2xl text-center text-gray-700 mb-12">
                     Explore our curated selection of new arrivals. Find the perfect streetwear,
                     casual, or accessory pieces to elevate your style.
