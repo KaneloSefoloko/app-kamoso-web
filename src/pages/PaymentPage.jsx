@@ -22,9 +22,12 @@ const PaymentPage = () => {
         return null;
     }
 
+    /* ============================
+       HELPERS
+    ============================ */
     const orderItemsText = cart
         .map(
-            (item) =>
+            item =>
                 `• ${item.name} (${item.size || "ONE SIZE"}) x${item.quantity} — R${
                     item.price * item.quantity
                 }`
@@ -32,7 +35,7 @@ const PaymentPage = () => {
         .join("\n");
 
     const fullName =
-        shipping?.firstName && shipping?.lastName
+        shipping.firstName && shipping.lastName
             ? `${shipping.firstName} ${shipping.lastName}`
             : userInfo?.name || "Customer";
 
@@ -84,31 +87,18 @@ ${shipping.postalCode || ""}
     const handleWhatsAppSubmit = async () => {
         if (submitting) return;
 
-        if (!proof) {
-            setError("Please upload proof of payment before continuing.");
+        if (!auth.currentUser) {
+            setError("Please log in to place an order.");
             return;
         }
 
-        if (!shipping?.address || !shipping?.city) {
+        if (!shipping.address || !shipping.city) {
             setError("Delivery details are missing. Please return to checkout.");
             return;
         }
 
         try {
             setSubmitting(true);
-
-            const orderData = {
-                userId: auth.currentUser.uid,
-                orderNumber,
-                items: cart,
-                total,
-                deliveryAddress: shipping,
-                proofName: proof.name,
-                status: "pending",
-                createdAt: serverTimestamp(),
-            };
-
-            await addDoc(collection(db, "orders"), orderData);
 
             const message = `
 🧾 *NEW EFT ORDER*
@@ -117,7 +107,7 @@ ${shipping.postalCode || ""}
 
 👤 Name: ${fullName}
 📧 Email: ${userInfo?.email || "N/A"}
-📞 Phone: ${shipping?.phone || "N/A"}
+📞 Phone: ${shipping.phone || "N/A"}
 
 📍 *Delivery Address*
 ${fullAddress || "Not provided"}
@@ -126,11 +116,43 @@ ${fullAddress || "Not provided"}
 ${orderItemsText}
 
 💰 *Amount Paid*: R${total}
-            `;
+🧾 *Proof*: ${proof ? "Uploaded" : "Pending"}
+        `;
 
             const phone = "27627833498";
-            const encodedMessage = encodeURIComponent(message);
-            window.open(`https://wa.me/${phone}?text=${encodedMessage}`, "_blank");
+            const whatsappUrl = `https://wa.me/${phone}?text=${encodeURIComponent(message)}`;
+
+            // WhatsApp FIRST
+            window.open(whatsappUrl, "_blank");
+
+            const orderData = {
+                userId: auth.currentUser.uid,
+                orderNumber,
+                items: cart.map(item => ({
+                    id: item.id,
+                    name: item.name,
+                    price: item.price,
+                    quantity: item.quantity,
+                    size: item.size || "ONE_SIZE",
+                    image: item.image
+                })),
+                total: Number(total),
+                deliveryAddress: {
+                    firstName: shipping.firstName || "",
+                    lastName: shipping.lastName || "",
+                    phone: shipping.phone || "",
+                    address: shipping.address || "",
+                    apartment: shipping.apartment || "",
+                    city: shipping.city || "",
+                    province: shipping.province || "",
+                    postalCode: shipping.postalCode || ""
+                },
+                proofName: proof?.name || null,
+                status: "pending",
+                createdAt: serverTimestamp()
+            };
+
+            await addDoc(collection(db, "orders"), orderData);
 
             clearCart();
             setSuccess(true);
@@ -174,8 +196,8 @@ ${orderItemsText}
                     <h2 className="text-xl font-semibold mb-4">EFT Payment</h2>
 
                     {/* BANK DETAILS */}
-                    <div className="bg-gray-100 rounded-lg p-4 mb-4 text-sm space-y-1">
-                        <p className="font-semibold mb-2">Banking Details</p>
+                    <div className="bg-gray-100 rounded-lg p-4 mb-4 text-sm space-y-2">
+                        <p className="font-semibold">Banking Details</p>
 
                         <div className="flex justify-between">
                             <span>Bank:</span>
@@ -187,10 +209,12 @@ ${orderItemsText}
                             <span>Kavanti</span>
                         </div>
 
-                        <div className="flex justify-between items-center gap-2">
-                            <span>Account Number:</span>
-                            <div className="flex items-center gap-2">
-                                <span className="font-mono">119 746 0347</span>
+                        <div className="flex items-center justify-between gap-2 overflow-x-auto">
+                            <span className="shrink-0">Account Number:</span>
+                            <div className="flex items-center gap-2 whitespace-nowrap">
+                                <span className="font-mono text-sm sm:text-base whitespace-nowrap">
+                                    1197460347
+                                </span>
                                 <button
                                     onClick={() => {
                                         navigator.clipboard.writeText("1197460347");
@@ -210,10 +234,10 @@ ${orderItemsText}
                         </div>
                     </div>
 
-                    {/* PROOF UPLOAD */}
+                    {/* OPTIONAL PROOF */}
                     <div className="mb-3">
                         <label className="block text-sm font-semibold mb-1">
-                            Upload Proof of Payment
+                            Upload Proof of Payment (optional)
                         </label>
                         <input
                             type="file"
@@ -227,6 +251,7 @@ ${orderItemsText}
 
                     <button
                         disabled={submitting}
+                        type="button"
                         onClick={handleWhatsAppSubmit}
                         className={`w-full mt-4 py-3 rounded-sm font-semibold transition ${
                             submitting

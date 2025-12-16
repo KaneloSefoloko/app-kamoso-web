@@ -1,25 +1,47 @@
 import React, { useEffect, useState } from "react";
 import { auth, db } from "../../firebase";
-import { collection, query, where, orderBy, getDocs } from "firebase/firestore";
+import {
+    collection,
+    query,
+    where,
+    orderBy,
+    onSnapshot
+} from "firebase/firestore";
 
 const OrdersPage = () => {
     const [orders, setOrders] = useState([]);
     const [loading, setLoading] = useState(true);
 
     useEffect(() => {
-        const fetchOrders = async () => {
-            const q = query(
-                collection(db, "orders"),
-                where("userId", "==", auth.currentUser.uid),
-                orderBy("createdAt", "desc")
-            );
-
-            const snapshot = await getDocs(q);
-            setOrders(snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() })));
+        const user = auth.currentUser;
+        if (!user) {
             setLoading(false);
-        };
+            return;
+        }
 
-        fetchOrders();
+        const q = query(
+            collection(db, "orders"),
+            where("userId", "==", user.uid),
+            orderBy("createdAt", "desc")
+        );
+
+        const unsub = onSnapshot(
+            q,
+            (snap) => {
+                const data = snap.docs.map(doc => ({
+                    id: doc.id,
+                    ...doc.data()
+                }));
+                setOrders(data);
+                setLoading(false);
+            },
+            (error) => {
+                console.error("Orders fetch error:", error);
+                setLoading(false);
+            }
+        );
+
+        return () => unsub();
     }, []);
 
     if (loading) {
@@ -31,7 +53,7 @@ const OrdersPage = () => {
     }
 
     return (
-        <div>
+        <div className="max-w-3xl mx-auto">
             <h1 className="text-xl font-bold mb-6">Your Orders</h1>
 
             <div className="space-y-4">
@@ -41,25 +63,33 @@ const OrdersPage = () => {
                         className="border rounded-lg p-4 bg-white shadow-sm"
                     >
                         <div className="flex justify-between mb-2">
-                            <span className="font-semibold">
-                                {order.orderNumber}
-                            </span>
+              <span className="font-semibold">
+                {order.orderNumber}
+              </span>
                             <span className="text-sm text-yellow-600 capitalize">
-                                {order.status}
-                            </span>
+                {order.status}
+              </span>
                         </div>
 
-                        <p className="text-sm text-gray-600 mb-2">
+                        <p className="text-sm text-gray-600 mb-3">
                             Total: <strong>R{order.total}</strong>
                         </p>
 
-                        <ul className="text-sm text-gray-600">
-                            {order.items.map((item, i) => (
-                                <li key={i}>
-                                    {item.name} × {item.quantity}
-                                </li>
+                        <div className="space-y-1">
+                            {order.items?.map((item, i) => (
+                                <div
+                                    key={i}
+                                    className="flex justify-between text-sm text-gray-600"
+                                >
+                  <span>
+                    {item.name} ({item.size}) × {item.quantity}
+                  </span>
+                                    <span>
+                    R{item.price * item.quantity}
+                  </span>
+                                </div>
                             ))}
-                        </ul>
+                        </div>
                     </div>
                 ))}
             </div>
