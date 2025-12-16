@@ -14,7 +14,7 @@ const PaymentPage = () => {
     const [proof, setProof] = useState(null);
     const [error, setError] = useState("");
 
-    const { cart = [], total = 0, userInfo = {}, shipping = {} } = checkoutInfo || {};
+    const { cart = [], subtotal = 0, deliveryFee = 0, total = 0, userInfo = {}, shipping = {} } = checkoutInfo || {};
     const orderNumber = `KAV-${Date.now().toString().slice(-6)}`;
 
     if (!cart.length) {
@@ -115,7 +115,10 @@ ${fullAddress || "Not provided"}
 🛍 *Order Items*
 ${orderItemsText}
 
-💰 *Amount Paid*: R${total}
+💰 *Subtotal*: R${subtotal}
+🚚 *Delivery*: ${deliveryFee === 0 ? "FREE" : `R${deliveryFee}`}
+💳 *Total Paid*: R${total}
+
 🧾 *Proof*: ${proof ? "Uploaded" : "Pending"}
         `;
 
@@ -128,6 +131,9 @@ ${orderItemsText}
             const orderData = {
                 userId: auth.currentUser.uid,
                 orderNumber,
+                subtotal,
+                deliveryFee,
+                deliveryType: deliveryFee === 0 ? "free" : "standard",
                 items: cart.map(item => ({
                     id: item.id,
                     name: item.name,

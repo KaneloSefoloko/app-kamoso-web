@@ -18,7 +18,13 @@ const Checkout = () => {
     const [phone, setPhone] = useState("");
     const [error, setError] = useState("");
 
-    const total = cart.reduce((sum, item) => sum + item.price * item.quantity, 0);
+    const subtotal = cart.reduce(
+        (sum, item) => sum + item.price * item.quantity,
+        0
+    );
+
+    const deliveryFee = subtotal >= 900 ? 0 : 90;
+    const total = subtotal + deliveryFee;
 
     const handleProceedToPayment = () => {
         if (!cart.length) return;
@@ -29,6 +35,8 @@ const Checkout = () => {
 
         saveCheckoutInfo({
             cart,
+            subtotal,
+            deliveryFee,
             total,
             shipping: { firstName, lastName, address, apartment, city, province, postalCode, phone },
             userInfo: { name: user?.displayName || "", email: user?.email || "" },
@@ -159,9 +167,24 @@ const Checkout = () => {
                             </div>
                         ))}
                     </div>
-                    <div className="border-t border-gray-300 mt-6 pt-4">
-                        <p className="text-gray-700 mb-2">Total:</p>
-                        <p className="text-xl font-semibold">R{total}</p>
+                    <div className="border-t border-gray-300 mt-6 pt-4 space-y-2 text-sm">
+                        <div className="flex justify-between">
+                            <span>Subtotal</span>
+                            <span>R{subtotal}</span>
+                        </div>
+                        <div className="flex justify-between">
+                            <span>Delivery</span>
+                            <span>{deliveryFee === 0 ? "FREE" : `R${deliveryFee}`}</span>
+                        </div>
+                        <div className="flex justify-between font-semibold text-base pt-2">
+                            <span>Total</span>
+                            <span>R{total}</span>
+                        </div>
+                        {deliveryFee === 0 && (
+                            <p className="text-xs text-green-600 pt-1">
+                                🎉 Free delivery on orders over R900
+                            </p>
+                        )}
                     </div>
                 </div>
             </div>
