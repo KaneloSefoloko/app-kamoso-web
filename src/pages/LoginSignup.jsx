@@ -11,6 +11,8 @@ const LoginSignup = () => {
     const [name, setName] = useState("");
     const [email, setEmail] = useState("");
     const [password, setPass] = useState("");
+    const [acceptedTerms, setAcceptedTerms] = useState(false);
+
     const [error, setError] = useState("");
     const [pending, setPending] = useState(false);
 
@@ -25,28 +27,32 @@ const LoginSignup = () => {
             setError("Please fill in all fields.");
             return;
         }
+
         if (!isValidEmail(email)) {
             setError("Please enter a valid email address.");
             return;
         }
+
         if (password.length < 6) {
             setError("Password must be at least 6 characters.");
+            return;
+        }
+
+        if (!acceptedTerms) {
+            setError("You must agree to the terms and privacy policy to continue.");
             return;
         }
 
         setPending(true);
 
         try {
-            // Create account (AuthContext handles creating + logging in)
-            await authenticate({ name, email, password });
+            await authenticate({mode: "signup", name, email, password});
 
-            // Redirect to home (or dashboard)
             navigate("/");
         } catch (e) {
-            console.error("Signup failed:", e);
-            const friendly = getFriendlyAuthMessage(e.code, "signup");
-
-            setError(friendly);
+            setError(getFriendlyAuthMessage(e.code, "signup"));
+        } finally {
+            setPending(false);
         }
     }
 
@@ -55,7 +61,11 @@ const LoginSignup = () => {
             <div className="bg-white shadow-none rounded-none sm:shadow-lg sm:rounded-lg p-6 sm:p-8 w-full max-w-md flex flex-col items-center">
 
                 <Link to="/" className="mb-4 sm:mb-6">
-                    <img src={logo} alt="Logo" className="h-12 sm:h-16 md:h-24 w-auto cursor-pointer" />
+                    <img
+                        src={logo}
+                        alt="Logo"
+                        className="h-12 sm:h-16 md:h-24 w-auto cursor-pointer"
+                    />
                 </Link>
 
                 <h1 className="text-xl sm:text-2xl font-bold text-gray-800 mb-4 sm:mb-6">
@@ -96,8 +106,14 @@ const LoginSignup = () => {
 
                 <button
                     onClick={handleContinue}
-                    disabled={pending}
-                    className="w-full bg-black text-white py-2 rounded hover:bg-gray-700 transition text-sm sm:text-base"
+                    disabled={pending || !acceptedTerms}
+                    className={`w-full py-2 rounded transition text-sm sm:text-base
+                        ${
+                        acceptedTerms
+                            ? "bg-black text-white hover:bg-gray-700"
+                            : "bg-gray-400 text-gray-200 cursor-not-allowed"
+                    }
+                    `}
                 >
                     {pending ? "Creating account..." : "Sign up"}
                 </button>
@@ -106,7 +122,7 @@ const LoginSignup = () => {
                     <div
                         role="alert"
                         aria-live="polite"
-                        className="text-red-700 mt-4 w-full border-red-300 bg-red-50 px-3 py-2 text-sm"
+                        className="text-red-700 mt-4 w-full border border-red-300 bg-red-50 px-3 py-2 text-sm"
                     >
                         {error}
                     </div>
@@ -123,15 +139,26 @@ const LoginSignup = () => {
                 </Link>
             </p>
 
-            <div className="flex items-center mt-4 text-gray-700 sm:text-white text-xs sm:text-sm">
-                <input type="checkbox" className="mr-2" />
+            <div className="flex items-start mt-4 text-gray-700 sm:text-white text-xs sm:text-sm max-w-md">
+                <input
+                    type="checkbox"
+                    checked={acceptedTerms}
+                    onChange={(e) => setAcceptedTerms(e.target.checked)}
+                    className="mt-1 mr-2"
+                />
                 <p>
                     By continuing, I agree to the{" "}
-                    <Link to="/policies/terms-of-service" className="underline cursor-pointer">
+                    <Link
+                        to="/policies/terms-of-service"
+                        className="underline cursor-pointer"
+                    >
                         terms of use
                     </Link>{" "}
                     and{" "}
-                    <Link to="/policies/privacy-policy" className="underline cursor-pointer">
+                    <Link
+                        to="/policies/privacy-policy"
+                        className="underline cursor-pointer"
+                    >
                         privacy policy
                     </Link>
                     .

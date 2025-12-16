@@ -48,24 +48,25 @@ export function AuthProvider({ children }) {
     }, []);
 
     // 🧠 SMART AUTH (NO DUPLICATES)
-    const authenticate = async ({ name, email, password }) => {
-        const methods = await fetchSignInMethodsForEmail(auth, email);
-
-        if (methods.length > 0 && name) {
-            throw {
-                code: "auth/email-already-in-use",
-                message: "Account already exists. Please sign in."
-            };
+// 🧠 EXPLICIT AUTH (NO GUESSING)
+    const authenticate = async ({ mode, name, email, password }) => {
+        if (mode === "login") {
+            // 🔐 LOGIN ONLY
+            const cred = await signInWithEmailAndPassword(auth, email, password);
+            return cred.user;
         }
 
-        let cred;
+        if (mode === "signup") {
+            // 🆕 SIGNUP ONLY
+            const methods = await fetchSignInMethodsForEmail(auth, email);
 
-        if (methods.length > 0) {
-            // 🔐 EMAIL EXISTS → LOGIN
-            cred = await signInWithEmailAndPassword(auth, email, password);
-        } else {
-            // 🆕 NEW EMAIL → SIGN UP
-            cred = await createUserWithEmailAndPassword(auth, email, password);
+            if (methods.length > 0) {
+                throw {
+                    code: "auth/email-already-in-use",
+                };
+            }
+
+            const cred = await createUserWithEmailAndPassword(auth, email, password);
 
             if (name) {
                 await updateProfile(cred.user, { displayName: name });
@@ -76,9 +77,11 @@ export function AuthProvider({ children }) {
                 email,
                 createdAt: serverTimestamp(),
             });
+
+            return cred.user;
         }
 
-        return cred.user;
+        throw new Error("Invalid auth mode");
     };
 
     // 👋 Logout

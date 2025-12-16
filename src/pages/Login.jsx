@@ -37,7 +37,7 @@ const Login = () => {
         try {
 
             // Try normal login
-            await authenticate({ email, password });
+            await authenticate({mode: "login", email, password});
 
             navigate("/orders");
 
@@ -101,7 +101,7 @@ const Login = () => {
 
             <p className="mt-3 text-sm">
                 <button
-                    className="text-black sm:text-white hover:text-gray-300 hover:underline"
+                    className="text-black sm:text-white font-semibold hover:text-gray-300 hover:underline"
                     onClick={() => navigate("/forgot-password")}
                 >
                     Forgot your password?
