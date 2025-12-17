@@ -29,6 +29,9 @@ function debounce(fn, delay = 150) {
 
 const Hero = () => {
     // ---------------- HOOKS ----------------
+    const sanitizeSlides = slides =>
+        slides.filter(s => s && typeof s.src === "string" && s.src.trim() !== "");
+
     const [isReady, setIsReady] = useState(false);
     const [slides, setSlides] = useState({ web: [], mobile: [] });
     const [currentIndex, setCurrentIndex] = useState(0);
@@ -63,8 +66,8 @@ const Hero = () => {
                 if (!mounted) return;
 
                 setSlides({
-                    web: webSnap.docs.map(d => d.data()),
-                    mobile: mobileSnap.docs.map(d => d.data())
+                    web: sanitizeSlides(webSnap.docs.map(d => d.data())),
+                    mobile: sanitizeSlides(mobileSnap.docs.map(d => d.data()))
                 });
 
                 setIsReady(true);
@@ -83,6 +86,13 @@ const Hero = () => {
             ? slides.mobile
             : slides.web;
     }, [slides, isMobile]);
+
+
+    useEffect(() => {
+        if (currentIndex >= activeSlides.length) {
+            setCurrentIndex(0);
+        }
+    }, [activeSlides.length, currentIndex]);
 
     // Auto rotation
     useEffect(() => {
@@ -107,7 +117,7 @@ const Hero = () => {
         );
     }
 
-    if (!activeSlides.length) {
+    if (!activeSlides.length || !activeSlides[currentIndex]) {
         return null;
     }
 
