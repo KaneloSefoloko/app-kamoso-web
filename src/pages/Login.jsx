@@ -1,19 +1,21 @@
-import React, { useState } from "react";
-import { Link, useLocation, useNavigate } from "react-router-dom";
+import React, {useContext, useState} from "react";
+import { Link, useNavigate } from "react-router-dom";
 import logo from "/assets/main.svg";
 import { useAuth } from "../context/AuthContext";
 import { getFriendlyAuthMessage } from "../utils/authErrors";
-import { auth } from "../../firebase";
+import { CartContext } from '../components/CartContext';
+import {useUI} from "../components/UIContext.jsx";
 
 const Login = () => {
     const navigate = useNavigate();
-    const location = useLocation();
     const { authenticate } = useAuth();
 
     const [email, setEmail] = useState("");
     const [password, setPass] = useState("");
     const [error, setError] = useState("");
     const [pending, setPending] = useState(false);
+    const { cart } = useContext(CartContext);
+    const { cartOpen, setCartOpen } = useUI();
 
     function isValidEmail(value) {
         return /\S+@\S+\.\S+/.test(value);
@@ -39,7 +41,13 @@ const Login = () => {
             // Try normal login
             await authenticate({mode: "login", email, password});
 
-            navigate("/orders");
+
+            if (cart.length > 0) {
+                navigate("/", { state: { openCart: true } });
+            } else {
+                navigate("/");
+            }
+
 
         } catch (e) {
             if (e.code === "auth/multi-factor-auth-required") {

@@ -58,6 +58,16 @@ const Navbar = () => {
         setQuery("");
     }, [location.pathname]);
 
+    useEffect(() => {
+        if (location.state?.openCart && cart.length > 0) {
+            setCartOpen(true);
+
+            // Clear state so it doesn't reopen on refresh / next nav
+            navigate(location.pathname, { replace: true });
+        }
+    }, [location.state, cart.length, setCartOpen, navigate]);
+
+
 
     const hideNavbarRoutes = ['/signup', '/login', '/checkout', '/pay'];
     if (hideNavbarRoutes.includes(location.pathname)) return null;
