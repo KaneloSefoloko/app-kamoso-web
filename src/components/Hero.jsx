@@ -179,33 +179,27 @@ const Hero = () => {
                     </button>
                 </div>
 
-                {/* SCROLL BUTTON */}
-                <button
-                    onClick={() =>
-                        nextSectionRef.current?.scrollIntoView({
-                            behavior: "smooth",
-                        })
-                    }
-                    className="
-                        absolute bottom-6 left-1/2 -translate-x-1/2
-                        w-12 h-12 md:w-14 md:h-14
-                        rounded-full
-                        bg-white/10 backdrop-blur-md
-                        border border-white/20
-                        text-white
-                        flex items-center justify-center
-                        hover:bg-white hover:text-black
-                        transition
-                    "
-                >
-                    ↓
-                </button>
             </section>
+            <button
+                onClick={() =>
+                    nextSectionRef.current?.scrollIntoView({behavior: "smooth"})
+                }
+                className="relative -mt-8 z-20 mx-auto w-16 h-16
+                 md:w-20 md:h-20 rounded-full
+                bg-white/10 backdrop-blur-md border
+                 border-white/20 flex items-center
+                justify-center hover:bg-white transition
+                hover:scale-105 duration-300"
+            >
+                 <span className="text-black text-2xl md:text-3xl leading-none">
+                    ↓
+                 </span>
+            </button>
 
             {/* NEXT SECTION */}
             <section
                 ref={nextSectionRef}
-                className="min-h-screen bg-gray-100 flex flex-col items-center justify-center px-4 md:px-10 lg:px-20 pt-24 md:pt-32"
+                className="min-h-screen bg-white flex flex-col items-center justify-center px-4 md:px-10 lg:px-20 pt-24 md:pt-32"
             >
                 <h2 className="text-4xl md:text-5xl font-bold mb-6 text-center">
                     Discover Our Latest Collection
