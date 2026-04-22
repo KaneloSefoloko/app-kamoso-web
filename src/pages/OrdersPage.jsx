@@ -4,7 +4,6 @@ import {
     collection,
     query,
     where,
-    orderBy,
     onSnapshot
 } from "firebase/firestore";
 import { onAuthStateChanged } from "firebase/auth";
@@ -25,8 +24,7 @@ const OrdersPage = () => {
 
             const q = query(
                 collection(db, "orders"),
-                where("userId", "==", user.uid),
-                orderBy("createdAt", "desc")
+                where("userId", "==", user.uid)
             );
 
             unsubOrders = onSnapshot(q, snap => {
@@ -34,6 +32,7 @@ const OrdersPage = () => {
                     id: doc.id,
                     ...doc.data()
                 }));
+
                 setOrders(data);
                 setLoading(false);
             });
@@ -77,11 +76,8 @@ const OrdersPage = () => {
                         </p>
 
                         <div className="space-y-1 text-sm text-gray-600">
-                            {order.items.map((item, i) => (
-                                <div
-                                    key={i}
-                                    className="flex justify-between"
-                                >
+                            {(order.items || []).map((item, i) => (
+                                <div key={i} className="flex justify-between">
                                     <span>
                                         {item.name} ({item.size}) × {item.quantity}
                                     </span>

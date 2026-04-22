@@ -155,13 +155,13 @@ export const products = [
         id: 7,
         slug: 'blue-shades',
         category: 'sunglasses',   // ← and this
-        name: 'Classic Blue Shades',
+        name: 'Classic Green Shades',
         price: 250,
-        image: '/assets/kamoso-sunglasses.jpeg',
-        hoverImage: '/assets/kamoso-sunglasses.jpeg',
+        image: '/assets/greenage-shades.jpeg',
+        hoverImage: '/assets/greenage-shades.jpeg',
         gallery: [
-            '/assets/kamoso-sunglasses.jpeg',
-            '/assets/kamoso-sunglasses.jpeg'
+            '/assets/greenage-shades.jpeg',
+            '/assets/greenage-shades.jpeg'
         ],
         description: 'Bold design for those who embrace courage.',
         sizes: ['One size'],
@@ -172,8 +172,9 @@ export const products = [
         inStock: true,
         related: [
             { slug: 'black-rounded-shades', name: 'Rounded Shades', price: 420, image: '/assets/rounded-shape.jpeg' },
+            { slug: 'goldish-shades', name: 'Goldish Shades', price: 420, image: '/assets/goldish-shades.jpeg' }
         ],
-        createdAt: "2025-11-10"
+        createdAt: "2025-04-11"
     }
 ];
 

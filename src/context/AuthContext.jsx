@@ -1,14 +1,14 @@
-import React, { createContext, useContext, useState, useEffect } from "react";
-import { auth, db } from "../../firebase";
+import React, {createContext, useContext, useEffect, useState} from "react";
+import {auth, db} from "../../firebase";
 import {
-    onAuthStateChanged,
     createUserWithEmailAndPassword,
+    fetchSignInMethodsForEmail,
+    onAuthStateChanged,
     signInWithEmailAndPassword,
     signOut,
-    updateProfile,
-    fetchSignInMethodsForEmail
+    updateProfile
 } from "firebase/auth";
-import { doc, setDoc, getDoc, serverTimestamp } from "firebase/firestore";
+import {doc, getDoc, serverTimestamp, setDoc} from "firebase/firestore";
 
 const AuthContext = createContext();
 
@@ -17,8 +17,11 @@ export function AuthProvider({ children }) {
     const [profile, setProfile] = useState(null);
     const [loading, setLoading] = useState(true);
 
+    // 🔐 Admin check
+    const isAdmin = profile?.role === "admin";
+
     useEffect(() => {
-        const unsub = onAuthStateChanged(auth, async (u) => {
+        return onAuthStateChanged(auth, async (u) => {
             setUser(u);
 
             if (u) {
@@ -32,8 +35,10 @@ export function AuthProvider({ children }) {
                     const data = {
                         name: u.displayName || "",
                         email: u.email,
+                        role: "user", // default role
                         createdAt: serverTimestamp(),
                     };
+
                     await setDoc(ref, data);
                     setProfile(data);
                 }
@@ -43,21 +48,18 @@ export function AuthProvider({ children }) {
 
             setLoading(false);
         });
-
-        return unsub;
     }, []);
 
-    // 🧠 SMART AUTH (NO DUPLICATES)
-// 🧠 EXPLICIT AUTH (NO GUESSING)
+    // 🧠 AUTH HANDLER
     const authenticate = async ({ mode, name, email, password }) => {
         if (mode === "login") {
-            // 🔐 LOGIN ONLY
+            // 🔐 LOGIN
             const cred = await signInWithEmailAndPassword(auth, email, password);
             return cred.user;
         }
 
         if (mode === "signup") {
-            // 🆕 SIGNUP ONLY
+            // 🆕 SIGNUP
             const methods = await fetchSignInMethodsForEmail(auth, email);
 
             if (methods.length > 0) {
@@ -72,9 +74,13 @@ export function AuthProvider({ children }) {
                 await updateProfile(cred.user, { displayName: name });
             }
 
+            // 🔐 Assign admin automatically (CHANGE EMAIL BELOW)
+            const isOwner = email === "your@email.com"; // 👈 PUT YOUR EMAIL HERE
+
             await setDoc(doc(db, "users", cred.user.uid), {
                 name: name || "",
                 email,
+                role: isOwner ? "admin" : "user",
                 createdAt: serverTimestamp(),
             });
 
@@ -88,7 +94,16 @@ export function AuthProvider({ children }) {
     const logout = () => signOut(auth);
 
     return (
-        <AuthContext.Provider value={{ user, profile, loading, authenticate, logout }}>
+        <AuthContext.Provider
+            value={{
+                user,
+                profile,
+                loading,
+                authenticate,
+                logout,
+                isAdmin, // ✅ exposed
+            }}
+        >
             {!loading && children}
         </AuthContext.Provider>
     );
