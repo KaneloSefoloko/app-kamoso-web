@@ -22,7 +22,7 @@ const MobileSidebar = ({ isOpen, closeSidebar }) => {
 
     return (
         <div
-            className={`fixed inset-0 z-50 bg-black/60 transition-transform duration-300 ${
+            className={`fixed inset-0 z-[50] bg-black/60 transition-transform duration-300 ${
                 isOpen ? "translate-x-0" : "translate-x-full"
             }`}
         >

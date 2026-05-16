@@ -2,105 +2,92 @@ import React from "react";
 
 const Payments = () => {
     return (
-        <div className="min-h-screen bg-white py-16 px-6">
-            <div className="max-w-4xl mx-auto space-y-12">
+        <div className="min-h-screen bg-[#f7f7f5] py-20 px-4">
 
-                {/* Heading */}
-                <div className="text-center space-y-3">
-                    <h1 className="text-3xl font-bold tracking-tight">Payment Methods</h1>
-                    <p className="text-gray-600 max-w-xl mx-auto">
-                        Shop safely and securely using any of our trusted payment options.
+            <div className="max-w-5xl mx-auto space-y-14">
+
+                {/* HERO */}
+                <div className="text-center space-y-4">
+                    <h1 className="text-4xl md:text-5xl font-light tracking-tight">
+                        Payment Methods
+                    </h1>
+
+                    <p className="text-gray-500 max-w-2xl mx-auto leading-relaxed">
+                        Shop confidently with secure, encrypted and globally trusted payment options
+                        designed for a seamless checkout experience.
                     </p>
                 </div>
 
-                {/* Icon Banner */}
-                <div className="flex flex-wrap justify-center gap-10 pt-4">
+                {/* PAYMENT ICON STRIP */}
+                <div className="bg-white border border-gray-200 rounded-2xl shadow-sm px-6 py-8">
+                    <div className="flex flex-wrap items-center justify-center gap-10">
 
-                    {/* VISA */}
-                    <div className="w-20">
-                        <img
-                            src="/assets/paymentMethod/Visa_Inc._logo.svg"
-                            alt="Visa"
-                            className="w-full object-contain"
-                        />
+                        {[
+                            { src: "/assets/paymentMethod/Visa_Inc._logo.svg", w: "w-20" },
+                            { src: "/assets/paymentMethod/MasterCard_Logo.svg", w: "w-20" },
+                            { src: "/assets/paymentMethod/PayPal.svg", w: "w-24" },
+                            { src: "/assets/paymentMethod/CapitecPay.png", w: "w-24" },
+                        ].map((item, i) => (
+                            <div
+                                key={i}
+                                className={`${item.w} opacity-80 hover:opacity-100 transition`}
+                            >
+                                <img
+                                    src={item.src}
+                                    alt=""
+                                    className="w-full object-contain"
+                                />
+                            </div>
+                        ))}
                     </div>
-
-                    {/* Mastercard */}
-                    <div className="w-20">
-                        <img
-                            src="/assets/paymentMethod/MasterCard_Logo.svg"
-                            alt="Mastercard"
-                            className="w-full object-contain"
-                        />
-                    </div>
-
-                    {/* PayPal */}
-                    <div className="w-24">
-                        <img
-                            src="/assets/paymentMethod/PayPal.svg"
-                            alt="PayPal"
-                            className="w-full object-contain"
-                        />
-                    </div>
-
-                    {/* Capitec PaymentPage.jsx */}
-                    <div className="w-24">
-                        <img
-                            src="/assets/paymentMethod/CapitecPay.png"
-                            alt="Capitec Pay"
-                            className="w-full object-contain"
-                        />
-                    </div>
-
                 </div>
 
-                {/* Information Cards */}
-                <div className="grid md:grid-cols-2 gap-8 pt-8">
+                {/* CARDS */}
+                <div className="grid md:grid-cols-2 gap-6">
 
-                    {/* Secure Payments */}
-                    <div className="border rounded-xl p-6 shadow-sm hover:shadow-md transition">
-                        <h2 className="text-xl font-semibold mb-3">Secure Payments</h2>
-                        <p className="text-gray-600">
-                            All transactions are encrypted and processed securely through industry-leading
-                            payment gateways. Your card details are never stored on our servers.
-                        </p>
-                    </div>
+                    {[
+                        {
+                            title: "Secure Payments",
+                            text: "All transactions are encrypted and processed securely through industry-leading gateways. Your data is never stored.",
+                        },
+                        {
+                            title: "Card Payments",
+                            text: "Visa & Mastercard payments are processed instantly with real-time confirmation for fast checkout.",
+                        },
+                        {
+                            title: "Capitec Pay",
+                            text: "Approve purchases directly in your banking app — fast, secure, and no extra fees.",
+                        },
+                        {
+                            title: "PayPal",
+                            text: "International checkout made simple with trusted global payment protection.",
+                        },
+                    ].map((item, i) => (
+                        <div
+                            key={i}
+                            className="group bg-white border border-gray-200 rounded-2xl p-7 shadow-sm hover:shadow-lg hover:-translate-y-1 transition-all duration-300"
+                        >
+                            <h2 className="text-lg font-medium mb-3 group-hover:text-black">
+                                {item.title}
+                            </h2>
 
-                    {/* Card Payments */}
-                    <div className="border rounded-xl p-6 shadow-sm hover:shadow-md transition">
-                        <h2 className="text-xl font-semibold mb-3">Card Payments</h2>
-                        <p className="text-gray-600">
-                            We accept Visa and Mastercard debit/credit cards. Payments are processed instantly
-                            and you will receive a confirmation email once successful.
-                        </p>
-                    </div>
-
-                    {/* Capitec PaymentPage.jsx */}
-                    <div className="border rounded-xl p-6 shadow-sm hover:shadow-md transition">
-                        <h2 className="text-xl font-semibold mb-3">Capitec Pay</h2>
-                        <p className="text-gray-600">
-                            Capitec Pay allows you to approve purchases directly from your banking app — quick,
-                            secure, and free of extra charges.
-                        </p>
-                    </div>
-
-                    {/* PayPal Payments */}
-                    <div className="border rounded-xl p-6 shadow-sm hover:shadow-md transition">
-                        <h2 className="text-xl font-semibold mb-3">PayPal</h2>
-                        <p className="text-gray-600">
-                            International customers can pay using PayPal for a smooth, globally trusted
-                            checkout experience.
-                        </p>
-                    </div>
-
+                            <p className="text-gray-500 leading-relaxed text-sm">
+                                {item.text}
+                            </p>
+                        </div>
+                    ))}
                 </div>
 
-                {/* Support Message */}
-                <div className="text-center pt-10">
-                    <p className="text-gray-700">
-                        Need help with a payment? Contact us at{" "}
-                        <span className="font-semibold">info@kavanti.co.za</span>
-                    </p>
+                {/* SUPPORT */}
+                <div className="text-center pt-6">
+                    <div className="inline-block bg-white border border-gray-200 rounded-full px-6 py-3 shadow-sm">
+                        <p className="text-gray-600 text-sm">
+                            Need help? Contact us at{" "}
+                            <span className="font-medium text-black">
+                                info@kavanti.co.za
+                            </span>
+                        </p>
+                    </div>
                 </div>
 
             </div>

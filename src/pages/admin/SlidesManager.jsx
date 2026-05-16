@@ -7,7 +7,7 @@ import {
     deleteDoc,
     doc,
 } from "firebase/firestore";
-import { uploadToCloudinary } from "../../cloudinaryUpload";
+import { uploadToCloudinary } from "../../utils/uploadToCloudinary";
 
 const SlidesManager = () => {
     const [slides, setSlides] = useState([]);
@@ -27,30 +27,32 @@ const SlidesManager = () => {
     }, []);
 
     const handleUpload = async () => {
-        if (!file) return;
+        if (!file) return alert("Select an image");
 
         setLoading(true);
 
         try {
-            const url = await uploadToCloudinary(file);
+            const imageUrl = await uploadToCloudinary(file);
 
             await addDoc(collection(db, "slides"), {
-                src: url,
+                src: imageUrl,
                 label,
                 link,
                 device,
-                active: true,
-                order: Date.now(),
+                type: "image",
+                createdAt: new Date(),
             });
 
             setFile(null);
             setLabel("");
             setLink("");
-
             fetchSlides();
-        } finally {
-            setLoading(false);
+        } catch (err) {
+            console.error(err);
+            alert("Upload failed");
         }
+
+        setLoading(false);
     };
 
     const handleDelete = async (id) => {
@@ -59,30 +61,34 @@ const SlidesManager = () => {
     };
 
     return (
-        <div className="p-6 max-w-3xl mx-auto">
-            <h1 className="text-xl font-bold mb-4">Hero Slides</h1>
+        <div className="p-6 max-w-5xl mx-auto">
+            <h1 className="text-2xl font-bold mb-6">Slides Manager</h1>
 
-            <div className="space-y-2 border p-4 rounded">
-                <input type="file" onChange={(e) => setFile(e.target.files[0])} />
+            {/* UPLOAD FORM */}
+            <div className="bg-white p-4 rounded shadow mb-6 space-y-3">
+                <input
+                    type="file"
+                    onChange={(e) => setFile(e.target.files[0])}
+                />
 
                 <input
                     placeholder="Label"
                     value={label}
                     onChange={(e) => setLabel(e.target.value)}
-                    className="w-full border p-2"
+                    className="border p-2 w-full"
                 />
 
                 <input
-                    placeholder="Link"
+                    placeholder="Link (e.g. /category/sunglasses)"
                     value={link}
                     onChange={(e) => setLink(e.target.value)}
-                    className="w-full border p-2"
+                    className="border p-2 w-full"
                 />
 
                 <select
                     value={device}
                     onChange={(e) => setDevice(e.target.value)}
-                    className="w-full border p-2"
+                    className="border p-2 w-full"
                 >
                     <option value="web">Web</option>
                     <option value="mobile">Mobile</option>
@@ -90,23 +96,24 @@ const SlidesManager = () => {
 
                 <button
                     onClick={handleUpload}
-                    className="bg-black text-white px-4 py-2 w-full"
+                    disabled={loading}
+                    className="bg-black text-white px-4 py-2"
                 >
-                    {loading ? "Uploading..." : "Add Slide"}
+                    {loading ? "Uploading..." : "Upload Slide"}
                 </button>
             </div>
 
-            <div className="mt-6 space-y-3">
+            {/* LIST */}
+            <div className="grid md:grid-cols-2 gap-4">
                 {slides.map((s) => (
-                    <div key={s.id} className="flex justify-between border p-2">
-                        <div>
-                            <p>{s.label}</p>
-                            <p className="text-xs text-gray-500">{s.device}</p>
-                        </div>
+                    <div key={s.id} className="border p-3">
+                        <img src={s.src} className="h-40 object-cover w-full mb-2" />
+                        <p className="font-semibold">{s.label}</p>
+                        <p className="text-sm text-gray-500">{s.device}</p>
 
                         <button
                             onClick={() => handleDelete(s.id)}
-                            className="text-red-500"
+                            className="text-red-500 mt-2"
                         >
                             Delete
                         </button>

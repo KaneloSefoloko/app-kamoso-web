@@ -101,7 +101,7 @@ export function AuthProvider({ children }) {
                 loading,
                 authenticate,
                 logout,
-                isAdmin, // ✅ exposed
+                isAdmin,
             }}
         >
             {!loading && children}

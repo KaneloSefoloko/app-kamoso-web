@@ -1,12 +1,20 @@
-import React, { useEffect, useState } from "react";
-import { useParams, Link } from "react-router-dom";
-import { products } from "../data/products";
+import React, { useEffect, useMemo, useState } from "react";
+import { useParams } from "react-router-dom";
+import { collection, getDocs } from "firebase/firestore";
+import { db } from "../../firebase.js";
 import ProductCard from "../components/ProductCard";
 import { motion } from "framer-motion";
+import ComingSoonHero from "../components/ComingSoonHero";
+
+/* ---------------- NORMALIZE ---------------- */
+const normalize = (str) =>
+    str?.toLowerCase().replace(/&/g, "-").replace(/\s+/g, "-");
 
 const CategoryPage = () => {
     const { category } = useParams();
-    const [filteredProducts, setFilteredProducts] = useState([]);
+
+    const [products, setProducts] = useState([]);
+    const [showFilters, setShowFilters] = useState(false);
 
     const [filters, setFilters] = useState({
         size: "",
@@ -14,107 +22,194 @@ const CategoryPage = () => {
         price: "",
     });
 
-    // Filter by category
+    /* ---------------- FETCH ---------------- */
     useEffect(() => {
-        const filtered = products.filter(
-            (p) => p.category && p.category.toLowerCase() === category.toLowerCase()
+        const fetchProducts = async () => {
+            const snap = await getDocs(collection(db, "products"));
+            const data = snap.docs.map((doc) => ({
+                id: doc.id,
+                ...doc.data(),
+            }));
+            setProducts(data);
+        };
+
+        fetchProducts();
+    }, []);
+
+    /* ---------------- BASE CATEGORY ---------------- */
+    const baseProducts = useMemo(() => {
+        return products.filter(
+            (p) => normalize(p.category) === normalize(category)
         );
-        setFilteredProducts(filtered);
-    }, [category]);
+    }, [products, category]);
 
-    // Apply filters
-    useEffect(() => {
-        let temp = products.filter(
-            (p) => p.category && p.category.toLowerCase() === category.toLowerCase()
-        );
+    /* ---------------- FILTER OPTIONS ---------------- */
+    const filterOptions = useMemo(() => {
+        const sizes = new Set();
+        const colors = new Set();
 
-        if (filters.size) temp = temp.filter((p) => p.sizes.includes(filters.size));
-        if (filters.color) temp = temp.filter((p) => p.color === filters.color);
-        if (filters.price) temp = temp.filter((p) => p.price <= Number(filters.price));
+        baseProducts.forEach((p) => {
+            p.sizes?.forEach((s) => sizes.add(s));
 
-        setFilteredProducts(temp);
-    }, [filters, category]);
+            p.variants?.forEach((v) => {
+                if (v.color?.value) {
+                    colors.add(v.color.value.toLowerCase());
+                }
+            });
+
+            if (p.color) {
+                colors.add(p.color.toLowerCase());
+            }
+        });
+
+        return {
+            sizes: [...sizes],
+            colors: [...colors],
+        };
+    }, [baseProducts]);
+
+    /* ---------------- APPLY FILTERS ---------------- */
+    const filteredProducts = useMemo(() => {
+        let temp = [...baseProducts];
+
+        if (filters.size) {
+            temp = temp.filter((p) => p.sizes?.includes(filters.size));
+        }
+
+        if (filters.color) {
+            temp = temp.filter(
+                (p) =>
+                    p.variants?.some(
+                        (v) =>
+                            v.color?.value?.toLowerCase() ===
+                            filters.color.toLowerCase()
+                    ) ||
+                    p.color?.toLowerCase() === filters.color.toLowerCase()
+            );
+        }
+
+        if (filters.price) {
+            temp = temp.filter(
+                (p) => Number(p.price) <= Number(filters.price)
+            );
+        }
+
+        return temp;
+    }, [baseProducts, filters]);
 
     const handleFilterChange = (e) => {
-        setFilters({ ...filters, [e.target.name]: e.target.value });
+        setFilters({
+            ...filters,
+            [e.target.name]: e.target.value,
+        });
     };
 
     return (
-        <div className="container mx-auto py-10 px-4">
-            <h1 className="text-lg font-bold mb-8 capitalize tracking-tight">
-                {category} Collection
-            </h1>
+        <div className="bg-white text-black min-h-screen antialiased">
+            <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10">
 
-            <div className="grid grid-cols-12 gap-6">
-                {/* FILTERS */}
-                <motion.div
-                    initial={{ opacity: 0, x: -20 }}
-                    animate={{ opacity: 1, x: 0 }}
-                    transition={{ duration: 0.3 }}
-                    className="col-span-12 md:col-span-3 p-6 bg-gray-50 rounded-xl shadow-md"
-                >
-                    <h2 className="text-lg font-semibold mb-4">Filters</h2>
+                {/* TITLE */}
+                <h1 className="text-2xl md:text-4xl font-light tracking-[0.25em] uppercase mb-10">
+                    {category?.replace(/-/g, " ")} Collection
+                </h1>
 
-                    <div className="flex flex-col space-y-4">
-                        <div>
-                            <label className="block font-medium mb-1">Size</label>
-                            <select
-                                name="size"
-                                onChange={handleFilterChange}
-                                className="w-full border p-2 rounded-lg"
+                <div className="grid grid-cols-1 lg:grid-cols-12 gap-10">
+
+                    {/* ================= FILTERS ================= */}
+                    <aside className="
+                        lg:col-span-3
+                        bg-white
+                        border border-gray-100
+                        rounded-2xl
+                        p-5 sm:p-6
+                        h-fit
+                        lg:sticky lg:top-24
+                        shadow-sm
+                    ">
+
+                        {/* MOBILE HEADER */}
+                        <div className="flex items-center justify-between mb-4 lg:hidden">
+                            <h2 className="text-xs uppercase tracking-widest text-gray-500">
+                                Filters
+                            </h2>
+
+                            <button
+                                onClick={() => setShowFilters((p) => !p)}
+                                className="text-xs px-3 py-1 border rounded-full"
                             >
-                                <option value="">All Sizes</option>
-                                <option value="S">S</option>
-                                <option value="M">M</option>
-                                <option value="L">L</option>
-                                <option value="XL">XL</option>
-                            </select>
+                                {showFilters ? "Close" : "Filter"}
+                            </button>
                         </div>
 
-                        <div>
-                            <label className="block font-medium mb-1">Color</label>
-                            <select
-                                name="color"
-                                onChange={handleFilterChange}
-                                className="w-full border p-2 rounded-lg"
-                            >
-                                <option value="">All Colors</option>
-                                <option value="Black">Black</option>
-                                <option value="Gray">Gray</option>
-                            </select>
-                        </div>
+                        {/* FILTER CONTENT */}
+                        <div className="lg:block">
 
-                        <div>
-                            <label className="block font-medium mb-1">Max Price</label>
-                            <input
-                                name="price"
-                                type="number"
-                                placeholder="500"
-                                onChange={handleFilterChange}
-                                className="w-full border p-2 rounded-lg"
-                            />
-                        </div>
-                    </div>
-                </motion.div>
+                            {/* MOBILE TOGGLED CONTENT */}
+                            <div className={`${showFilters ? "block" : "hidden"} lg:block space-y-5`}>
 
-                {/* PRODUCT GRID */}
-                <div className="col-span-12 md:col-span-9">
-                    <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
-                        {filteredProducts.length ? (
-                            filteredProducts.map((product) => (
-                                <motion.div
-                                    key={product.id}
-                                    initial={{ opacity: 0, y: 20 }}
-                                    animate={{ opacity: 1, y: 0 }}
-                                    transition={{ duration: 0.3 }}
+                                {/* SIZE */}
+                                <select
+                                    name="size"
+                                    onChange={handleFilterChange}
+                                    className="w-full px-3 py-3 border border-gray-200 rounded-xl text-sm"
                                 >
-                                    <ProductCard product={product} />
-                                </motion.div>
-                            ))
+                                    <option value="">All Sizes</option>
+                                    {filterOptions.sizes.map((size) => (
+                                        <option key={size} value={size}>{size}</option>
+                                    ))}
+                                </select>
+
+                                {/* COLOR */}
+                                <select
+                                    name="color"
+                                    onChange={handleFilterChange}
+                                    className="w-full px-3 py-3 border border-gray-200 rounded-xl text-sm"
+                                >
+                                    <option value="">All Colors</option>
+                                    {filterOptions.colors.map((color) => (
+                                        <option key={color} value={color}>{color}</option>
+                                    ))}
+                                </select>
+
+                                {/* PRICE */}
+                                <input
+                                    name="price"
+                                    type="number"
+                                    placeholder="Max price"
+                                    onChange={handleFilterChange}
+                                    className="w-full px-3 py-3 border border-gray-200 rounded-xl text-sm"
+                                />
+                            </div>
+                        </div>
+                    </aside>
+
+                    {/* ================= PRODUCTS ================= */}
+                    <main className="lg:col-span-9">
+
+                        {filteredProducts.length === 0 ? (
+                            <ComingSoonHero />
                         ) : (
-                            <p>No products found.</p>
+                            <div className="
+                                grid grid-cols-2
+                                sm:grid-cols-2
+                                md:grid-cols-3
+                                xl:grid-cols-4
+                                gap-6
+                            ">
+                                {filteredProducts.map((product) => (
+                                    <motion.div
+                                        key={product.id}
+                                        initial={{ opacity: 0, y: 15 }}
+                                        animate={{ opacity: 1, y: 0 }}
+                                        transition={{ duration: 0.3 }}
+                                    >
+                                        <ProductCard product={product} />
+                                    </motion.div>
+                                ))}
+                            </div>
                         )}
-                    </div>
+                    </main>
+
                 </div>
             </div>
         </div>

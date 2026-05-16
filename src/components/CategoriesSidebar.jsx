@@ -4,23 +4,46 @@ import { Link } from "react-router-dom";
 const categories = [
     {
         title: "Bags",
-        sub: ["All Bags & Purses", "Dome Bags", "Tote Bags", "Crossbody Bags", "Wallets & Card Holders"]
+        sub: [
+            { name: "All Bags & Purses", slug: "bags" },
+            { name: "Dome Bags", slug: "dome-bags" },
+            { name: "Tote Bags", slug: "tote-bags" },
+            { name: "Crossbody Bags", slug: "crossbody-bags" },
+            { name: "Wallets & Card Holders", slug: "wallets" }
+        ]
     },
     {
         title: "Sunglasses",
-        sub: ["All Sunglasses", "Round Frames", "Square Frames"]
+        sub: [
+            { name: "All Sunglasses", slug: "sunglasses" },
+            { name: "Round Frames", slug: "round-frames" },
+            { name: "Square Frames", slug: "square-frames" }
+        ]
     },
     {
         title: "Hats",
-        sub: ["All Hats", "Beanies", "Bucket Hats", "Caps"]
+        sub: [
+            { name: "All Hats", slug: "hats" },
+            { name: "Beanies", slug: "beanies" },
+            { name: "Bucket Hats", slug: "bucket-hats" },
+            { name: "Caps", slug: "caps" }
+        ]
     },
     {
         title: "Jewellery",
-        sub: ["All Jewellery", "Bracelets", "Earrings", "Necklaces"]
+        sub: [
+            { name: "All Jewellery", slug: "jewellery" },
+            { name: "Bracelets", slug: "bracelets" },
+            { name: "Earrings", slug: "earrings" },
+            { name: "Necklaces", slug: "necklaces" }
+        ]
     },
     {
         title: "Footwear",
-        sub: ["All Footwear", "Socks"]
+        sub: [
+            { name: "All Footwear", slug: "footwear" },
+            { name: "Socks", slug: "socks" }
+        ]
     },
 ];
 
@@ -30,14 +53,15 @@ const CategoriesSidebar = () => {
             {categories.map((cat) => (
                 <div key={cat.title} className="mb-6">
                     <h3 className="text-lg font-semibold mb-2">{cat.title}</h3>
+
                     <ul className="space-y-1">
                         {cat.sub.map((sub) => (
-                            <li key={sub}>
+                            <li key={sub.slug}>
                                 <Link
-                                    to={`/category/${sub.toLowerCase().replace(/\s+/g, "-")}`}
+                                    to={`/category/${sub.slug}`}
                                     className="block text-gray-600 hover:text-black hover:font-medium transition"
                                 >
-                                    {sub}
+                                    {sub.name}
                                 </Link>
                             </li>
                         ))}

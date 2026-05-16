@@ -11,50 +11,83 @@ const CartPage = () => {
 
     return (
         <div className="p-6 max-w-4xl mx-auto">
-            <h1 className="text-xl font-light mb-6">Your Cart</h1>
+            <h1 className="text-xl mb-6">Your Cart</h1>
 
             {cart.length === 0 ? (
                 <p>Your cart is empty.</p>
             ) : (
-                <>
-                    {cart.map((item) => (
+                cart.map((item) => {
+                    const colorValue = item.color?.value || "";
+                    const image =
+                        item.image ||
+                        item.image_url ||
+                        item.images?.[0] ||
+                        item.variant?.image ||
+                        item.variant?.image_url ||
+                        item.variants?.[0]?.image ||
+                        item.variants?.[0]?.image_url ||
+                        "/placeholder.png";
+
+                    return (
                         <div
-                            key={`${item.id}-${item.size}`}
-                            className="flex items-center justify-between border-b py-4 gap-4"
+                            key={`${item.slug}-${item.size}-${colorValue}`}
+                            className="flex items-center justify-between border-b py-4"
                         >
                             <img
-                                src={item.image}
+                                src={image}
                                 alt={item.name}
-                                className="w-20 h-20 object-cover"
+                                onError={(e) => {
+                                    e.target.src = "/placeholder.png";
+                                }}
+                                className="w-14 h-14 object-cover rounded cursor-pointer"
                             />
 
-                            <div className="flex-1">
-                                <h2 className="font-semibold">{item.name}</h2>
-                                <p className="text-sm text-gray-500">
-                                    Size: {item.size}
-                                </p>
-                                <p className="text-sm">R{item.price}</p>
+                            <div className="flex-1 ml-4">
+                                <h2>{item.name}</h2>
+                                <p>Size: {item.size}</p>
+
+                                {item.color && (
+                                    <p className="flex items-center gap-2">
+                                        <span
+                                            className="w-3 h-3 rounded-full border"
+                                            style={{
+                                                backgroundColor:
+                                                    item.color.hex ||
+                                                    item.color.value,
+                                            }}
+                                        />
+                                        {item.color.name}
+                                    </p>
+                                )}
+
+                                <p>R{item.price}</p>
                             </div>
 
                             <div className="flex items-center gap-2">
                                 <button
                                     onClick={() =>
-                                        updateQuantity(item.id, item.size, -1)
+                                        updateQuantity(
+                                            item.slug,
+                                            item.size,
+                                            colorValue,
+                                            -1
+                                        )
                                     }
-                                    className="px-2 py-1 border rounded"
                                 >
                                     −
                                 </button>
 
-                                <span className="w-6 text-center">
-                                    {item.quantity}
-                                </span>
+                                <span>{item.quantity}</span>
 
                                 <button
                                     onClick={() =>
-                                        updateQuantity(item.id, item.size, 1)
+                                        updateQuantity(
+                                            item.slug,
+                                            item.size,
+                                            colorValue,
+                                            1
+                                        )
                                     }
-                                    className="px-2 py-1 border rounded"
                                 >
                                     +
                                 </button>
@@ -62,20 +95,24 @@ const CartPage = () => {
 
                             <button
                                 onClick={() =>
-                                    removeFromCart(item.id, item.size)
+                                    removeFromCart(
+                                        item.slug,
+                                        item.size,
+                                        colorValue
+                                    )
                                 }
-                                className="text-red-500 text-sm"
+                                className="text-red-500"
                             >
                                 Remove
                             </button>
                         </div>
-                    ))}
-
-                    <div className="text-right mt-6 font-bold text-xl">
-                        Total: R{total}
-                    </div>
-                </>
+                    );
+                })
             )}
+
+            <div className="text-right mt-6 font-bold">
+                Total: R{total}
+            </div>
         </div>
     );
 };

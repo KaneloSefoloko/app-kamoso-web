@@ -3,8 +3,14 @@ import { collection, addDoc, serverTimestamp } from "firebase/firestore";
 import { db } from "../../firebase.js";
 
 const Contact = () => {
-    const [formData, setFormData] = useState({ name: "", email: "", phone: "", message: "" });
-    const [status, setStatus] = useState("idle"); // idle, submitting, success, error
+    const [formData, setFormData] = useState({
+        name: "",
+        email: "",
+        phone: "",
+        message: ""
+    });
+
+    const [status, setStatus] = useState("idle");
 
     const handleChange = (e) => {
         const { name, value } = e.target;
@@ -16,7 +22,6 @@ const Contact = () => {
         setStatus("submitting");
 
         try {
-            // Add form data to Firestore collection "contacts"
             await addDoc(collection(db, "contacts"), {
                 ...formData,
                 createdAt: serverTimestamp(),
@@ -31,96 +36,123 @@ const Contact = () => {
     };
 
     return (
-        <div className="min-h-screen bg-white py-12 px-6">
-            <div className="max-w-3xl mx-auto bg-white p-8 space-y-8">
-                <h1 className="text-3xl font-bold text-center">Contact Us</h1>
+        <div className="min-h-screen bg-[#f6f6f3] py-20 px-6">
+            <div className="max-w-6xl mx-auto grid md:grid-cols-2 gap-10">
 
-                {/* Contact Info */}
-                <div className="space-y-4 text-gray-700">
-                    <p>Have questions? Reach out to us via phone, email or send us a message using the form below.</p>
-                    <p><strong>Email:</strong> info@kavanti.co.za</p>
-                    <p><strong>Phone:</strong> +27 21 000 0000</p>
-                    <p><strong>Address:</strong> Unit 000, Greenbay <br /> Firlands Minor Rd, Admirals Park
-                        <br /> Gordon's Bay, 7135</p>
+                {/* LEFT - INFO */}
+                <div className="space-y-8">
+
+                    <div>
+                        <p className="uppercase tracking-[0.3em] text-xs text-gray-500 mb-3">
+                            Get in touch
+                        </p>
+
+                        <h1 className="text-4xl md:text-5xl font-light text-black">
+                            Contact Us
+                        </h1>
+
+                        <p className="text-gray-600 mt-4 leading-relaxed max-w-md">
+                            We’d love to hear from you. Whether you have a question
+                            about orders, sizing, or collaborations — we’re here to help.
+                        </p>
+                    </div>
+
+                    <div className="space-y-4 text-gray-700 text-sm">
+                        <div className="p-5 bg-white rounded-2xl border border-gray-100">
+                            <p className="font-medium">Email</p>
+                            <p className="text-gray-500">info@kavanti.co.za</p>
+                        </div>
+
+                        <div className="p-5 bg-white rounded-2xl border border-gray-100">
+                            <p className="font-medium">WhatsApp</p>
+                            <p className="text-gray-500">+27 62 783 3498</p>
+                        </div>
+
+                        <div className="p-5 bg-white rounded-2xl border border-gray-100">
+                            <p className="font-medium">Address</p>
+                            <p className="text-gray-500">
+                                Unit 000, Greenbay <br />
+                                Firlands Minor Rd, Admirals Park <br />
+                                Gordon's Bay, 7135
+                            </p>
+                        </div>
+                    </div>
                 </div>
 
-                {/* Form */}
-                <form onSubmit={handleSubmit} className="space-y-6">
-                    <div>
-                        <label className="block text-sm font-medium text-gray-700 mb-1" htmlFor="name">
-                            Name
-                        </label>
+                {/* RIGHT - FORM */}
+                <div className="bg-white rounded-3xl border border-gray-100 p-8 md:p-10 shadow-sm">
+
+                    <h2 className="text-2xl font-light mb-6">
+                        Send a message
+                    </h2>
+
+                    <form onSubmit={handleSubmit} className="space-y-5">
+
                         <input
                             type="text"
                             name="name"
-                            id="name"
-                            required
+                            placeholder="Your name"
                             value={formData.name}
                             onChange={handleChange}
-                            className="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-yellow-500"
-                            placeholder="Your Name"
+                            className="w-full h-14 px-5 rounded-2xl bg-[#fafafa] border border-gray-200
+                            outline-none focus:border-black transition"
+                            required
                         />
-                    </div>
-                    <div>
-                        <label className="block text-sm font-medium text-gray-700 mb-1" htmlFor="email">
-                            Email
-                        </label>
+
                         <input
                             type="email"
                             name="email"
-                            id="email"
-                            required
+                            placeholder="Email address"
                             value={formData.email}
                             onChange={handleChange}
-                            className="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-yellow-500"
-                            placeholder="you@example.com"
+                            className="w-full h-14 px-5 rounded-2xl bg-[#fafafa] border border-gray-200
+                            outline-none focus:border-black transition"
+                            required
                         />
-                    </div>
-                    <div>
-                        <label className="block text-sm font-medium text-gray-700 mb-1" htmlFor="phone">
-                            Phone (optional)
-                        </label>
+
                         <input
                             type="tel"
                             name="phone"
-                            id="phone"
+                            placeholder="Phone (optional)"
                             value={formData.phone}
                             onChange={handleChange}
-                            className="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-yellow-500"
-                            placeholder="e.g. +27 71 123 4567"
+                            className="w-full h-14 px-5 rounded-2xl bg-[#fafafa] border border-gray-200
+                            outline-none focus:border-black transition"
                         />
-                    </div>
-                    <div>
-                        <label className="block text-sm font-medium text-gray-700 mb-1" htmlFor="message">
-                            Message
-                        </label>
+
                         <textarea
                             name="message"
-                            id="message"
-                            required
+                            placeholder="Your message..."
                             value={formData.message}
                             onChange={handleChange}
                             rows={5}
-                            className="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-yellow-500"
-                            placeholder="Write your message here..."
+                            className="w-full px-5 py-4 rounded-2xl bg-[#fafafa] border border-gray-200
+                            outline-none focus:border-black transition"
+                            required
                         />
-                    </div>
-                    <button
-                        type="submit"
-                        disabled={status === "submitting"}
-                        className="w-full bg-black text-white px-6 py-3 rounded-sm hover:bg-gray-800 transition"
-                    >
-                        {status === "submitting" ? "Sending..." : "Send Message"}
-                    </button>
-                </form>
 
-                {/* Status Messages */}
-                {status === "success" && (
-                    <p className="text-green-600 text-center">Thank you! Your message has been sent.</p>
-                )}
-                {status === "error" && (
-                    <p className="text-red-600 text-center">Oops — something went wrong. Please try again later.</p>
-                )}
+                        <button
+                            type="submit"
+                            disabled={status === "submitting"}
+                            className="w-full h-14 rounded-2xl bg-black text-white text-sm tracking-wide
+                            hover:opacity-90 transition disabled:opacity-50"
+                        >
+                            {status === "submitting" ? "Sending..." : "Send Message"}
+                        </button>
+
+                        {status === "success" && (
+                            <p className="text-green-600 text-sm text-center">
+                                Message sent successfully ✔
+                            </p>
+                        )}
+
+                        {status === "error" && (
+                            <p className="text-red-600 text-sm text-center">
+                                Something went wrong. Try again.
+                            </p>
+                        )}
+                    </form>
+                </div>
             </div>
         </div>
     );

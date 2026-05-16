@@ -46,8 +46,7 @@ const LoginSignup = () => {
         setPending(true);
 
         try {
-            await authenticate({mode: "signup", name, email, password});
-
+            await authenticate({ mode: "signup", name, email, password });
             navigate("/");
         } catch (e) {
             setError(getFriendlyAuthMessage(e.code, "signup"));
@@ -57,111 +56,119 @@ const LoginSignup = () => {
     }
 
     return (
-        <div className="flex flex-col items-center justify-center min-h-screen bg-white sm:bg-black px-4 sm:px-6">
-            <div className="bg-white shadow-none rounded-none sm:shadow-lg sm:rounded-lg p-6 sm:p-8 w-full max-w-md flex flex-col items-center">
+        <div className="min-h-screen flex flex-col items-center justify-center px-4 bg-gradient-to-br from-white via-gray-50 to-gray-100">
 
-                <Link to="/" className="mb-4 sm:mb-6">
-                    <img
-                        src={logo}
-                        alt="Logo"
-                        className="h-12 sm:h-16 md:h-24 w-auto cursor-pointer"
-                    />
-                </Link>
+            {/* CARD WRAPPER */}
+            <div className="w-full max-w-md relative">
 
-                <h1 className="text-xl sm:text-2xl font-bold text-gray-800 mb-4 sm:mb-6">
-                    Create your account
-                </h1>
+                {/* soft glow */}
+                <div className="absolute -inset-1 bg-gradient-to-r from-black/10 via-gray-300/20 to-black/10 blur-2xl rounded-3xl" />
 
-                <div className="space-y-3 sm:space-y-4 mb-4 sm:mb-6 w-full">
-                    <input
-                        value={name}
-                        disabled={pending}
-                        onChange={(e) => setName(e.target.value)}
-                        type="text"
-                        placeholder="Full name"
-                        className="w-full px-3 sm:px-4 py-2 border border-gray-300 rounded
-                        focus:outline-none focus:ring-2 focus:ring-black text-sm sm:text-base"
-                    />
+                <div className="relative bg-white/80 backdrop-blur-xl border border-gray-200 shadow-2xl rounded-3xl p-8 sm:p-10 flex flex-col items-center">
 
-                    <input
-                        value={email}
-                        disabled={pending}
-                        onChange={(e) => setEmail(e.target.value)}
-                        type="email"
-                        placeholder="Email address"
-                        className="w-full px-3 sm:px-4 py-2 border border-gray-300 rounded
-                        focus:outline-none focus:ring-2 focus:ring-black text-sm sm:text-base"
-                    />
+                    {/* LOGO */}
+                    <Link to="/" className="mb-5">
+                        <img
+                            src={logo}
+                            alt="Logo"
+                            className="h-14 sm:h-20 w-auto hover:scale-105 transition"
+                        />
+                    </Link>
 
-                    <input
-                        value={password}
-                        disabled={pending}
-                        onChange={(e) => setPass(e.target.value)}
-                        type="password"
-                        placeholder="Password (min 6 chars)"
-                        className="w-full px-3 sm:px-4 py-2 border border-gray-300 rounded
-                        focus:outline-none focus:ring-2 focus:ring-black text-sm sm:text-base"
-                    />
-                </div>
+                    {/* TITLE */}
+                    <h1 className="text-2xl font-semibold tracking-tight text-gray-900 mb-6">
+                        Create your account
+                    </h1>
 
-                <button
-                    onClick={handleContinue}
-                    disabled={pending || !acceptedTerms}
-                    className={`w-full py-2 rounded transition text-sm sm:text-base
-                        ${
-                        acceptedTerms
-                            ? "bg-black text-white hover:bg-gray-700"
-                            : "bg-gray-400 text-gray-200 cursor-not-allowed"
-                    }
-                    `}
-                >
-                    {pending ? "Creating account..." : "Sign up"}
-                </button>
+                    {/* INPUTS */}
+                    <div className="space-y-4 w-full mb-6">
 
-                {error && (
-                    <div
-                        role="alert"
-                        aria-live="polite"
-                        className="text-red-700 mt-4 w-full border border-red-300 bg-red-50 px-3 py-2 text-sm"
-                    >
-                        {error}
+                        <input
+                            value={name}
+                            disabled={pending}
+                            onChange={(e) => setName(e.target.value)}
+                            type="text"
+                            placeholder="Full name"
+                            className="w-full px-4 py-3 rounded-2xl border border-gray-200 bg-gray-50
+                            focus:bg-white focus:border-black outline-none transition text-sm"
+                        />
+
+                        <input
+                            value={email}
+                            disabled={pending}
+                            onChange={(e) => setEmail(e.target.value)}
+                            type="email"
+                            placeholder="Email address"
+                            className="w-full px-4 py-3 rounded-2xl border border-gray-200 bg-gray-50
+                            focus:bg-white focus:border-black outline-none transition text-sm"
+                        />
+
+                        <input
+                            value={password}
+                            disabled={pending}
+                            onChange={(e) => setPass(e.target.value)}
+                            type="password"
+                            placeholder="Password (min 6 chars)"
+                            className="w-full px-4 py-3 rounded-2xl border border-gray-200 bg-gray-50
+                            focus:bg-white focus:border-black outline-none transition text-sm"
+                        />
                     </div>
-                )}
+
+                    {/* BUTTON */}
+                    <button
+                        onClick={handleContinue}
+                        disabled={pending || !acceptedTerms}
+                        className={`w-full py-3 rounded-2xl text-sm font-medium transition active:scale-[0.98]
+                            ${
+                            acceptedTerms
+                                ? "bg-black text-white hover:opacity-90"
+                                : "bg-gray-300 text-gray-500 cursor-not-allowed"
+                        }`}
+                    >
+                        {pending ? "Creating account..." : "Sign up"}
+                    </button>
+
+                    {/* ERROR */}
+                    {error && (
+                        <div
+                            role="alert"
+                            aria-live="polite"
+                            className="mt-5 w-full rounded-2xl border border-red-200 bg-red-50 text-red-700 px-4 py-3 text-sm"
+                        >
+                            {error}
+                        </div>
+                    )}
+                </div>
             </div>
 
-            <p className="mt-4 text-gray-700 sm:text-white text-sm sm:text-base">
+            {/* FOOTER LINK */}
+            <p className="mt-5 text-sm text-gray-600">
                 Already have an account?
                 <Link
                     to="/login"
-                    className="text-blue-600 sm:text-yellow-400 font-semibold cursor-pointer hover:underline ml-1"
+                    className="ml-1 font-medium text-black hover:underline"
                 >
                     Sign in
                 </Link>
             </p>
 
-            <div className="flex items-start mt-4 text-gray-700 sm:text-white text-xs sm:text-sm max-w-md">
+            {/* TERMS */}
+            <div className="flex items-start mt-5 text-xs text-gray-500 max-w-md leading-relaxed">
                 <input
                     type="checkbox"
                     checked={acceptedTerms}
                     onChange={(e) => setAcceptedTerms(e.target.checked)}
-                    className="mt-1 mr-2"
+                    className="mt-1 mr-2 accent-black"
                 />
                 <p>
                     By continuing, I agree to the{" "}
-                    <Link
-                        to="/policies/terms-of-service"
-                        className="underline cursor-pointer"
-                    >
+                    <Link to="/policies/terms-of-service" className="underline">
                         terms of use
                     </Link>{" "}
                     and{" "}
-                    <Link
-                        to="/policies/privacy-policy"
-                        className="underline cursor-pointer"
-                    >
+                    <Link to="/policies/privacy-policy" className="underline">
                         privacy policy
-                    </Link>
-                    .
+                    </Link>.
                 </p>
             </div>
         </div>

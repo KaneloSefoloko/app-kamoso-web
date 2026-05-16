@@ -1,44 +1,42 @@
 import { motion } from "framer-motion";
 
-const Footwear = () => {
+const ComingSoonHero = () => {
     return (
-        <div className="min-h-[70vh] flex items-center justify-center bg-white px-6 pb-24 md:pb-0">
-
-            <div className="max-w-2xl text-center">
+        <div className="flex items-center justify-center py-40 px-6">
+            <div className="max-w-2xl w-full text-center">
 
                 {/* TOP LINE */}
                 <motion.div
-                    initial={{ width: 0 }}
-                    animate={{ width: 80 }}
+                    initial={{ opacity: 0 }}
+                    animate={{ opacity: 1 }}
                     transition={{ duration: 1 }}
-                    className="h-[1px] bg-gray-300 mx-auto mb-8"
-                />
+                    className="flex justify-center mb-6"
+                >
+                    <div className="h-[1px] w-24 bg-gray-300" />
+                </motion.div>
 
-                {/* TITLE */}
+                {/* MAIN TEXT */}
                 <motion.h1
                     initial={{ opacity: 0, y: 10 }}
                     animate={{ opacity: 1, y: 0 }}
                     transition={{ duration: 0.8 }}
-                    className="text-3xl md:text-5xl font-light tracking-[0.3em] uppercase text-gray-500"
+                    className="text-2xl md:text-4xl font-light tracking-[0.3em] text-gray-500 uppercase"
                 >
-                    Footwear
+                    New Collection
                 </motion.h1>
 
-                {/* SUBTEXT */}
+                {/* SUB TEXT */}
                 <motion.p
                     initial={{ opacity: 0 }}
                     animate={{ opacity: 1 }}
-                    transition={{ delay: 0.3 }}
-                    className="mt-6 text-gray-400 text-sm md:text-base leading-relaxed"
+                    transition={{ delay: 0.3, duration: 1 }}
+                    className="mt-4 text-sm md:text-base text-gray-400 tracking-wide"
                 >
-                    Designed to move differently.
-                    <br />
-                    Our first footwear collection is currently in development.
+                    Pieces are being curated. Check back soon.
                 </motion.p>
 
-                {/* “DROP STYLE” VISUAL BLOCKS */}
+                {/* SKELETON GRID */}
                 <div className="mt-16 grid grid-cols-2 md:grid-cols-3 gap-4">
-
                     {Array.from({ length: 6 }).map((_, i) => (
                         <motion.div
                             key={i}
@@ -47,12 +45,11 @@ const Footwear = () => {
                             transition={{
                                 duration: 2,
                                 repeat: Infinity,
-                                delay: i * 0.15,
+                                delay: i * 0.2,
                             }}
-                            className="h-56 md:h-72 bg-gray-100 rounded-xl"
+                            className="h-64 md:h-72 bg-gray-200 rounded-xl"
                         />
                     ))}
-
                 </div>
 
                 {/* BOTTOM LINE */}
@@ -78,4 +75,4 @@ const Footwear = () => {
     );
 };
 
-export default Footwear;
+export default ComingSoonHero;

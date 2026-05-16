@@ -1,10 +1,10 @@
-import React, {useContext, useState} from "react";
+import React, { useContext, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import logo from "/assets/main.svg";
 import { useAuth } from "../context/AuthContext";
 import { getFriendlyAuthMessage } from "../utils/authErrors";
-import { CartContext } from '../components/CartContext';
-import {useUI} from "../components/UIContext.jsx";
+import { CartContext } from "../components/CartContext";
+import { useUI } from "../components/UIContext.jsx";
 
 const Login = () => {
     const navigate = useNavigate();
@@ -37,18 +37,13 @@ const Login = () => {
         setPending(true);
 
         try {
-
-            // Try normal login
-            await authenticate({mode: "login", email, password});
-
+            await authenticate({ mode: "login", email, password });
 
             if (cart.length > 0) {
                 navigate("/", { state: { openCart: true } });
             } else {
                 navigate("/");
             }
-
-
         } catch (e) {
             if (e.code === "auth/multi-factor-auth-required") {
                 navigate("/mfa-challenge", {
@@ -63,58 +58,83 @@ const Login = () => {
         }
     }
 
-
     return (
-        <div className="flex flex-col items-center justify-center min-h-screen bg-white sm:bg-black px-4 sm:px-6">
-            <div className="bg-white shadow-sm rounded-lg p-6 sm:p-8 w-full max-w-md flex flex-col items-center">
-                <Link to="/" className="mb-4 sm:mb-6">
-                    <img src={logo} alt="Logo" className="h-14 sm:h-16 md:h-28 w-auto cursor-pointer" />
-                </Link>
+        <div className="min-h-screen flex items-center justify-center px-4 bg-gradient-to-br from-white via-gray-50 to-gray-100">
 
-                <h1 className="text-xl sm:text-2xl font-bold text-gray-800 mb-4 sm:mb-6">Sign In</h1>
+            {/* CARD */}
+            <div className="w-full max-w-md relative">
 
-                <div className="space-y-3 sm:space-y-4 mb-4 sm:mb-6 w-full">
-                    <input
-                        disabled={pending}
-                        value={email}
-                        onChange={(e) => setEmail(e.target.value)}
-                        type="email"
-                        placeholder="Email Address"
-                        className="w-full px-3 sm:px-4 py-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-black text-sm sm:text-base"
-                    />
-                    <input
-                        disabled={pending}
-                        value={password}
-                        onChange={(e) => setPass(e.target.value)}
-                        type="password"
-                        placeholder="Password"
-                        className="w-full px-3 sm:px-4 py-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-black text-sm sm:text-base"
-                    />
-                </div>
+                {/* glow background */}
+                <div className="absolute -inset-1 bg-gradient-to-r from-black/10 via-gray-300/20 to-black/10 blur-2xl rounded-3xl" />
 
-                <button
-                    onClick={handleContinue}
-                    disabled={pending}
-                    className="w-full bg-black text-white py-2 rounded hover:bg-gray-600 transition text-sm sm:text-base"
-                >
-                    {pending ? "Signing in..." : "Continue"}
-                </button>
+                <div className="relative bg-white/80 backdrop-blur-xl border border-gray-200 shadow-2xl rounded-3xl p-8 sm:p-10 flex flex-col items-center">
 
-                {error && (
-                    <div role="alert" aria-live="polite" className="text-red-700 mt-4 w-full border-red-300 bg-red-50 px-3 py-2 text-sm">
-                        {error}
+                    {/* LOGO */}
+                    <Link to="/" className="mb-6">
+                        <img
+                            src={logo}
+                            alt="Logo"
+                            className="h-16 sm:h-20 w-auto hover:scale-105 transition"
+                        />
+                    </Link>
+
+                    {/* TITLE */}
+                    <h1 className="text-2xl font-semibold tracking-tight text-gray-900 mb-6">
+                        Welcome back
+                    </h1>
+
+                    {/* INPUTS */}
+                    <div className="w-full space-y-4 mb-6">
+                        <input
+                            disabled={pending}
+                            value={email}
+                            onChange={(e) => setEmail(e.target.value)}
+                            type="email"
+                            placeholder="Email address"
+                            className="w-full px-4 py-3 rounded-2xl border border-gray-200 bg-gray-50 focus:bg-white focus:border-black outline-none transition text-sm"
+                        />
+
+                        <input
+                            disabled={pending}
+                            value={password}
+                            onChange={(e) => setPass(e.target.value)}
+                            type="password"
+                            placeholder="Password"
+                            className="w-full px-4 py-3 rounded-2xl border border-gray-200 bg-gray-50 focus:bg-white focus:border-black outline-none transition text-sm"
+                        />
                     </div>
-                )}
-            </div>
 
-            <p className="mt-3 text-sm">
-                <button
-                    className="text-black sm:text-white font-semibold hover:text-gray-300 hover:underline"
-                    onClick={() => navigate("/forgot-password")}
-                >
-                    Forgot your password?
-                </button>
-            </p>
+                    {/* BUTTON */}
+                    <button
+                        onClick={handleContinue}
+                        disabled={pending}
+                        className="w-full py-3 rounded-2xl bg-black text-white font-medium text-sm hover:opacity-90 active:scale-[0.98] transition"
+                    >
+                        {pending ? "Signing in..." : "Continue"}
+                    </button>
+
+                    {/* ERROR */}
+                    {error && (
+                        <div
+                            role="alert"
+                            aria-live="polite"
+                            className="mt-5 w-full rounded-2xl border border-red-200 bg-red-50 text-red-700 px-4 py-3 text-sm"
+                        >
+                            {error}
+                        </div>
+                    )}
+
+                    {/* FORGOT PASSWORD */}
+                    <p className="mt-6 text-sm text-gray-500">
+                        <button
+                            className="text-black font-medium hover:underline"
+                            onClick={() => navigate("/forgot-password")}
+                        >
+                            Forgot your password?
+                        </button>
+                    </p>
+                </div>
+            </div>
         </div>
     );
 };

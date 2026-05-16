@@ -8,13 +8,20 @@ const PaymentPage = () => {
     const { checkoutInfo, clearCart } = useContext(CartContext);
     const navigate = useNavigate();
 
-    const [copied, setCopied] = useState(false);
     const [success, setSuccess] = useState(false);
     const [submitting, setSubmitting] = useState(false);
     const [proof, setProof] = useState(null);
     const [error, setError] = useState("");
 
-    const { cart = [], subtotal = 0, deliveryFee = 0, total = 0, userInfo = {}, shipping = {} } = checkoutInfo || {};
+    const {
+        cart = [],
+        subtotal = 0,
+        deliveryFee = 0,
+        total = 0,
+        userInfo = {},
+        shipping = {},
+    } = checkoutInfo || {};
+
     const orderNumber = `KAV-${Date.now().toString().slice(-6)}`;
 
     if (!cart.length) {
@@ -22,12 +29,9 @@ const PaymentPage = () => {
         return null;
     }
 
-    /* ============================
-       HELPERS
-    ============================ */
     const orderItemsText = cart
         .map(
-            item =>
+            (item) =>
                 `• ${item.name} (${item.size || "ONE SIZE"}) x${item.quantity} — R${
                     item.price * item.quantity
                 }`
@@ -47,9 +51,7 @@ ${shipping.province || ""}
 ${shipping.postalCode || ""}
 `.trim();
 
-    /* ============================
-       SUCCESS SCREEN
-    ============================ */
+    /* SUCCESS SCREEN */
     if (success) {
         return (
             <div className="min-h-screen flex items-center justify-center bg-gray-50 px-4">
@@ -61,8 +63,7 @@ ${shipping.postalCode || ""}
                     </h2>
 
                     <p className="text-gray-600 text-sm mb-6">
-                        Your order has been received and is pending payment
-                        verification. We’ll notify you once it’s confirmed.
+                        Your order is pending payment verification.
                     </p>
 
                     <div className="bg-gray-100 rounded-lg p-3 text-sm mb-6">
@@ -72,7 +73,7 @@ ${shipping.postalCode || ""}
 
                     <button
                         onClick={() => navigate("/orders")}
-                        className="w-full bg-black text-white py-2 rounded hover:bg-gray-800 transition"
+                        className="w-full bg-black text-white py-2 rounded"
                     >
                         View my orders
                     </button>
@@ -81,9 +82,11 @@ ${shipping.postalCode || ""}
         );
     }
 
-    /* ============================
-       SUBMIT HANDLER
-    ============================ */
+    /* CLEAN OBJECT (prevents Firestore crash) */
+    const clean = (obj) =>
+        JSON.parse(JSON.stringify(obj, (k, v) => (v === undefined ? null : v)));
+
+    /* SUBMIT */
     const handleWhatsAppSubmit = async () => {
         if (submitting) return;
 
@@ -93,7 +96,7 @@ ${shipping.postalCode || ""}
         }
 
         if (!shipping.address || !shipping.city) {
-            setError("Delivery details are missing. Please return to checkout.");
+            setError("Delivery details are missing.");
             return;
         }
 
@@ -103,174 +106,321 @@ ${shipping.postalCode || ""}
             const message = `
 🧾 *NEW EFT ORDER*
 
-🆔 Order Number: ${orderNumber}
+🆔 Order: ${orderNumber}
 
-👤 Name: ${fullName}
-📧 Email: ${userInfo?.email || "N/A"}
-📞 Phone: ${shipping.phone || "N/A"}
+👤 ${fullName}
+📧 ${userInfo?.email || "N/A"}
+📞 ${shipping.phone || "N/A"}
 
-📍 *Delivery Address*
-${fullAddress || "Not provided"}
+📍 Address:
+${fullAddress}
 
-🛍 *Order Items*
+🛍 Items:
 ${orderItemsText}
 
-💰 *Subtotal*: R${subtotal}
-🚚 *Delivery*: ${deliveryFee === 0 ? "FREE" : `R${deliveryFee}`}
-💳 *Total Paid*: R${total}
+💰 Total: R${total}
+            `;
 
-🧾 *Proof*: ${proof ? "Uploaded" : "Pending"}
-        `;
+            window.open(
+                `https://wa.me/27627833498?text=${encodeURIComponent(message)}`,
+                "_blank"
+            );
 
-            const phone = "27627833498";
-            const whatsappUrl = `https://wa.me/${phone}?text=${encodeURIComponent(message)}`;
+            await addDoc(
+                collection(db, "orders"),
+                clean({
+                    userId: auth.currentUser.uid,
+                    orderNumber,
+                    subtotal,
+                    deliveryFee,
+                    total,
 
-            // WhatsApp FIRST
-            window.open(whatsappUrl, "_blank");
+                    items: cart.map((item) => ({
+                        id: item.id || null,
+                        slug: item.slug || "",
+                        name: item.name || "Item",
+                        price: item.price || 0,
+                        quantity: item.quantity || 1,
+                        size: item.size || "ONE_SIZE",
+                        image: item.image || "",
+                        color: item.color || null,
+                    })),
 
-            const orderData = {
-                userId: auth.currentUser.uid,
-                orderNumber,
-                subtotal,
-                deliveryFee,
-                deliveryType: deliveryFee === 0 ? "free" : "standard",
-                items: cart.map(item => ({
-                    id: item.id,
-                    name: item.name,
-                    price: item.price,
-                    quantity: item.quantity,
-                    size: item.size || "ONE_SIZE",
-                    image: item.image
-                })),
-                total: Number(total),
-                deliveryAddress: {
-                    firstName: shipping.firstName || "",
-                    lastName: shipping.lastName || "",
-                    phone: shipping.phone || "",
-                    address: shipping.address || "",
-                    apartment: shipping.apartment || "",
-                    city: shipping.city || "",
-                    province: shipping.province || "",
-                    postalCode: shipping.postalCode || ""
-                },
-                proofName: proof?.name || null,
-                status: "pending",
-                createdAt: serverTimestamp()
-            };
-
-            await addDoc(collection(db, "orders"), orderData);
+                    deliveryAddress: shipping,
+                    proofName: proof?.name || null,
+                    status: "pending",
+                    createdAt: serverTimestamp(),
+                })
+            );
 
             clearCart();
             setSuccess(true);
         } catch (err) {
             console.error(err);
-            setError("Something went wrong. Please try again.");
+            setError("Something went wrong while placing order.");
         } finally {
             setSubmitting(false);
         }
     };
 
-    /* ============================
-       PAGE UI
-    ============================ */
     return (
-        <div className="min-h-screen bg-gray-50 px-4 py-8">
-            <div className="max-w-5xl mx-auto grid md:grid-cols-2 gap-8">
+        <div className="min-h-screen bg-[#f6f6f3] px-4 py-10">
 
-                {/* ORDER SUMMARY */}
-                <div className="bg-white rounded-lg shadow-md p-6">
-                    <h2 className="text-xl font-semibold mb-4">Order Summary</h2>
+            <div className="max-w-6xl mx-auto">
 
-                    {cart.map(item => (
-                        <div
-                            key={`${item.id}-${item.size || "ONE_SIZE"}`}
-                            className="flex justify-between mb-2 text-sm"
-                        >
-                            <span>{item.name} × {item.quantity}</span>
-                            <span>R{item.price * item.quantity}</span>
-                        </div>
-                    ))}
+                {/* PAGE HEADER */}
+                <div className="mb-10">
+                    <p className="text-xs uppercase tracking-[0.3em] text-gray-500 mb-2">
+                        Secure Payment
+                    </p>
 
-                    <div className="border-t mt-4 pt-3 flex justify-between font-semibold">
-                        <span>Total</span>
-                        <span>R{total}</span>
-                    </div>
+                    <h1 className="text-4xl font-semibold tracking-tight">
+                        Complete Your Order
+                    </h1>
                 </div>
 
-                {/* EFT PAYMENT */}
-                <div className="bg-white rounded-lg shadow-md p-6">
-                    <h2 className="text-xl font-semibold mb-4">EFT Payment</h2>
+                <div className="grid grid-cols-1 lg:grid-cols-[1.1fr_0.9fr] gap-6">
 
-                    {/* BANK DETAILS */}
-                    <div className="bg-gray-100 rounded-lg p-4 mb-4 text-sm space-y-2">
-                        <p className="font-semibold">Banking Details</p>
+                    {/* LEFT SIDE */}
+                    <div className="space-y-6">
 
-                        <div className="flex justify-between">
-                            <span>Bank:</span>
-                            <span>Capitec Bank</span>
-                        </div>
+                        {/* ORDER SUMMARY */}
+                        <div className="bg-white border border-gray-200 rounded-3xl p-8">
 
-                        <div className="flex justify-between">
-                            <span>Account Name:</span>
-                            <span>Kavanti</span>
-                        </div>
+                            <div className="flex items-center justify-between mb-8">
+                                <div>
+                                    <p className="text-xs uppercase tracking-[0.25em] text-gray-500 mb-2">
+                                        Summary
+                                    </p>
 
-                        <div className="flex items-center justify-between gap-2 overflow-x-auto">
-                            <span className="shrink-0">Account Number:</span>
-                            <div className="flex items-center gap-2 whitespace-nowrap">
-                                <span className="font-mono text-sm sm:text-base whitespace-nowrap">
-                                    1197460347
+                                    <h2 className="text-2xl font-semibold">
+                                        Order Details
+                                    </h2>
+                                </div>
+
+                                <span className="text-sm text-gray-500">
+                                {cart.length} items
+                            </span>
+                            </div>
+
+                            <div className="space-y-5">
+                                {cart.map((item) => (
+                                    <div
+                                        key={`${item.slug}-${item.size}`}
+                                        className="flex gap-4"
+                                    >
+                                        {/* IMAGE */}
+                                        <div className="relative">
+                                            <img
+                                                src={item.image}
+                                                alt={item.name}
+                                                className="w-24 h-28 rounded-2xl object-cover bg-[#f4f4f4]"
+                                            />
+
+                                            <div className="absolute -top-2 -right-2 bg-black text-white text-xs w-6 h-6 rounded-full flex items-center justify-center">
+                                                {item.quantity}
+                                            </div>
+                                        </div>
+
+                                        {/* INFO */}
+                                        <div className="flex-1 flex justify-between gap-4">
+                                            <div>
+                                                <p className="font-medium text-base leading-tight">
+                                                    {item.name}
+                                                </p>
+
+                                                <div className="mt-3 space-y-1">
+                                                    <p className="text-sm text-gray-500">
+                                                        Size: {item.size}
+                                                    </p>
+
+                                                    {item.color && (
+                                                        <div className="flex items-center gap-2">
+                                                        <span className="text-sm text-gray-500">
+                                                            Color:
+                                                        </span>
+
+                                                            <span
+                                                                className="w-3 h-3 rounded-full border border-gray-300"
+                                                                style={{
+                                                                    backgroundColor:
+                                                                        item.color.hex ||
+                                                                        item.color.value
+                                                                }}
+                                                            />
+
+                                                            <span className="text-sm text-gray-600">
+                                                            {item.color.name}
+                                                        </span>
+                                                        </div>
+                                                    )}
+                                                </div>
+                                            </div>
+
+                                            <p className="font-semibold whitespace-nowrap">
+                                                R{item.price * item.quantity}
+                                            </p>
+                                        </div>
+                                    </div>
+                                ))}
+                            </div>
+
+                            {/* TOTALS */}
+                            <div className="border-t border-gray-200 mt-8 pt-6 space-y-4">
+
+                                <div className="flex justify-between text-sm text-gray-600">
+                                    <span>Subtotal</span>
+                                    <span>R{subtotal}</span>
+                                </div>
+
+                                <div className="flex justify-between text-sm text-gray-600">
+                                    <span>Delivery</span>
+                                    <span>
+                                    {deliveryFee === 0
+                                        ? "FREE"
+                                        : `R${deliveryFee}`}
                                 </span>
-                                <button
-                                    onClick={() => {
-                                        navigator.clipboard.writeText("1197460347");
-                                        setCopied(true);
-                                        setTimeout(() => setCopied(false), 2000);
-                                    }}
-                                    className="text-xs px-2 py-1 border rounded hover:bg-gray-200"
-                                >
-                                    {copied ? "Copied ✓" : "Copy"}
-                                </button>
+                                </div>
+
+                                <div className="flex justify-between pt-4 border-t border-gray-100">
+                                <span className="text-lg font-semibold">
+                                    Total
+                                </span>
+
+                                    <span className="text-2xl font-semibold">
+                                    R{total}
+                                </span>
+                                </div>
                             </div>
                         </div>
+                    </div>
 
-                        <div className="flex justify-between">
-                            <span>Reference:</span>
-                            <span className="font-semibold">{orderNumber}</span>
+                    {/* RIGHT SIDE */}
+                    <div className="space-y-6">
+
+                        {/* PAYMENT CARD */}
+                        <div className="bg-white border border-gray-200 rounded-3xl p-8 sticky top-6">
+
+                            <div className="mb-8">
+                                <p className="text-xs uppercase tracking-[0.25em] text-gray-500 mb-2">
+                                    EFT Payment
+                                </p>
+
+                                <h2 className="text-2xl font-semibold">
+                                    Bank Transfer
+                                </h2>
+                            </div>
+
+                            {/* BANK DETAILS */}
+                            <div className="bg-[#f8f8f8] border border-gray-200 rounded-2xl p-5 space-y-4">
+
+                                <div className="flex justify-between items-center">
+                                <span className="text-gray-500 text-sm">
+                                    Bank
+                                </span>
+
+                                    <span className="font-medium">
+                                    Capitec Bank
+                                </span>
+                                </div>
+
+                                <div className="flex justify-between items-center">
+                                <span className="text-gray-500 text-sm">
+                                    Account Name
+                                </span>
+
+                                    <span className="font-medium">
+                                    Kavanti
+                                </span>
+                                </div>
+
+                                <div className="flex justify-between items-center">
+                                <span className="text-gray-500 text-sm">
+                                    Account Number
+                                </span>
+
+                                    <span className="font-medium tracking-wide">
+                                    1197460347
+                                </span>
+                                </div>
+
+                                <div className="flex justify-between items-center">
+                                <span className="text-gray-500 text-sm">
+                                    Payment Reference
+                                </span>
+
+                                    <span className="font-semibold">
+                                    {orderNumber}
+                                </span>
+                                </div>
+                            </div>
+
+                            {/* NOTICE */}
+                            <div className="mt-5 bg-amber-50 border border-amber-200 rounded-2xl p-4">
+                                <p className="text-sm text-amber-800 leading-relaxed">
+                                    Use your order reference when making payment.
+                                    Orders are processed after payment verification.
+                                </p>
+                            </div>
+
+                            {/* FILE */}
+                            <div className="mt-6">
+                                <label className="block text-sm font-medium mb-3">
+                                    Upload Proof of Payment
+                                </label>
+
+                                <label className="w-full h-36 border-2 border-dashed border-gray-300 rounded-2xl bg-[#fafafa] flex flex-col items-center justify-center cursor-pointer hover:border-black transition">
+                                <span className="text-sm font-medium">
+                                    Choose file
+                                </span>
+
+                                    <span className="text-xs text-gray-500 mt-1">
+                                    JPG, PNG or PDF
+                                </span>
+
+                                    {proof && (
+                                        <span className="text-xs mt-3 text-black">
+                                        {proof.name}
+                                    </span>
+                                    )}
+
+                                    <input
+                                        type="file"
+                                        onChange={(e) =>
+                                            setProof(e.target.files[0])
+                                        }
+                                        className="hidden"
+                                    />
+                                </label>
+                            </div>
+
+                            {/* ERROR */}
+                            {error && (
+                                <div className="mt-4 bg-red-50 border border-red-200 rounded-2xl px-4 py-3">
+                                    <p className="text-sm text-red-600">
+                                        {error}
+                                    </p>
+                                </div>
+                            )}
+
+                            {/* BUTTON */}
+                            <button
+                                disabled={submitting}
+                                onClick={handleWhatsAppSubmit}
+                                className="w-full h-14 rounded-2xl bg-black text-white text-sm font-medium tracking-wide mt-6 hover:opacity-90 transition-all duration-300 disabled:opacity-50"
+                            >
+                                {submitting
+                                    ? "Processing Order..."
+                                    : "Complete via WhatsApp"}
+                            </button>
+
+                            {/* SECURITY TEXT */}
+                            <p className="text-xs text-center text-gray-500 mt-4 leading-relaxed">
+                                Your order will be confirmed after payment
+                                verification.
+                            </p>
                         </div>
                     </div>
-
-                    {/* OPTIONAL PROOF */}
-                    <div className="mb-3">
-                        <label className="block text-sm font-semibold mb-1">
-                            Upload Proof of Payment (optional)
-                        </label>
-                        <input
-                            type="file"
-                            accept="image/*,application/pdf"
-                            onChange={(e) => setProof(e.target.files[0])}
-                            className="w-full border rounded-lg px-3 py-2"
-                        />
-                    </div>
-
-                    {error && <p className="text-red-600 text-sm mb-2">{error}</p>}
-
-                    <button
-                        disabled={submitting}
-                        type="button"
-                        onClick={handleWhatsAppSubmit}
-                        className={`w-full mt-4 py-3 rounded-sm font-semibold transition ${
-                            submitting
-                                ? "bg-gray-400 cursor-not-allowed"
-                                : "bg-black text-white hover:bg-gray-800"
-                        }`}
-                    >
-                        {submitting ? "Processing..." : "I Have Paid – Send via WhatsApp"}
-                    </button>
-
-                    <p className="text-xs text-gray-500 mt-3 text-center">
-                        Orders are processed only after payment is verified.
-                    </p>
                 </div>
             </div>
         </div>

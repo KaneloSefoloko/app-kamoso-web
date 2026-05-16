@@ -1,103 +1,254 @@
-import React from 'react';
+import React from "react";
+import {motion} from "framer-motion";
 
-const OurStory = () => (
-    <div>
-        {/* Hero Section */}
-        {/*<div*/}
-        {/*    className="relative h-[40vh] w-full bg-cover bg-center flex items-center justify-center"*/}
-        {/*    style={{ backgroundImage: "url('/assets/ABOUT_US_4.webp')" }}*/}
-        {/*>*/}
-        {/*    <div className="absolute inset-0 bg-gray-100/40" />*/}
-        {/*</div>*/}
+const values = [
+    {
+        title: "Quality",
+        text: "Quality over quantity equates to longevity.",
+    },
+    {
+        title: "Teamwork",
+        text: "A collaborative effort is a lucrative effort.",
+    },
+    {
+        title: "Customer Service",
+        text: "We serve beyond fashion.",
+    },
+];
 
-        {/* Origin & Philosophy */}
-        <div className="pt-24">
-            <div
-                className="max-w-4xl mx-auto py-12 px-4 space-y-6 text-center font-sans md:font-serif font-light mb-36">
-                <h1 className="text-3xl font-light text-black z-10">Our Story</h1>
-                <p>
-                    Kavanti was born in the middle of the kasi noise founded in 2023 by Kanelo Sefoloko — where dreams
-                    feel
-                    too big, far apart from the reality and chances feel too small.
-                    The name stands for those who choose to rise anyway. Our designs are inspired by the streets we grew
-                    up
-                    on, the music that raised us, and the courage that
-                    it takes to stand out without asking for permission.
-                    <br/><br/>
-                    Kavanti isn't just clothing. It's identity. It's for the ones who hustle with purpose. The ones who
-                    walk
-                    with quiet confidence. The ones
-                    who know they are becoming something greater day by day.
-                    <br/><br/>
-                    Wear Kavanti. Don't just move through the world — leave a mark.
-                </p>
-                <p>
-                    Our vision is brought to life through an innovative, 21st-century African design philosophy
-                    that reflects the modern aspirations of South African youth.
-                </p>
-            </div>
-        </div>
+const OurStory = () => {
+    return (
+        <div className="bg-[#f8f8f6] text-black overflow-hidden">
 
-        {/* Responsive Image Section with Overlay */}
-        <div className="relative w-screen overflow-hidden">
+            {/* HERO */}
+            <section
+                className="relative h-[70vh] md:h-[90vh] overflow-hidden bg-[#f8f8f6] flex items-center justify-center">
 
-            <div
-                className="w-screen h-[200px] bg-no-repeat bg-center bg-contain"
-            >
+                {/* SIGNATURE */}
+                <img
+                    src="https://res.cloudinary.com/dkwfi3iku/image/upload/v1775855831/signature_wt5dpo.svg"
+                    alt="Kavanti Signature"
+                    className="
+        w-[105vw]
+        md:w-[85vw]
+        max-w-none
+        h-auto
+        object-contain
+        opacity-[0.08]
+        select-none
+        pointer-events-none
+        translate-y-10
+        md:translate-y-16
+    "
+                />
 
-            {/* Optional: Overlay for better readability */}
-                <div className="absolute inset-0 bg-black bg-opacity-30"></div>
+                {/* CONTENT */}
+                <div className="absolute inset-0 flex flex-col items-center justify-center text-center px-6">
+                    <p className="uppercase tracking-[0.3em] text-sm text-black/60 mb-4">
+                        KAVANTI
+                    </p>
 
-                {/* Optional: Centered text or content */}
-                <div className="relative z-10 flex items-center justify-center h-full">
-                    <h1 className="text-white text-2xl sm:text-3xl md:text-5xl">
-                        TODAY | TOMORROW | ALWAYS
+                    <h1 className="text-5xl md:text-7xl font-light leading-tight">
+                        Our Story
                     </h1>
+                    <p className="text-black/60 text-base md:text-lg leading-relaxed max-w-2xl mx-auto">
+                        Built from ambition, identity, and the courage
+                        to stand out without permission.
+                    </p>
                 </div>
-            </div>
+            </section>
+
+            {/* STORY SECTION */}
+            <section className="py-24 px-5 md:px-10">
+                <div className="max-w-6xl mx-auto grid md:grid-cols-2 gap-16 items-center">
+
+                    {/* LEFT IMAGE */}
+                    <motion.div
+                        initial={{opacity: 0, x: -40}}
+                        whileInView={{opacity: 1, x: 0}}
+                        viewport={{once: true}}
+                        transition={{duration: 0.8}}
+                        className="relative"
+                    >
+                        <img
+                            src="/assets/Image.png"
+                            alt="Kavanti Story"
+                            className="relative rounded-[2rem] w-[80%] md:w-[70%] mx-auto h-[420px] object-contain shadow-2xl"
+                        />
+                    </motion.div>
+
+                    {/* RIGHT TEXT */}
+                    <motion.div
+                        initial={{opacity: 0, x: 40}}
+                        whileInView={{opacity: 1, x: 0}}
+                        viewport={{once: true}}
+                        transition={{duration: 0.8}}
+                    >
+                        <p className="uppercase tracking-[0.25em] text-sm text-gray-500 mb-4">
+                            Since 2023
+                        </p>
+
+                        <h2 className="text-4xl md:text-5xl font-light leading-tight mb-8">
+                            More Than Clothing
+                        </h2>
+
+                        <div className="space-y-6 text-gray-600 leading-relaxed text-base md:text-lg font-light">
+                            <p>
+                                Kavanti was born in the middle of the kasi noise
+                                — founded in 2023 by Kanelo Sefoloko —
+                                where dreams often feel bigger than the chances
+                                available and far apart from the reality.
+                            </p>
+
+                            <p>
+                                The name stands for those who choose to rise anyway.
+                                Our designers are inspired by the streets we grew up on,
+                                the township culture, music, ambition,
+                                and everyday resilience, Kavanti represents
+                                identity, purpose, and confidence.
+                            </p>
+
+                            <p>
+                                This is for the ones building something greater
+                                day by day. The ones who move with quiet
+                                confidence while leaving a mark everywhere they go.
+                            </p>
+                            <br/>
+                            <p>
+                                Wear Kavanti. Don't just move through the world — leave a mark with Kavanti.
+                            </p>
+                        </div>
+
+                        {/* QUOTE */}
+                        <div className="mt-10 border-l-2 border-black pl-6">
+                            <p className="text-2xl md:text-3xl font-light italic leading-relaxed">
+                                “Today | Tomorrow | Always”
+                            </p>
+                        </div>
+                    </motion.div>
+                </div>
+            </section>
+
+            {/* BANNER */}
+            <section className="relative py-28 overflow-hidden">
+
+                <div className="absolute inset-0 bg-black"/>
+
+                <div
+                    className="absolute inset-0 opacity-20 bg-cover bg-center"
+                    style={{
+                        backgroundImage:
+                            "url('https://res.cloudinary.com/dkwfi3iku/image/upload/v1775855828/Image_1_pepgbt.png')",
+                    }}
+                />
+
+                <div className="relative z-10 max-w-5xl mx-auto px-6 text-center">
+                    <motion.h2
+                        initial={{opacity: 0, y: 30}}
+                        whileInView={{opacity: 1, y: 0}}
+                        viewport={{once: true}}
+                        transition={{duration: 0.8}}
+                        className="text-white text-4xl md:text-6xl font-light leading-tight"
+                    >
+                        African streetwear built
+                        for self-definition.
+                    </motion.h2>
+                </div>
+            </section>
+
+            {/* VISION */}
+            <section className="py-24 px-5 md:px-10 bg-white">
+
+                <div className="max-w-4xl mx-auto text-center">
+
+                    <p className="uppercase tracking-[0.25em] text-sm text-gray-500 mb-4">
+                        Vision
+                    </p>
+
+                    <h2 className="text-4xl md:text-5xl font-light mb-8">
+                        Designed For Elevation
+                    </h2>
+
+                    <p className="text-gray-600 leading-relaxed text-lg font-light">
+                        Kavanti exists to empower individuals to stand
+                        confidently as they are — expressive,
+                        intentional, and unapologetic.
+                        We aim to build a global streetwear identity rooted
+                        in African creativity and modern aspiration.
+                    </p>
+
+                    {/* PHILOSOPHY */}
+                    <div className="grid md:grid-cols-3 gap-6 mt-16">
+
+                        {[
+                            "Style is personal.",
+                            "Presence is power.",
+                            "Culture is not followed — it is created.",
+                        ].map((item) => (
+                            <motion.div
+                                key={item}
+                                initial={{opacity: 0, y: 30}}
+                                whileInView={{opacity: 1, y: 0}}
+                                viewport={{once: true}}
+                                transition={{duration: 0.5}}
+                                className="bg-[#f8f8f6] rounded-3xl p-8 border border-black/5"
+                            >
+                                <p className="text-lg font-light leading-relaxed">
+                                    {item}
+                                </p>
+                            </motion.div>
+                        ))}
+                    </div>
+                </div>
+            </section>
+
+            {/* VALUES */}
+            <section className="py-24 px-5 md:px-10 bg-[#f8f8f6]">
+
+                <div className="max-w-6xl mx-auto">
+
+                    <div className="mb-16 text-center">
+                        <p className="uppercase tracking-[0.25em] text-sm text-gray-500 mb-4">
+                            Core Values
+                        </p>
+
+                        <h2 className="text-4xl md:text-5xl font-light">
+                            What Drives Us
+                        </h2>
+                    </div>
+
+                    <div className="grid md:grid-cols-3 gap-8">
+
+                        {values.map((value, i) => (
+                            <motion.div
+                                key={value.title}
+                                initial={{opacity: 0, y: 40}}
+                                whileInView={{opacity: 1, y: 0}}
+                                viewport={{once: true}}
+                                transition={{
+                                    duration: 0.7,
+                                    delay: i * 0.1,
+                                }}
+                                className="bg-white rounded-[2rem] p-10 border border-black/5 shadow-sm hover:shadow-xl transition-all duration-500"
+                            >
+                                <div className="text-5xl font-light text-black/10 mb-6">
+                                    0{i + 1}
+                                </div>
+
+                                <h3 className="text-2xl font-light mb-4">
+                                    {value.title}
+                                </h3>
+
+                                <p className="text-gray-600 leading-relaxed font-light">
+                                    {value.text}
+                                </p>
+                            </motion.div>
+                        ))}
+                    </div>
+                </div>
+            </section>
         </div>
-
-        {/* Vision & Core Values Section */}
-        <div className="bg-white py-12 px-4">
-            <div className="max-w-4xl mx-auto space-y-8 font-light">
-                <div>
-                    <h2 className="text-3xl font-light text-black text-center mb-4">Our Vision</h2>
-                    <p className="font-sans md:font-serif text-center mb-4">
-                        Kavanti aims on building a global streetwear identity that celebrates self-definition. We also
-                        exist to empower individuals to stand as they are — confident,
-                        expressive, and unapologetic. We aim to become a symbol of elevation: taking the everyday and
-                        turning it into something bold, intentional, and distinct.
-                    </p>
-                    <ul className="list-disc list-inside text-center space-y-1">
-                        <li>Style is personal.</li>
-                        <li>Presence is power.</li>
-                        <li>Culture is not followed — it is created.</li>
-                    </ul>
-                </div>
-
-                <div>
-                    <h3 className="text-lg font-light text-black text-center mb-1">Quality</h3>
-                    <p className="font-sans md:font-serif text-center mb-4">
-                        Quality over quantity equates to longevity.
-                    </p>
-                </div>
-
-                <div>
-                    <h3 className="text-lg font-light text-black text-center mb-1">Teamwork</h3>
-                    <p className="font-sans md:font-serif text-center mb-4">
-                        A collaborative effort is a lucrative effort.
-                    </p>
-                </div>
-
-                <div>
-                    <h3 className="text-lg font-light text-black text-center mb-1">Customer service</h3>
-                    <p className="font-sans md:font-serif text-center mb-4">
-                        We serve beyond fashion.
-                    </p>
-                </div>
-            </div>
-        </div>
-    </div>
-);
+    );
+};
 
 export default OurStory;

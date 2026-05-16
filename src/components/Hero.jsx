@@ -43,6 +43,8 @@ const Hero = () => {
     const nextSectionRef = useRef(null);
 
     const isMobile = viewportW < 768;
+    const [categories, setCategories] = useState([]);
+
 
     // ---------------- RESIZE ----------------
     const onResize = useMemo(
@@ -75,6 +77,28 @@ const Hero = () => {
             } catch (err) {
                 console.error("Hero load failed:", err);
                 setIsReady(true);
+            }
+        })();
+
+        return () => (mounted = false);
+    }, []);
+
+    useEffect(() => {
+        let mounted = true;
+
+        (async () => {
+            try {
+                const snap = await getDocs(collection(db, "categories"));
+                const data = snap.docs.map(doc => ({
+                    id: doc.id,
+                    ...doc.data()
+                }));
+
+                if (!mounted) return;
+                setCategories(data);
+
+            } catch (err) {
+                console.error("Categories load failed:", err);
             }
         })();
 
@@ -201,19 +225,23 @@ const Hero = () => {
                 ref={nextSectionRef}
                 className="min-h-screen bg-white flex flex-col items-center justify-center px-4 md:px-10 lg:px-20 pt-24 md:pt-32"
             >
-                <h2 className="text-4xl md:text-5xl font-bold mb-6 text-center">
+                <h2 className="text-xl md:text-3xl font-semibold tracking-[0.2em] uppercase mb-10 text-center">
                     Discover Our Latest Collection
                 </h2>
 
-                <p className="max-w-2xl text-center text-gray-700 mb-12">
+                <p className="text-xl md:text-sm font-light tracking-[0.2em] uppercase mb-10 text-center">
                     Explore our curated selection of new arrivals. Find the perfect
                     streetwear, casual, or accessory pieces to elevate your style.
                 </p>
 
                 <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6 w-full">
-                    <CategoryCard src="/assets/BlackAndWhite.svg" title="Streetwear" />
-                    <CategoryCard src="/assets/design.svg" title="Casual" />
-                    <CategoryCard src="/assets/greenage-shades.jpeg" title="Accessories" />
+                    {categories.map((cat) => (
+                        <CategoryCard
+                            key={cat.id}
+                            src={cat.src}
+                            title={cat.title}
+                        />
+                    ))}
                 </div>
             </section>
         </>
@@ -221,18 +249,25 @@ const Hero = () => {
 };
 
 // ---------------- CATEGORY CARD ----------------
-const CategoryCard = ({ src, title }) => (
-    <div className="group relative overflow-hidden rounded-xl shadow-lg cursor-pointer">
-        <img
-            src={src}
-            alt={title}
-            className="w-full h-72 object-cover group-hover:scale-105 transition duration-500"
-        />
-        <div className="absolute inset-0 bg-black/30 group-hover:bg-black/50 transition" />
-        <div className="absolute bottom-4 left-4 text-white">
-            <h3 className="text-lg tracking-widest uppercase">{title}</h3>
+const CategoryCard = ({ src, title, link }) => {
+    const navigate = useNavigate();
+
+    return (
+        <div
+            onClick={() => link && navigate(link)}
+            className="group relative overflow-hidden rounded-xl shadow-lg cursor-pointer"
+        >
+            <img
+                src={src}
+                alt={title}
+                className="w-full aspect-[4/3] md:aspect-[4/3] object-contain bg-black/5"
+            />
+            <div className="absolute inset-0 bg-black/30 group-hover:bg-black/50 transition" />
+            <div className="absolute bottom-4 left-4 text-white">
+                <h3 className="text-lg tracking-widest uppercase">{title}</h3>
+            </div>
         </div>
-    </div>
-);
+    );
+};
 
 export default Hero;

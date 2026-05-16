@@ -27,41 +27,60 @@ const SideNav = () => {
     };
 
     return (
-        <aside className="w-full md:w-64 bg-white border-b md:border-b-0 md:border-r border-gray-200 flex flex-col">
-            {/* Profile Section */}
-            <div className="p-6 border-b flex flex-col items-center text-center">
-                <div className="relative group">
-                    <img
-                        src={avatar}
-                        alt="Avatar"
-                        className="h-20 w-20 rounded-full object-cover border shadow-sm"
-                    />
+        <aside className="w-full md:w-72 bg-[#f6f6f3] border-r border-gray-200 flex flex-col min-h-screen">
+
+            {/* PROFILE */}
+            <div className="p-6 border-b border-gray-200 bg-white">
+
+                <div className="flex flex-col items-center text-center">
+
+                    {/* AVATAR */}
+                    <div className="relative group">
+                        <img
+                            src={avatar}
+                            alt="Avatar"
+                            className="h-24 w-24 rounded-full object-cover border border-gray-200 shadow-sm"
+                        />
+
+                        <button
+                            onClick={() => navigate("/account/profile")}
+                            className="absolute bottom-1 right-1 bg-black text-white text-[10px] px-2 py-1 rounded-full
+                        opacity-0 group-hover:opacity-100 transition"
+                        >
+                            Edit
+                        </button>
+                    </div>
+
+                    {/* NAME */}
+                    <h3 className="mt-4 text-lg font-semibold tracking-tight">
+                        {displayName}
+                    </h3>
+
+                    <p className="text-sm text-gray-500 mt-1">
+                        {user?.email || ""}
+                    </p>
+
+                    {/* CTA */}
                     <button
                         onClick={() => navigate("/account/profile")}
-                        className="absolute bottom-0 right-0 bg-black text-white text-xs px-2 py-1 rounded-sm
-                           opacity-0 group-hover:opacity-100 transition"
+                        className="mt-4 text-xs tracking-wide uppercase text-gray-600 hover:text-black transition"
                     >
-                        Edit
+                        Manage Account
                     </button>
                 </div>
-
-                <h3 className="mt-3 font-semibold text-gray-800">{displayName}</h3>
-                <p className="text-gray-500 text-sm">{user?.email || ""}</p>
-
-                <button
-                    onClick={() => navigate("/account/profile")}
-                    className="text-xs mt-2 text-blue-600 hover:underline"
-                >
-                    Manage Account
-                </button>
             </div>
 
-            {/* Navigation Links */}
-            <nav className="flex-1 p-4">
+            {/* NAV */}
+            <nav className="flex-1 p-4 space-y-2">
+
                 <NavLink
                     to="/orders"
                     className={({ isActive }) =>
-                        `block px-3 py-2 rounded ${isActive ? "bg-gray-100" : "hover:bg-gray-50"}`
+                        `flex items-center px-4 py-3 rounded-2xl text-sm font-medium transition ${
+                            isActive
+                                ? "bg-white border border-gray-200 shadow-sm text-black"
+                                : "text-gray-600 hover:bg-white hover:border hover:border-gray-200"
+                        }`
                     }
                 >
                     Orders
@@ -70,21 +89,31 @@ const SideNav = () => {
                 <NavLink
                     to="/account/profile"
                     className={({ isActive }) =>
-                        `block px-3 py-2 rounded ${isActive ? "bg-gray-100" : "hover:bg-gray-50"}`
+                        `flex items-center px-4 py-3 rounded-2xl text-sm font-medium transition ${
+                            isActive
+                                ? "bg-white border border-gray-200 shadow-sm text-black"
+                                : "text-gray-600 hover:bg-white hover:border hover:border-gray-200"
+                        }`
                     }
                 >
                     Profile
                 </NavLink>
             </nav>
 
-            {/* Sign Out */}
-            <div className="p-4 border-t">
+            {/* FOOTER */}
+            <div className="p-4 border-t border-gray-200 bg-white">
+
                 <button
                     onClick={handleSignOut}
-                    className="w-full bg-black text-white py-2 rounded hover:bg-gray-700 transition"
+                    className="w-full h-12 rounded-2xl bg-black text-white text-sm font-medium tracking-wide
+                hover:opacity-90 transition"
                 >
                     Sign out
                 </button>
+
+                <p className="text-[11px] text-gray-400 text-center mt-3">
+                    Secure session management
+                </p>
             </div>
         </aside>
     );

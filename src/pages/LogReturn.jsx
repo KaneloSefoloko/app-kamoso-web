@@ -38,10 +38,7 @@ const LogReturn = () => {
 
         try {
             await addDoc(collection(db, "returns"), {
-                orderNumber: formData.orderNumber,
-                email: formData.email,
-                reason: formData.reason,
-                notes: formData.notes,
+                ...formData,
                 status: "pending",
                 createdAt: serverTimestamp(),
             });
@@ -54,7 +51,6 @@ const LogReturn = () => {
                 reason: "",
                 notes: "",
             });
-
         } catch (error) {
             console.error("Error submitting return:", error);
             setStatus("error");
@@ -62,98 +58,125 @@ const LogReturn = () => {
     };
 
     return (
-        <div className="min-h-screen bg-white py-16 px-6">
-            <div className="max-w-3xl mx-auto bg-white p-8 rounded-xl space-y-10 shadow-sm border border-gray-200">
+        <div className="min-h-screen bg-[#f7f7f5] py-20 px-4">
 
-                <div className="text-center space-y-4">
-                    <h1 className="text-3xl font-bold tracking-wide">Log a Return</h1>
-                    <p className="text-gray-600 max-w-xl mx-auto">
-                        Submit a return request below. Our team will respond within 2–3 working days.
+            <div className="max-w-4xl mx-auto space-y-10">
+
+                {/* HERO */}
+                <div className="text-center space-y-3">
+                    <h1 className="text-4xl md:text-5xl font-light tracking-tight">
+                        Return Request
+                    </h1>
+
+                    <p className="text-gray-500 max-w-2xl mx-auto leading-relaxed">
+                        Submit your return request below. Our support team will review and respond
+                        within 2–3 business days.
                     </p>
                 </div>
 
-                <form onSubmit={handleSubmit} className="space-y-6">
+                {/* FORM CARD */}
+                <div className="bg-white border border-gray-200 rounded-3xl shadow-sm p-6 md:p-10">
 
-                    {/* Order Number */}
-                    <div>
-                        <label className="block mb-1 text-gray-700 font-medium">Order Number</label>
-                        <input
-                            type="text"
-                            name="orderNumber"
-                            required
-                            value={formData.orderNumber}
-                            onChange={handleChange}
-                            placeholder="e.g. KVNT12345"
-                            className="w-full border border-gray-300 rounded-lg px-4 py-3 focus:ring-2 focus:ring-black outline-none"
-                        />
-                    </div>
+                    <form onSubmit={handleSubmit} className="space-y-6">
 
-                    {/* Email */}
-                    <div>
-                        <label className="block mb-1 text-gray-700 font-medium">Email</label>
-                        <input
-                            type="email"
-                            name="email"
-                            required
-                            value={formData.email}
-                            onChange={handleChange}
-                            placeholder="you@example.com"
-                            className="w-full border border-gray-300 rounded-lg px-4 py-3 focus:ring-2 focus:ring-black outline-none"
-                        />
-                    </div>
+                        {/* ORDER + EMAIL */}
+                        <div className="grid md:grid-cols-2 gap-5">
 
-                    {/* Reason Dropdown */}
-                    <div>
-                        <label className="block mb-1 text-gray-700 font-medium">Reason</label>
-                        <select
-                            name="reason"
-                            required
-                            value={formData.reason}
-                            onChange={handleChange}
-                            className="w-full border border-gray-300 rounded-lg px-4 py-3 bg-white focus:ring-2 focus:ring-black outline-none"
+                            <div>
+                                <label className="text-sm text-gray-600 mb-2 block">
+                                    Order Number
+                                </label>
+                                <input
+                                    type="text"
+                                    name="orderNumber"
+                                    value={formData.orderNumber}
+                                    onChange={handleChange}
+                                    placeholder="e.g. KVNT12345"
+                                    className="w-full h-12 px-4 rounded-xl border border-gray-200 bg-[#fafafa] focus:bg-white focus:border-black outline-none transition"
+                                />
+                            </div>
+
+                            <div>
+                                <label className="text-sm text-gray-600 mb-2 block">
+                                    Email
+                                </label>
+                                <input
+                                    type="email"
+                                    name="email"
+                                    value={formData.email}
+                                    onChange={handleChange}
+                                    placeholder="you@example.com"
+                                    className="w-full h-12 px-4 rounded-xl border border-gray-200 bg-[#fafafa] focus:bg-white focus:border-black outline-none transition"
+                                />
+                            </div>
+                        </div>
+
+                        {/* REASON */}
+                        <div>
+                            <label className="text-sm text-gray-600 mb-2 block">
+                                Reason for return
+                            </label>
+
+                            <select
+                                name="reason"
+                                value={formData.reason}
+                                onChange={handleChange}
+                                className="w-full h-12 px-4 rounded-xl border border-gray-200 bg-[#fafafa] focus:bg-white focus:border-black outline-none transition"
+                            >
+                                <option value="">Select a reason</option>
+                                {returnReasons.map((reason) => (
+                                    <option key={reason} value={reason}>
+                                        {reason}
+                                    </option>
+                                ))}
+                            </select>
+                        </div>
+
+                        {/* NOTES */}
+                        <div>
+                            <label className="text-sm text-gray-600 mb-2 block">
+                                Additional notes (optional)
+                            </label>
+
+                            <textarea
+                                name="notes"
+                                value={formData.notes}
+                                onChange={handleChange}
+                                rows={5}
+                                placeholder="Tell us more about the issue..."
+                                className="w-full px-4 py-3 rounded-xl border border-gray-200 bg-[#fafafa] focus:bg-white focus:border-black outline-none transition resize-none"
+                            />
+                        </div>
+
+                        {/* SUBMIT */}
+                        <button
+                            type="submit"
+                            disabled={status === "submitting" || !isFormValid}
+                            className={`w-full h-12 rounded-xl font-medium transition-all duration-300 ${
+                                isFormValid
+                                    ? "bg-black text-white hover:opacity-90"
+                                    : "bg-gray-200 text-gray-400 cursor-not-allowed"
+                            }`}
                         >
-                            <option value="">Select a reason</option>
-                            {returnReasons.map((reason) => (
-                                <option key={reason} value={reason}>
-                                    {reason}
-                                </option>
-                            ))}
-                        </select>
-                    </div>
+                            {status === "submitting"
+                                ? "Submitting request..."
+                                : "Submit Return Request"}
+                        </button>
 
-                    {/* Notes */}
-                    <div>
-                        <label className="block mb-1 text-gray-700 font-medium">Notes (optional)</label>
-                        <textarea
-                            name="notes"
-                            value={formData.notes}
-                            onChange={handleChange}
-                            rows={4}
-                            placeholder="Describe the issue..."
-                            className="w-full border border-gray-300 rounded-lg px-4 py-3 focus:ring-2 focus:ring-black outline-none"
-                        />
-                    </div>
+                        {/* STATUS */}
+                        {status === "success" && (
+                            <div className="text-center text-green-600 text-sm">
+                                Your return request has been submitted successfully.
+                            </div>
+                        )}
 
-                    <button
-                        type="submit"
-                        disabled={status === "submitting" || !isFormValid}
-                        className={`w-full py-3 rounded-sm font-semibold transition
-                             ${isFormValid ? "bg-black text-white hover:bg-gray-900" : "bg-gray-300 text-gray-500 cursor-not-allowed"}`}
-                    >
-                        {status === "submitting" ? "Submitting..." : "Submit Return"}
-                    </button>
-                </form>
-
-                {status === "success" && (
-                    <p className="text-green-600 text-center font-medium">
-                        Your return request has been submitted.
-                    </p>
-                )}
-                {status === "error" && (
-                    <p className="text-red-600 text-center font-medium">
-                        Something went wrong. Please try again.
-                    </p>
-                )}
+                        {status === "error" && (
+                            <div className="text-center text-red-500 text-sm">
+                                Something went wrong. Please try again.
+                            </div>
+                        )}
+                    </form>
+                </div>
             </div>
         </div>
     );

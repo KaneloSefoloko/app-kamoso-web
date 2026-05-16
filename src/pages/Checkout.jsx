@@ -1,7 +1,8 @@
-import React, { useState, useContext } from "react";
+import React, {useState, useContext, useRef, useEffect} from "react";
 import { useNavigate } from "react-router-dom";
-import { useAuth } from "../context/AuthContext"; // Adjust path if needed
-import {CartContext} from "../components/CartContext";
+import { useAuth } from "../context/AuthContext";
+import { CartContext } from "../components/CartContext";
+import {FiChevronDown} from "react-icons/fi";
 
 const Checkout = () => {
     const { user } = useAuth();
@@ -17,6 +18,36 @@ const Checkout = () => {
     const [postalCode, setPostalCode] = useState("");
     const [phone, setPhone] = useState("");
     const [error, setError] = useState("");
+    const provinces = [
+        "Gauteng",
+        "Western Cape",
+        "KwaZulu-Natal",
+        "Eastern Cape",
+        "Limpopo",
+        "North West",
+        "Northern Cape",
+        "Free State",
+        "Mpumalanga",
+    ];
+
+    const [provinceOpen, setProvinceOpen] = useState(false);
+    const provinceRef = useRef(null);
+
+    useEffect(() => {
+        const handleClickOutside = (e) => {
+            if (provinceRef.current && !provinceRef.current.contains(e.target)) {
+                setProvinceOpen(false);
+            }
+        };
+
+        document.addEventListener("mousedown", handleClickOutside);
+        document.addEventListener("touchstart", handleClickOutside);
+
+        return () => {
+            document.removeEventListener("mousedown", handleClickOutside);
+            document.removeEventListener("touchstart", handleClickOutside);
+        };
+    }, []);
 
     const subtotal = cart.reduce(
         (sum, item) => sum + item.price * item.quantity,
@@ -28,6 +59,7 @@ const Checkout = () => {
 
     const handleProceedToPayment = () => {
         if (!cart.length) return;
+
         if (!firstName || !lastName || !address || !city || !postalCode || !phone) {
             setError("Please fill in all required fields.");
             return;
@@ -38,8 +70,20 @@ const Checkout = () => {
             subtotal,
             deliveryFee,
             total,
-            shipping: { firstName, lastName, address, apartment, city, province, postalCode, phone },
-            userInfo: { name: user?.displayName || "", email: user?.email || "" },
+            shipping: {
+                firstName,
+                lastName,
+                address,
+                apartment,
+                city,
+                province,
+                postalCode,
+                phone
+            },
+            userInfo: {
+                name: user?.displayName || "",
+                email: user?.email || ""
+            },
         });
 
         navigate("/pay");
@@ -51,139 +95,284 @@ const Checkout = () => {
     }
 
     return (
-        <div className="min-h-screen bg-gray-50 py-8 px-4">
-            <div className="max-w-4xl mx-auto bg-white shadow-lg rounded-sm overflow-hidden md:flex">
-                {/* Left: Form */}
-                <div className="w-full md:w-2/3 p-8 space-y-6">
-                    <h2 className="text-lg font-semibold">Delivery Details</h2>
-                    <form className="space-y-4" onSubmit={(e) => e.preventDefault()}>
-                        {/* Name */}
+        <div className="min-h-screen bg-[#f6f6f3] py-10 px-4">
+            <div className="max-w-6xl mx-auto grid grid-cols-1 lg:grid-cols-[1.3fr_0.7fr] gap-6">
+
+                {/* LEFT - FORM */}
+                <div className="bg-white rounded-3xl border border-gray-200 p-8 md:p-10">
+
+                    {/* HEADER */}
+                    <div className="mb-10">
+                        <p className="text-xs tracking-[0.25em] uppercase text-gray-500 mb-2">
+                            Secure Checkout
+                        </p>
+
+                        <h2 className="text-3xl font-semibold tracking-tight text-black">
+                            Delivery Details
+                        </h2>
+                    </div>
+
+                    <form
+                        className="space-y-5"
+                        onSubmit={(e) => e.preventDefault()}
+                    >
+                        {/* NAME */}
                         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                             <input
                                 type="text"
                                 placeholder="First Name"
                                 value={firstName}
                                 onChange={(e) => setFirstName(e.target.value)}
-                                required
-                                className="w-full border border-gray-300 rounded px-4 py-2 focus:outline-none focus:ring-2 focus:ring-yellow-400"
+                                className="w-full h-14 px-5 rounded-2xl border border-gray-200 bg-[#fafafa] outline-none focus:border-black transition"
                             />
+
                             <input
                                 type="text"
                                 placeholder="Last Name"
                                 value={lastName}
                                 onChange={(e) => setLastName(e.target.value)}
-                                required
-                                className="w-full border border-gray-300 rounded px-4 py-2 focus:outline-none focus:ring-2 focus:ring-yellow-400"
+                                className="w-full h-14 px-5 rounded-2xl border border-gray-200 bg-[#fafafa] outline-none focus:border-black transition"
                             />
                         </div>
 
+                        {/* ADDRESS */}
                         <input
                             type="text"
-                            placeholder="Address"
+                            placeholder="Street Address"
                             value={address}
                             onChange={(e) => setAddress(e.target.value)}
-                            required
-                            className="w-full border border-gray-300 rounded px-4 py-2 focus:outline-none focus:ring-2 focus:ring-yellow-400"
+                            className="w-full h-14 px-5 rounded-2xl border border-gray-200 bg-[#fafafa] outline-none focus:border-black transition"
                         />
+
                         <input
                             type="text"
                             placeholder="Apartment, suite, etc. (optional)"
                             value={apartment}
                             onChange={(e) => setApartment(e.target.value)}
-                            className="w-full border border-gray-300 rounded px-4 py-2 focus:outline-none focus:ring-2 focus:ring-yellow-400"
+                            className="w-full h-14 px-5 rounded-2xl border border-gray-200 bg-[#fafafa] outline-none focus:border-black transition"
                         />
+
+                        {/* CITY / PROVINCE / POSTAL */}
                         <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
                             <input
                                 type="text"
                                 placeholder="City"
                                 value={city}
                                 onChange={(e) => setCity(e.target.value)}
-                                required
-                                className="w-full border border-gray-300 rounded px-4 py-2 focus:outline-none focus:ring-2 focus:ring-yellow-400"
+                                className="w-full h-14 px-5 rounded-2xl border border-gray-200 bg-[#fafafa] outline-none focus:border-black transition"
                             />
-                            <select
-                                value={province}
-                                onChange={(e) => setProvince(e.target.value)}
-                                className="w-full border border-gray-300 rounded px-4 py-2 focus:outline-none focus:ring-2 focus:ring-yellow-400"
-                            >
-                                <option>Gauteng</option>
-                                <option>Western Cape</option>
-                                <option>KwaZulu-Natal</option>
-                                <option>Eastern Cape</option>
-                                <option>Limpopo</option>
-                                <option>North West</option>
-                                <option>Northern Cape</option>
-                                <option>FreeState</option>
-                                <option>Mpumalanga</option>
-                            </select>
+
+                            <div className="relative" ref={provinceRef}>
+                                {/* BUTTON */}
+                                <button
+                                    type="button"
+                                    onClick={() => setProvinceOpen((p) => !p)}
+                                    className="
+            w-full h-14 px-5
+            rounded-2xl border border-gray-200
+            bg-[#fafafa]
+            text-left
+            flex items-center justify-between
+            outline-none focus:border-black transition
+        "
+                                >
+                                    <span>{province}</span>
+
+                                    <FiChevronDown
+                                        className={`text-gray-400 transition-transform duration-200 ${
+                                            provinceOpen ? "rotate-180" : "rotate-0"
+                                        }`}
+                                    />
+                                </button>
+
+                                {/* DROPDOWN */}
+                                {provinceOpen && (
+                                    <div className="absolute z-50 mt-2 w-full bg-white border border-gray-200 rounded-2xl shadow-lg overflow-hidden">
+                                        {provinces.map((p) => (
+                                            <button
+                                                key={p}
+                                                type="button"
+                                                onClick={() => {
+                                                    setProvince(p);
+                                                    setProvinceOpen(false);
+                                                }}
+                                                className={`w-full text-left px-5 py-3 text-sm hover:bg-gray-50 transition ${
+                                                    province === p ? "bg-gray-100 font-medium" : ""
+                                                }`}
+                                            >
+                                                {p}
+                                            </button>
+                                        ))}
+                                    </div>
+                                )}
+                            </div>
+
                             <input
                                 type="text"
                                 placeholder="Postal Code"
                                 value={postalCode}
                                 onChange={(e) => setPostalCode(e.target.value)}
-                                required
-                                className="w-full border border-gray-300 rounded px-4 py-2 focus:outline-none focus:ring-2 focus:ring-yellow-400"
+                                className="w-full h-14 px-5 rounded-2xl border border-gray-200 bg-[#fafafa] outline-none focus:border-black transition"
                             />
                         </div>
+
+                        {/* PHONE */}
                         <input
                             type="text"
-                            placeholder="Phone"
+                            placeholder="Phone Number"
                             value={phone}
                             onChange={(e) => setPhone(e.target.value)}
-                            required
-                            className="w-full border border-gray-300 rounded px-4 py-2 focus:outline-none focus:ring-2 focus:ring-yellow-400"
+                            className="w-full h-14 px-5 rounded-2xl border border-gray-200 bg-[#fafafa] outline-none focus:border-black transition"
                         />
 
-                        {error && <p className="text-red-600">{error}</p>}
+                        {/* ERROR */}
+                        {error && (
+                            <div className="bg-red-50 border border-red-200 text-red-600 px-4 py-3 rounded-2xl text-sm">
+                                {error}
+                            </div>
+                        )}
 
+                        {/* BUTTON */}
                         <button
                             type="button"
                             onClick={handleProceedToPayment}
-                            disabled={cart.length === 0}
-                            className={`w-full py-3 mt-4 font-light  rounded-sm transition ${
-                                cart.length > 0
-                                    ? "bg-black text-white hover:bg-gray-800"
-                                    : "bg-gray-300 text-gray-500 cursor-not-allowed"
+                            disabled={!cart.length}
+                            className={`w-full h-14 mt-6 rounded-2xl text-sm font-medium tracking-wide transition-all duration-300 ${
+                                cart.length
+                                    ? "bg-black text-white hover:opacity-90"
+                                    : "bg-gray-200 text-gray-400"
                             }`}
                         >
-                            Proceed to Payment (R{total})
+                            Proceed to Payment • R{total}
                         </button>
                     </form>
                 </div>
 
-                {/* Right: Order Summary */}
-                <div className="w-full md:w-1/3 bg-gray-100 p-6 border-l border-gray-200">
-                    <h3 className="text-lg font-semibold mb-4">Order Summary</h3>
-                    <div className="space-y-4">
-                        {cart.map((item) => (
-                            <div key={`${item.id}-${item.size || "ONE_SIZE"}`} className="flex items-center">
-                                <img src={item.image} alt={item.name} className="w-16 h-16 object-cover rounded" />
-                                <div className="ml-4 flex-1">
-                                    <p className="font-medium">{item.name}</p>
-                                    <p className="text-gray-600">Qty: {item.quantity}</p>
-                                    <p className="text-gray-600">Size: {item.size}</p>
-                                </div>
-                                <p className="font-semibold">R{item.price * item.quantity}</p>
-                            </div>
-                        ))}
+                {/* RIGHT - SUMMARY */}
+                <div className="bg-white rounded-3xl border border-gray-200 p-8 h-fit sticky top-6">
+
+                    {/* HEADER */}
+                    <div className="flex items-center justify-between mb-8">
+                        <div>
+                            <p className="text-xs tracking-[0.25em] uppercase text-gray-500 mb-2">
+                                Summary
+                            </p>
+
+                            <h3 className="text-2xl font-semibold">
+                                Your Order
+                            </h3>
+                        </div>
+
+                        <span className="text-sm text-gray-500">
+                        {cart.length} items
+                    </span>
                     </div>
-                    <div className="border-t border-gray-300 mt-6 pt-4 space-y-2 text-sm">
-                        <div className="flex justify-between">
+
+                    {/* ITEMS */}
+                    <div className="space-y-5">
+                        {cart.map((item) => {
+                            const image =
+                                item.image ||
+                                item.variant?.image ||
+                                item.variants?.[0]?.image ||
+                                "/placeholder.png";
+
+                            return (
+                                <div
+                                    key={`${item.slug || item.id || item.name}-${item.size || "ONE_SIZE"}`}
+                                    className="flex gap-4"
+                                >
+                                    {/* IMAGE */}
+                                    <div className="relative">
+                                        <img
+                                            src={image}
+                                            alt={item.name}
+                                            className="w-24 h-28 object-cover rounded-2xl bg-[#f4f4f4]"
+                                        />
+
+                                        <div className="absolute -top-2 -right-2 w-6 h-6 rounded-full bg-black text-white text-xs flex items-center justify-center">
+                                            {item.quantity}
+                                        </div>
+                                    </div>
+
+                                    {/* INFO */}
+                                    <div className="flex-1 min-w-0">
+                                        <div className="flex items-start justify-between gap-3">
+                                            <div>
+                                                <p className="font-medium text-sm md:text-base leading-tight">
+                                                    {item.name}
+                                                </p>
+
+                                                {item.size && (
+                                                    <p className="text-sm text-gray-500 mt-2">
+                                                        Size: {item.size}
+                                                    </p>
+                                                )}
+
+                                                {item.color && (
+                                                    <div className="flex items-center gap-2 mt-2">
+                                                    <span className="text-sm text-gray-500">
+                                                        Color:
+                                                    </span>
+
+                                                        <span
+                                                            className="w-3 h-3 rounded-full border border-gray-300"
+                                                            style={{
+                                                                backgroundColor:
+                                                                    item.color.hex ||
+                                                                    item.color.value
+                                                            }}
+                                                        />
+
+                                                        <span className="text-sm text-gray-600">
+                                                        {item.color.name}
+                                                    </span>
+                                                    </div>
+                                                )}
+                                            </div>
+
+                                            <p className="font-semibold whitespace-nowrap">
+                                                R{item.price * item.quantity}
+                                            </p>
+                                        </div>
+                                    </div>
+                                </div>
+                            );
+                        })}
+                    </div>
+
+                    {/* TOTALS */}
+                    <div className="border-t border-gray-200 mt-8 pt-6 space-y-4">
+
+                        <div className="flex items-center justify-between text-sm text-gray-600">
                             <span>Subtotal</span>
                             <span>R{subtotal}</span>
                         </div>
-                        <div className="flex justify-between">
+
+                        <div className="flex items-center justify-between text-sm text-gray-600">
                             <span>Delivery</span>
-                            <span>{deliveryFee === 0 ? "FREE" : `R${deliveryFee}`}</span>
+
+                            <span>
+                            {deliveryFee === 0 ? "FREE" : `R${deliveryFee}`}
+                        </span>
                         </div>
-                        <div className="flex justify-between font-semibold text-base pt-2">
-                            <span>Total</span>
-                            <span>R{total}</span>
+
+                        <div className="flex items-center justify-between pt-3 border-t border-gray-100">
+                        <span className="text-lg font-semibold">
+                            Total
+                        </span>
+
+                            <span className="text-2xl font-semibold">
+                            R{total}
+                        </span>
                         </div>
+
                         {deliveryFee === 0 && (
-                            <p className="text-xs text-green-600 pt-1">
-                                🎉 Free delivery on orders over R900
-                            </p>
+                            <div className="bg-green-50 border border-green-200 rounded-2xl px-4 py-3">
+                                <p className="text-sm text-green-700">
+                                    Free delivery unlocked 🎉
+                                </p>
+                            </div>
                         )}
                     </div>
                 </div>
