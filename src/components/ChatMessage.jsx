@@ -24,7 +24,7 @@ const ChatMessage = ({ from, text }) => {
                         relative px-4 py-3 text-sm leading-relaxed
                         rounded-3xl break-words whitespace-pre-wrap
                         shadow-sm border
-                        transition-all duration-200
+                        transition-opacity duration-200
                         ${
                         isUser
                             ? `

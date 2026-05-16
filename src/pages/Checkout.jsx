@@ -237,7 +237,7 @@ const Checkout = () => {
                             type="button"
                             onClick={handleProceedToPayment}
                             disabled={!cart.length}
-                            className={`w-full h-14 mt-6 rounded-2xl text-sm font-medium tracking-wide transition-all duration-300 ${
+                            className={`w-full h-14 mt-6 rounded-2xl text-sm font-medium tracking-wide transition-opacity duration-300 ${
                                 cart.length
                                     ? "bg-black text-white hover:opacity-90"
                                     : "bg-gray-200 text-gray-400"

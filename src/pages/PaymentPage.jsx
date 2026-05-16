@@ -407,7 +407,7 @@ ${orderItemsText}
                             <button
                                 disabled={submitting}
                                 onClick={handleWhatsAppSubmit}
-                                className="w-full h-14 rounded-2xl bg-black text-white text-sm font-medium tracking-wide mt-6 hover:opacity-90 transition-all duration-300 disabled:opacity-50"
+                                className="w-full h-14 rounded-2xl bg-black text-white text-sm font-medium tracking-wide mt-6 hover:opacity-90 transition-opacity duration-300 disabled:opacity-50"
                             >
                                 {submitting
                                     ? "Processing Order..."

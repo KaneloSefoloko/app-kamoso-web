@@ -80,7 +80,7 @@ const FAQ = () => {
                                     setActiveCategory(cat);
                                     setOpenIndex(null);
                                 }}
-                                className={`px-5 py-2 text-sm rounded-full transition-all duration-200
+                                className={`px-5 py-2 text-sm rounded-full transition-opacity duration-200
                                     ${
                                     activeCategory === cat
                                         ? "bg-black text-white shadow-md"
@@ -121,7 +121,7 @@ const FAQ = () => {
 
                             {/* ANSWER */}
                             <div
-                                className={`px-6 overflow-hidden transition-all duration-300 ease-in-out bg-white ${
+                                className={`px-6 overflow-hidden transition-opacity duration-300 ease-in-out bg-white ${
                                     openIndex === index ? "max-h-40 py-4" : "max-h-0"
                                 }`}
                             >

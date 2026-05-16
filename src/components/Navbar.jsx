@@ -146,7 +146,7 @@ const Navbar = () => {
                             key={label}
                             to={path}
                             className={({ isActive }) =>
-                                `transition-all duration-300 ${
+                                `transition-opacity duration-300 ${
                                     isActive ? "text-yellow-400" : "text-white"
                                 } hover:text-yellow-400`
                             }
@@ -494,7 +494,7 @@ const Navbar = () => {
 
             {/* MOBILE MENU */}
             <div
-                className={`fixed inset-0 z-[60] md:hidden transition-all duration-300 ${
+                className={`fixed inset-0 z-[60] md:hidden transition-opacity duration-300 ${
                     menuOpen ? "visible" : "invisible"
                 }`}
             >

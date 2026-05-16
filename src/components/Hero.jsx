@@ -175,7 +175,7 @@ const Hero = () => {
                     alt={currentSlide.label || "Hero image"}
                     loading={currentIndex === 0 ? "eager" : "lazy"}
                     decoding="async"
-                    className="absolute inset-0 w-full h-full object-cover scale-105 transition-all duration-700"
+                    className="absolute inset-0 w-full h-full object-cover scale-105 transition-opacity duration-700"
                 />
 
                 {/* OVERLAY */}
@@ -196,7 +196,7 @@ const Hero = () => {
                             bg-white/10 backdrop-blur-md
                             text-xs md:text-sm tracking-[0.3em] uppercase
                             hover:bg-white hover:text-black
-                            transition-all duration-300
+                            transition-opacity duration-300
                         "
                     >
                         Shop Now

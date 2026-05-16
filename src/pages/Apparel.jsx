@@ -43,7 +43,7 @@ const BlurImage = ({ src, alt }) => {
                 loading="lazy"
                 decoding="async"
                 onLoad={() => setLoaded(true)}
-                className={`w-full h-full object-contain transition-all duration-500 ${
+                className={`w-full h-full object-contain transition-opacity duration-500 ${
                     loaded
                         ? "opacity-100 blur-0 scale-100"
                         : "opacity-0 blur-xl scale-105"

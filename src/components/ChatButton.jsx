@@ -13,7 +13,7 @@ const ChatButton = ({ onClick, hasNotification = true }) => {
                 shadow-[0_10px_30px_rgba(0,0,0,0.12)]
                 hover:shadow-[0_15px_45px_rgba(0,0,0,0.18)]
                 hover:scale-110 active:scale-95
-                transition-all duration-300
+                transition-opacity duration-300
                 flex items-center justify-center
                 group
             "

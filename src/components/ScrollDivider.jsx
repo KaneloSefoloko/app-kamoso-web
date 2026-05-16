@@ -29,7 +29,7 @@ const ScrollDivider = ({ targetRef, label }) => {
         <div
             ref={selfRef}
             className={`
-                flex justify-center my-4 transition-all duration-700
+                flex justify-center my-4 transition-opacity duration-700
                 ${visible ? "opacity-100 translate-y-0" : "opacity-0 translate-y-6"}
             `}
         >
@@ -53,7 +53,7 @@ const ScrollDivider = ({ targetRef, label }) => {
 
         shadow-[0_10px_40px_rgba(0,0,0,0.15)]
 
-        transition-all duration-500 ease-out
+        transition-opacity duration-500 ease-out
 
         hover:bg-white hover:shadow-[0_20px_60px_rgba(0,0,0,0.25)]
         hover:scale-110
@@ -76,7 +76,7 @@ const ScrollDivider = ({ targetRef, label }) => {
         border border-white/10
         scale-110 opacity-0
         group-hover:opacity-100 group-hover:scale-125
-        transition-all duration-500
+        transition-opacity duration-500
     " />
             </button>
         </div>

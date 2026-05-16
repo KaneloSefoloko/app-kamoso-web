@@ -229,7 +229,7 @@ const OurStory = () => {
                                     duration: 0.7,
                                     delay: i * 0.1,
                                 }}
-                                className="bg-white rounded-[2rem] p-10 border border-black/5 shadow-sm hover:shadow-xl transition-all duration-500"
+                                className="bg-white rounded-[2rem] p-10 border border-black/5 shadow-sm hover:shadow-xl transition-opacity duration-500"
                             >
                                 <div className="text-5xl font-light text-black/10 mb-6">
                                     0{i + 1}

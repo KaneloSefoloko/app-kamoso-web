@@ -109,7 +109,7 @@ const ReturnPolicy = () => {
                         <Link
                             to="/return"
                             className="px-8 py-3 rounded-full bg-black text-white text-sm font-medium
-                                       hover:scale-[1.02] transition-all duration-300"
+                                       hover:scale-[1.02] transition-opacity duration-300"
                         >
                             Log a Return
                         </Link>

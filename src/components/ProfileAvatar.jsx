@@ -60,7 +60,7 @@ const ProfileAvatar = () => {
                 <div
                     className={`
                         px-5 py-2 rounded-full text-sm font-medium
-                        border transition-all duration-300
+                        border transition-opacity duration-300
                         ${
                         uploading
                             ? "bg-gray-100 text-gray-400 border-gray-200 cursor-not-allowed"

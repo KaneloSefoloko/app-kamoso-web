@@ -65,7 +65,7 @@ const Payments = () => {
                     ].map((item, i) => (
                         <div
                             key={i}
-                            className="group bg-white border border-gray-200 rounded-2xl p-7 shadow-sm hover:shadow-lg hover:-translate-y-1 transition-all duration-300"
+                            className="group bg-white border border-gray-200 rounded-2xl p-7 shadow-sm hover:shadow-lg hover:-translate-y-1 transition-opacity duration-300"
                         >
                             <h2 className="text-lg font-medium mb-3 group-hover:text-black">
                                 {item.title}

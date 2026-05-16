@@ -152,7 +152,7 @@ const LogReturn = () => {
                         <button
                             type="submit"
                             disabled={status === "submitting" || !isFormValid}
-                            className={`w-full h-12 rounded-xl font-medium transition-all duration-300 ${
+                            className={`w-full h-12 rounded-xl font-medium transition-opacity duration-300 ${
                                 isFormValid
                                     ? "bg-black text-white hover:opacity-90"
                                     : "bg-gray-200 text-gray-400 cursor-not-allowed"
