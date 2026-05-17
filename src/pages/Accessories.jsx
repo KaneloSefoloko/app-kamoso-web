@@ -74,7 +74,7 @@ const ACCESSORY_CATEGORIES = [
     "crossbody-bags",
     "leather-belt",
     "Bob",
-    "Wig",
+    "wig",
     "Water Curly",
 ];
 

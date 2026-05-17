@@ -154,9 +154,14 @@ const ProductCard = ({ product }) => {
                 <h3 className="font-medium text-sm md:text-base">
                     {product.name}
                 </h3>
-                <p className="text-sm text-gray-600">
-                    R{product.price}
-                </p>
+                {typeof product.displayPrice === "number" && (
+                    <p className="text-sm text-gray-600">
+                        {product.category?.toLowerCase() === "wig"
+                            ? `From R${product.displayPrice}`
+                            : `R${product.displayPrice}`}
+                    </p>
+                )}
+
             </div>
 
             {/* COLORS */}

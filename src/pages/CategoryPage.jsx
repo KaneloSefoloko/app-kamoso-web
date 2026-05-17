@@ -10,6 +10,20 @@ import ComingSoonHero from "../components/ComingSoonHero";
 const normalize = (str) =>
     str?.toLowerCase().replace(/&/g, "-").replace(/\s+/g, "-");
 
+const getDisplayPrice = (product) => {
+    const isWig = product.category?.toLowerCase() === "wig";
+
+    if (isWig && Array.isArray(product.sizes)) {
+        const prices = product.sizes
+            .map(s => Number(s.price))
+            .filter(p => !isNaN(p));
+
+        return prices.length ? Math.min(...prices) : null;
+    }
+
+    return Number(product.price) || null;
+};
+
 const CategoryPage = () => {
     const { category } = useParams();
 
@@ -49,7 +63,12 @@ const CategoryPage = () => {
         const colors = new Set();
 
         baseProducts.forEach((p) => {
-            p.sizes?.forEach((s) => sizes.add(s));
+            // p.sizes?.forEach((s) => sizes.add(s));
+
+            p.sizes?.forEach((s) => {
+                const sizeValue = typeof s === "object" ? s.size : s;
+                sizes.add(sizeValue);
+            });
 
             p.variants?.forEach((v) => {
                 if (v.color?.value) {
@@ -234,16 +253,25 @@ const CategoryPage = () => {
                                 xl:grid-cols-4
                                 gap-6
                             ">
-                                {filteredProducts.map((product) => (
-                                    <motion.div
-                                        key={product.id}
-                                        initial={{ opacity: 0, y: 15 }}
-                                        animate={{ opacity: 1, y: 0 }}
-                                        transition={{ duration: 0.3 }}
-                                    >
-                                        <ProductCard product={product} />
-                                    </motion.div>
-                                ))}
+                                {filteredProducts.map((product) => {
+                                    const displayPrice = getDisplayPrice(product);
+
+                                    return (
+                                        <motion.div
+                                            key={product.id}
+                                            initial={{ opacity: 0, y: 15 }}
+                                            animate={{ opacity: 1, y: 0 }}
+                                            transition={{ duration: 0.3 }}
+                                        >
+                                            <ProductCard
+                                                product={{
+                                                    ...product,
+                                                    displayPrice,
+                                                }}
+                                            />
+                                        </motion.div>
+                                    );
+                                })}
                             </div>
                         )}
                     </main>
