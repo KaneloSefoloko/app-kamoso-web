@@ -6,23 +6,42 @@ import { Swiper, SwiperSlide } from "swiper/react";
 import { Pagination } from "swiper/modules";
 import "swiper/css";
 import "swiper/css/pagination";
+import {ToastContext} from "./ToastContext.jsx";
+
+
+const normalizeColor = (c) => c?.toLowerCase().trim();
 
 const ProductCard = ({ product }) => {
     const { addToCart } = useContext(CartContext);
     const navigate = useNavigate();
-
     const variants = product?.variants || [];
+    const { showToast } = useContext(ToastContext);
 
     const [selectedColor, setSelectedColor] = useState(
-        variants[0]?.color?.value
+        normalizeColor(variants[0]?.color?.value)
     );
+
+    const [selectedSize, setSelectedSize] = useState(
+        product.category?.toLowerCase() === "wig"
+            ? product.sizes?.[0]?.size || product.sizes?.[0]
+            : product.sizes?.[0] || ""
+    );
+
+    const resolveSize = (product, selectedSize) => {
+        if (product.category?.toLowerCase() === "wig") {
+            const match = product.sizes?.find((s) => s.size === selectedSize);
+            return match || product.sizes?.[0];
+        }
+
+        return selectedSize || product.sizes?.[0] || "ONE_SIZE";
+    };
 
     const activeVariant = useMemo(() => {
         return (
             variants.find(
                 (v) =>
-                    v.color?.value?.toLowerCase() ===
-                    selectedColor?.toLowerCase()
+                    normalizeColor(v.color?.value) ===
+                    normalizeColor(selectedColor)
             ) || variants[0]
         );
     }, [selectedColor, variants]);
@@ -35,18 +54,32 @@ const ProductCard = ({ product }) => {
         e.preventDefault();
         e.stopPropagation();
 
-        if (product.sizes?.length > 1) {
-            navigate(`/products/${product.slug}`);
+        const hasMultipleSizes =
+            product.sizes?.length > 1 &&
+            !(product.category?.toLowerCase() === "wig");
+
+        if (hasMultipleSizes) {
+            navigate(`/products/${product.slug}`, {
+                state: { selectedColor, selectedSize }
+            });
             return;
         }
+
+        const selectedVariant =
+            variants.find(v => normalizeColor(v.color?.value) ===
+                normalizeColor(selectedColor)) || activeVariant;
+
+        const size = resolveSize(product, selectedSize);
 
         addToCart({
             ...product,
             selectedColor,
-            variant: activeVariant,
-            size: product.sizes?.[0],
+            variant: selectedVariant,
+            size,
             quantity: 1,
         });
+
+        showToast("Added to cart 🛒");
     };
 
     // ✅ images fallback logic
@@ -58,49 +91,54 @@ const ProductCard = ({ product }) => {
     return (
         <div className="group relative w-full max-w-sm mx-auto">
 
-            {/* IMAGE */}
-            <Link
-                to={`/products/${product.slug}`}
-                className="block relative w-full aspect-[4/5] overflow-hidden bg-white"
-            >
-                {/* DESKTOP */}
-                <div className="hidden md:block relative w-full h-full">
-                    <img
-                        src={activeVariant.image || "/placeholder.png"}
-                        alt={product.name}
-                        className="absolute inset-0 m-auto h-full w-auto object-contain transition-opacity duration-300 group-hover:opacity-0"
-                    />
+            {/* IMAGE CONTAINER */}
+            <div className="relative w-full aspect-[4/5] overflow-hidden bg-white">
 
-                    {activeVariant.hoverImage && (
+                {/* IMAGE LINK ONLY */}
+                <Link
+                    to={`/products/${product.slug}`}
+                    state={{ selectedColor, selectedSize }}
+                    className="block relative w-full h-full"
+                >
+                    {/* DESKTOP */}
+                    <div className="hidden md:block relative w-full h-full">
                         <img
-                            src={activeVariant.hoverImage}
-                            alt="hover"
-                            className="absolute inset-0 m-auto h-full w-auto object-contain opacity-0 transition-opacity duration-300 group-hover:opacity-100"
+                            src={activeVariant.image || "/placeholder.png"}
+                            alt={product.name}
+                            className="absolute inset-0 m-auto h-full w-auto object-contain transition-opacity duration-300 group-hover:opacity-0"
                         />
-                    )}
-                </div>
 
-                {/* MOBILE SWIPER */}
-                <div className="md:hidden">
-                    <Swiper
-                        modules={[Pagination]}
-                        pagination={{ clickable: true }}
-                        slidesPerView={1}
-                        className="h-full"
-                    >
-                        {galleryImages.map((img, i) => (
-                            <SwiperSlide key={i}>
-                                <img
-                                    src={img || "/placeholder.png"}
-                                    alt={product.name}
-                                    className="w-full h-full object-contain"
-                                />
-                            </SwiperSlide>
-                        ))}
-                    </Swiper>
-                </div>
+                        {activeVariant.hoverImage && (
+                            <img
+                                src={activeVariant.hoverImage}
+                                alt="hover"
+                                className="absolute inset-0 m-auto h-full w-auto object-contain opacity-0 transition-opacity duration-300 group-hover:opacity-100"
+                            />
+                        )}
+                    </div>
 
-                {/* QUICK ADD */}
+                    {/* MOBILE SWIPER */}
+                    <div className="md:hidden">
+                        <Swiper
+                            modules={[Pagination]}
+                            pagination={{ clickable: true }}
+                            slidesPerView={1}
+                            className="h-full"
+                        >
+                            {galleryImages.map((img, i) => (
+                                <SwiperSlide key={i}>
+                                    <img
+                                        src={img || "/placeholder.png"}
+                                        alt={product.name}
+                                        className="w-full h-full object-contain"
+                                    />
+                                </SwiperSlide>
+                            ))}
+                        </Swiper>
+                    </div>
+                </Link>
+
+                {/* QUICK ADD (OUTSIDE LINK - FIXED) */}
                 <div className="absolute bottom-3 right-3 z-20">
                     <button
                         onClick={handleQuickAdd}
@@ -109,7 +147,7 @@ const ProductCard = ({ product }) => {
                         <FiShoppingCart size={18} />
                     </button>
                 </div>
-            </Link>
+            </div>
 
             {/* INFO */}
             <div className="mt-3 text-center">
@@ -126,11 +164,9 @@ const ProductCard = ({ product }) => {
                 {variants.map((variant) => (
                     <button
                         key={variant.color.value}
-                        onClick={() =>
-                            setSelectedColor(variant.color.value)
-                        }
+                        onClick={() => setSelectedColor(normalizeColor(variant.color.value))}
                         className={`w-4 h-4 rounded-full border transition ${
-                            selectedColor === variant.color.value
+                            normalizeColor(selectedColor) === normalizeColor(variant.color.value)
                                 ? "scale-110 border-black"
                                 : "border-gray-300"
                         }`}

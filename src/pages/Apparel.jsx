@@ -26,8 +26,12 @@ const APPAREL_CATEGORIES = [
 
 /* ---------------- IMAGE HELPER ---------------- */
 const getProductImage = (p) =>
-    p?.variants?.[0]?.image ||
+    p?.selectedVariant?.image ||
     p?.variant?.image ||
+    p?.variants?.find(
+        (v) => v.color?.value === p.selectedColor
+    )?.image ||
+    p?.variants?.[0]?.image ||
     p?.image ||
     "/placeholder.png";
 
@@ -110,11 +114,9 @@ const Apparel = () => {
         };
 
         document.addEventListener("mousedown", handleClickOutside);
-       // document.addEventListener("touchstart", handleClickOutside);
 
         return () => {
             document.removeEventListener("mousedown", handleClickOutside);
-            //document.removeEventListener("touchstart", handleClickOutside);
         };
     }, []);
 
@@ -137,11 +139,14 @@ const Apparel = () => {
         arr = Array.from(
             new Map(
                 arr.map((p) => {
-                    const firstColor =
-                        p?.variants?.[0]?.color?.value || "no-color";
+                    const color =
+                        p.selectedColor ||
+                        p.selectedVariant?.color?.value ||
+                        p.variants?.[0]?.color?.value ||
+                        "no-color";
 
                     return [
-                        `${(p.name || "").trim().toLowerCase()}-${firstColor}`,
+                        `${(p.name || "").trim().toLowerCase()}-${color}`,
                         p,
                     ];
                 })
@@ -189,12 +194,18 @@ const Apparel = () => {
 
     /* ---------------- PRODUCT OPEN ---------------- */
     const handleOpenProduct = (p) => {
-        setSelectedProduct(p);
-
         const selectedVariant =
-            p.preselectedVariant ||
-            p.variants?.find((v) => v.stock > 0) ||
+            p.selectedVariant ||
+            p.variants?.find(
+                (v) => v.color?.value === p.selectedColor
+            ) ||
             p.variants?.[0];
+
+        setSelectedProduct({
+            ...p,
+            selectedVariant,
+            selectedColor: selectedVariant?.color?.value,
+        });
 
         setVariant({
             size: p.sizes?.[0] || null,
@@ -343,7 +354,22 @@ const Apparel = () => {
                         />
                     ))
                     : displayedProducts.map((p, i) => {
-                        const image = getProductImage(p);
+
+                        const product = {
+                            ...p,
+                            selectedVariant:
+                                p.selectedVariant ||
+                                p.variants?.find(
+                                    (v) => v.color?.value === p.selectedColor
+                                ) ||
+                                p.variants?.[0],
+                            selectedColor:
+                                p.selectedColor ||
+                                p.selectedVariant?.color?.value ||
+                                p.variants?.[0]?.color?.value,
+                        };
+
+                        const image = getProductImage(product);
                         const baseKey =
                             p.id ||
                             p.slug ||
@@ -355,17 +381,17 @@ const Apparel = () => {
                                     <div
                                         onClick={() => {
                                             if (!p.slug) return;
-                                            navigate(`/products/${p.slug}`);
+                                            navigate(`/products/${product.slug}`, {
+                                                state: {
+                                                    selectedColor: product.selectedColor,
+                                                    selectedVariant: product.selectedVariant
+                                                }
+                                            });
                                         }}
                                         className="cursor-pointer"
                                     >
                                         <BlurImage
-                                            src={
-                                                p.variants?.find(
-                                                    (v) => v.color?.value === p.selectedColor
-                                                )?.image || image
-                                            }
-                                            alt={p.name}
+                                            src={product.selectedVariant?.image || image}
                                         />
                                     </div>
 
@@ -389,7 +415,7 @@ const Apparel = () => {
                                                     );
                                                 }}
                                                 className={`w-4 h-4 rounded-full border ${
-                                                    (p.selectedColor || "") === (v.color?.value || "")
+                                                    (product.selectedColor || "") === (v.color?.value || "")
                                                         ? "border-black scale-110"
                                                         : "border-gray-300"
                                                 }`}
@@ -404,7 +430,7 @@ const Apparel = () => {
                                     <button
                                         onClick={(e) => {
                                             e.stopPropagation();
-                                            handleWishlist(p);
+                                            handleWishlist(product);
                                         }}
                                         className="absolute top-2 right-2 z-10 bg-white/90 rounded-full p-2"
                                     >
@@ -423,7 +449,7 @@ const Apparel = () => {
                                     <button
                                         onClick={(e) => {
                                             e.stopPropagation();
-                                            handleOpenProduct(p);
+                                            handleOpenProduct(product);
                                         }}
                                         className="absolute bottom-2 right-2 bg-black text-white p-2 rounded-full"
                                     >
@@ -476,11 +502,7 @@ const Apparel = () => {
                         <div className="p-6 overflow-y-auto flex-1">
                             <img
                                 src={
-                                    selectedProduct.selectedVariant?.image ||
-                                    selectedProduct.variants?.find(
-                                        (v) => v.color?.value === variant.color?.value
-                                    )?.image ||
-                                    getProductImage(selectedProduct)
+                                    selectedProduct.selectedVariant?.image
                                 }
                                 className="rounded-2xl w-full h-[500px] object-contain bg-white"
                             />
@@ -511,16 +533,36 @@ const Apparel = () => {
                                 onClick={() => {
                                     const selectedVariant =
                                         selectedProduct.selectedVariant ||
-                                        selectedProduct.variants?.[0];
+                                        selectedProduct.variants?.find(
+                                            (v) => v.color?.value === selectedProduct.selectedColor
+                                        );
 
-                                    addToCart(
-                                        selectedProduct,
-                                        selectedVariant,
-                                        variant.size,
-                                        1
-                                    );
+                                    if (!selectedVariant) {
+                                        console.warn("No variant found");
+                                        return;
+                                    }
+
+
+                                    console.log("ADDING TO CART:", {
+                                        selectedColor: selectedProduct.selectedColor,
+                                        variantColor: selectedProduct.selectedVariant?.color?.value,
+                                        size: variant.size
+                                    });
+
+
+                                    if (!variant.size) {
+                                        console.warn("No size selected");
+                                        return;
+                                    }
+
+                                    addToCart({
+                                        ...selectedProduct,
+                                        variant: selectedVariant,
+                                        size: variant.size,
+                                        quantity: 1,
+                                    });
+
                                     showToast("Added to cart 🛒");
-
                                     setSelectedProduct(null);
                                 }}
                                 className="bg-black text-white w-full py-3 rounded-lg"

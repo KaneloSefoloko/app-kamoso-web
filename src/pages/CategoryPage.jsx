@@ -63,17 +63,55 @@ const CategoryPage = () => {
         });
 
         return {
-            sizes: [...sizes],
-            colors: [...colors],
+            sizes: [...sizes].filter(Boolean),
+            colors: [...colors].filter(Boolean),
         };
     }, [baseProducts]);
+
+    const resolveSize = (product, selectedSize) => {
+        if (product.category?.toLowerCase() === "wig") {
+            const match = product.sizes?.find((s) => s.size === selectedSize);
+            return match || product.sizes?.[0];
+        }
+
+        return selectedSize || product.sizes?.[0] || "ONE_SIZE";
+    };
+
+    useEffect(() => {
+        const isWig = normalize(category).includes("wig");
+
+        if (!isWig) return;
+
+        if (baseProducts.length === 0) return;
+
+        const firstWig = baseProducts.find(
+            (p) => p.category?.toLowerCase() === "wig"
+        );
+
+        const defaultSize =
+            firstWig?.sizes?.[0]?.size ||
+            firstWig?.sizes?.[0] ||
+            "";
+
+        if (defaultSize) {
+            setFilters((prev) => ({
+                ...prev,
+                size: defaultSize,
+            }));
+        }
+    }, [category, baseProducts]);
 
     /* ---------------- APPLY FILTERS ---------------- */
     const filteredProducts = useMemo(() => {
         let temp = [...baseProducts];
 
         if (filters.size) {
-            temp = temp.filter((p) => p.sizes?.includes(filters.size));
+            temp = temp.filter((p) =>
+                p.sizes?.some((s) => {
+                    const sizeValue = typeof s === "object" ? s.size : s;
+                    return sizeValue === filters.size;
+                })
+            );
         }
 
         if (filters.color) {

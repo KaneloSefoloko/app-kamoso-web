@@ -56,6 +56,20 @@ const BlurImage = ({src, alt}) => {
     );
 };
 
+const getDisplayPrice = (product) => {
+    const isWig = product.category?.toLowerCase() === "wig";
+
+    if (isWig && Array.isArray(product.sizes) && product.sizes.length > 0) {
+        const prices = product.sizes
+            .map(s => Number(s.price))
+            .filter(Boolean);
+
+        return prices.length ? Math.min(...prices) : null;
+    }
+
+    return product.price || null;
+};
+
 const New = () => {
     const {addToCart} = useContext(CartContext);
     const {wishlist = [], toggleWishlist} = useWishlist();
@@ -67,6 +81,7 @@ const New = () => {
     const [sortBy, setSortBy] = useState("newest");
     const [selectedProduct, setSelectedProduct] = useState(null);
     const {showToast} = useContext(ToastContext);
+    const [selectedColors, setSelectedColors] = useState({});
 
     const [variant, setVariant] = useState({
         size: null,
@@ -162,11 +177,18 @@ const New = () => {
     const handleQuickAdd = (product) => {
         setSelectedProduct(product);
 
+        const selectedColor =
+            selectedColors[product.id] ||
+            product.selectedColor ||
+            product.variants?.[0]?.color?.value;
+
         const selectedVariant =
-            product.selectedVariant ||
             product.variants?.find(
-                (v) => v.stock > 0
+                (v) =>
+                    v.color?.value?.toLowerCase() ===
+                    selectedColor?.toLowerCase()
             ) ||
+            product.selectedVariant ||
             product.variants?.[0];
 
         setVariant({
@@ -345,7 +367,24 @@ const New = () => {
                                 <div className="relative overflow-hidden rounded-2xl bg-white">
 
                                     <div className="relative">
-                                        <Link to={`/products/${product.slug}`}>
+                                        <Link
+                                            to={`/products/${product.slug}`}
+                                            state={{
+                                                selectedColor:
+                                                    selectedColors[product.id] ||
+                                                    product.selectedColor ||
+                                                    product.variants?.[0]?.color?.value,
+
+                                                selectedVariant:
+                                                    product.variants?.find(
+                                                        (v) =>
+                                                            v.color?.value ===
+                                                            (selectedColors[product.id] || product.selectedColor)
+                                                    ),
+
+                                                selectedSize: variant.size || null, // ✅ ADD THIS
+                                            }}
+                                        >
                                             <BlurImage
                                                 src={
                                                     product.variants?.find(
@@ -370,12 +409,16 @@ const New = () => {
                                                                     ? {
                                                                         ...item,
                                                                         selectedVariant: v,
-                                                                        selectedColor:
-                                                                        v.color?.value,
+                                                                        selectedColor: v.color?.value,
                                                                     }
                                                                     : item
                                                             )
                                                         );
+
+                                                        setSelectedColors((prev) => ({
+                                                            ...prev,
+                                                            [product.id]: v.color?.value,
+                                                        }));
                                                     }}
                                                     className={`w-4 h-4 rounded-full border transition ${
                                                         (product.selectedColor || "") ===
@@ -452,9 +495,18 @@ const New = () => {
                                         {product.name}
                                     </h3>
 
-                                    <p className="text-gray-500 mt-1">
-                                        R{product.price}
-                                    </p>
+                                    {(() => {
+                                        const isWig = product.category?.toLowerCase() === "wig";
+                                        const price = getDisplayPrice(product);
+
+                                        if (!price) return null;
+
+                                        return (
+                                            <p className="text-gray-500 mt-1">
+                                                {isWig ? `From R${price}` : `R${price}`}
+                                            </p>
+                                        );
+                                    })()}
 
                                 </div>
                             </div>
@@ -530,15 +582,21 @@ const New = () => {
                             <button
                                 onClick={() => {
                                     const selectedVariant =
+                                        selectedProduct.variants?.find(
+                                            (v) =>
+                                                v.color?.value === variant.color?.value
+                                        ) ||
                                         selectedProduct.selectedVariant ||
                                         selectedProduct.variants?.[0];
 
-                                    addToCart(
-                                        selectedProduct,
-                                        selectedVariant,
-                                        variant.size,
-                                        1
-                                    );
+                                    addToCart({
+                                        ...selectedProduct,
+                                        variant: selectedVariant,
+                                        selectedColor: selectedVariant?.color?.value,
+                                        size: variant.size,
+                                        quantity: 1,
+                                    });
+
                                     showToast("Added to cart 🛒");
 
                                     setSelectedProduct(null);

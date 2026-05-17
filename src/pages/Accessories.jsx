@@ -5,7 +5,7 @@ import React, {
     useState,
 } from "react";
 
-import { Link } from "react-router-dom";
+import { Link, useNavigate} from "react-router-dom";
 
 import { CartContext } from "../components/CartContext";
 import { ToastContext } from "../components/ToastContext";
@@ -109,6 +109,7 @@ const BlurImage = ({ src, alt }) => {
 const Accessories = () => {
     const { addToCart } = useContext(CartContext);
     const { showToast } = useContext(ToastContext);
+    const navigate = useNavigate();
 
     const { wishlist = [], toggleWishlist } =
         useWishlist();
@@ -147,6 +148,8 @@ const Accessories = () => {
 
     /* ---------------- FETCH ---------------- */
     useEffect(() => {
+        let isMounted = true;
+
         const fetchProducts = async () => {
             try {
                 const snap = await getDocs(
@@ -158,15 +161,23 @@ const Accessories = () => {
                     ...doc.data(),
                 }));
 
+                if (isMounted) {
                 setProducts(data);
+                }
             } catch (err) {
                 console.log(err);
             } finally {
+                if (isMounted) {
                 setLoading(false);
+            }
             }
         };
 
         fetchProducts();
+
+        return () => {
+            isMounted = false;
+        };
     }, []);
 
     /* ---------------- FILTER PRODUCTS ---------------- */
@@ -227,6 +238,21 @@ const Accessories = () => {
 
     /* ---------------- QUICK ADD ---------------- */
     const handleQuickAdd = (product) => {
+        const isWig = product.category?.toLowerCase() === "wig";
+
+        if (isWig) {
+            const selectedVariant =
+                product.selectedVariant ||
+                product.variants?.[0];
+
+            navigate(`/products/${product.slug}`, {
+                state: {
+                    selectedColor: selectedVariant?.color?.value,
+                },
+            });
+            return;
+        }
+
         setSelectedProduct(product);
 
         const selectedVariant =
@@ -236,12 +262,29 @@ const Accessories = () => {
             ) ||
             product.variants?.[0];
 
+        const defaultSize = isWig
+            ? (product.sizes?.[0]?.size ?? product.sizes?.[0])
+            : null;
+
         setVariant({
-            size: product.sizes?.[0] || null,
-            color:
-                selectedVariant?.color || null,
+            size: defaultSize,
+            color: selectedVariant?.color || null,
         });
     };
+
+    useEffect(() => {
+        if (!selectedProduct) return;
+
+        const isWig =
+            selectedProduct.category?.toLowerCase() === "wig";
+
+        if (isWig && selectedProduct.sizes?.length) {
+            setVariant((v) => ({
+                ...v,
+                size: v.size || selectedProduct.sizes[0]?.size || selectedProduct.sizes[0],
+            }));
+        }
+    }, [selectedProduct]);
 
     return (
         <div className="bg-white text-black min-h-screen pt-28 px-4 md:px-10">
@@ -382,6 +425,11 @@ const Accessories = () => {
                                 getProductImage(
                                     product
                                 );
+
+                            const displayPrice =
+                                product.category?.toLowerCase() === "wig"
+                                    ? product.sizes?.[0]?.price
+                                    : product.price;
 
                             const activeColor =
                                 product.selectedColor ||
@@ -604,9 +652,10 @@ const Accessories = () => {
                                         >
                                             {product.name}
                                         </h3>
-
                                         <p className="text-gray-500 mt-1">
-                                            R{product.price}
+                                            {product.category?.toLowerCase() === "wig"
+                                                ? `From R${displayPrice}`
+                                                : `R${displayPrice}`}
                                         </p>
                                     </div>
                                 </div>
@@ -742,12 +791,12 @@ const Accessories = () => {
                                         selectedProduct
                                             .variants?.[0];
 
-                                    addToCart(
-                                        selectedProduct,
-                                        selectedVariant,
-                                        variant.size,
-                                        1
-                                    );
+                                    addToCart({
+                                        ...selectedProduct,
+                                        variant: selectedVariant,
+                                        size: variant.size,
+                                        quantity: 1,
+                                    });
 
                                     showToast(
                                         "Added to bag"

@@ -19,36 +19,48 @@ export const CartProvider = ({ children }) => {
         localStorage.setItem(CART_KEY, JSON.stringify(cart));
     }, [cart]);
 
-    const addToCart = (product, variant = null, size = null, quantity = 1) => {
-        if (!product) return;
+    const addToCart = (item) => {
+        if (!item) return;
 
-        const selected = variant || product.variants?.[0] || product;
+        const selected =
+            item.variant ||
+            item.selectedVariant ||
+            item.variants?.find(
+                (v) => v.color?.value === item.selectedColor
+            ) ||
+            item.variants?.[0] ||
+            item;
 
-        const item = {
-            slug: product.slug,
-            name: product.name,
-            image: selected.image || product.image,
-            price: selected.price || product.price,
-            size: size || "ONE_SIZE",
-            quantity,
+        const normalizedSize =
+            typeof item.size === "object"
+                ? item.size?.size
+                : item.size || "ONE_SIZE";
+
+        const cartItem = {
+            slug: item.slug,
+            name: item.name,
+            image: selected.image || item.image,
+            price: selected.price || item.price,
+            size: normalizedSize,
+            quantity: item.quantity || 1,
             color: selected.color || null,
         };
 
         setCart((prev) => {
             const index = prev.findIndex(
                 (p) =>
-                    p.slug === item.slug &&
-                    p.size === item.size &&
-                    (p.color?.value || "") === (item.color?.value || "")
+                    p.slug === cartItem.slug &&
+                    p.size === cartItem.size &&
+                    (p.color?.value || "") === (cartItem.color?.value || "")
             );
 
             if (index !== -1) {
                 const updated = [...prev];
-                updated[index].quantity += quantity;
+                updated[index].quantity += cartItem.quantity;
                 return updated;
             }
 
-            return [...prev, item];
+            return [...prev, cartItem];
         });
     };
 
