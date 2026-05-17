@@ -54,9 +54,11 @@ const ProductCard = ({ product }) => {
         e.preventDefault();
         e.stopPropagation();
 
+
+
         const hasMultipleSizes =
             product.sizes?.length > 1 &&
-            !(product.category?.toLowerCase() === "wig");
+            !(product.category?.toLowerCase() === "sunglasses");
 
         if (hasMultipleSizes) {
             navigate(`/products/${product.slug}`, {
