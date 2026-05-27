@@ -19,3 +19,30 @@
 .scale-in {
     animation: scaleInCustom .25s ease-out forwards;
 }
+
+@keyframes slideProgress {
+    from { width: 0%; }
+    to { width: 100%; }
+}
+
+.animate-slideProgress {
+    animation: slideProgress 5s linear forwards;
+}
+
+@keyframes progressBar {
+    from { width: 0%; }
+    to { width: 100%; }
+}
+
+.animate-progressBar {
+    animation: progressBar 5s linear forwards;
+}
+
+@keyframes progressBar {
+    from { width: 0%; }
+    to { width: 100%; }
+}
+
+.animate-progressBar {
+    animation: progressBar 5s linear forwards;
+}

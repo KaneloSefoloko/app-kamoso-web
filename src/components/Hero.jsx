@@ -1,4 +1,3 @@
-// src/components/Hero.jsx
 import React, { useEffect, useMemo, useRef, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { collection, getDocs } from "firebase/firestore";
@@ -44,6 +43,26 @@ const Hero = () => {
 
     const isMobile = viewportW < 768;
     const [categories, setCategories] = useState([]);
+    const SLIDE_DURATION = 5000;
+    const touchStartX = useRef(0);
+
+    const handleTouchStart = (e) => {
+        touchStartX.current = e.touches[0].clientX;
+    };
+
+    const handleTouchEnd = (e) => {
+        const diff = touchStartX.current - e.changedTouches[0].clientX;
+
+        if (diff > 50) {
+            setCurrentIndex(prev => (prev + 1) % activeSlides.length);
+            restartTimer();
+        } else if (diff < -50) {
+            setCurrentIndex(prev =>
+                (prev - 1 + activeSlides.length) % activeSlides.length
+            );
+            restartTimer();
+        }
+    };
 
 
     // ---------------- RESIZE ----------------
@@ -105,6 +124,15 @@ const Hero = () => {
         return () => (mounted = false);
     }, []);
 
+    const restartTimer = () => {
+        clearInterval(timerRef.current);
+
+        timerRef.current = setInterval(() => {
+            setCurrentIndex(prev => (prev + 1) % activeSlides.length);
+        }, SLIDE_DURATION);
+    };
+
+
     // ---------------- ACTIVE SLIDES ----------------
     const activeSlides = useMemo(() => {
         return isMobile && slides.mobile.length
@@ -124,10 +152,12 @@ const Hero = () => {
 
         timerRef.current = setInterval(() => {
             setCurrentIndex((prev) => (prev + 1) % activeSlides.length);
-        }, 5000);
+        }, SLIDE_DURATION);
 
         return () => clearInterval(timerRef.current);
     }, [activeSlides.length]);
+
+
 
     // ---------------- LOADING ----------------
     if (!isReady) {
@@ -160,7 +190,12 @@ const Hero = () => {
     return (
         <>
             {/* HERO SECTION */}
-            <section className="relative min-h-[75vh] md:min-h-[85vh] w-full flex items-center justify-center overflow-hidden text-white">
+            <section
+                onTouchStart={handleTouchStart}
+                onTouchEnd={handleTouchEnd}
+                onMouseEnter={() => clearInterval(timerRef.current)}
+                onMouseLeave={restartTimer}
+                className="relative min-h-[75vh] md:min-h-[85vh] w-full flex items-center justify-center overflow-hidden text-white">
 
                 {/* IMAGE */}
                 <img
@@ -203,6 +238,34 @@ const Hero = () => {
                     </button>
                 </div>
 
+                <div
+                    className="absolute bottom-6 right-6 z-20 flex gap-2 md:flex-col md:right-8 md:top-1/2 md:-translate-y-1/2">
+
+                    {activeSlides.map((_, index) => {
+                        const isActive = index === currentIndex;
+
+                        return (
+                            <div
+                                key={index}
+                                onClick={() => {
+                                    setCurrentIndex(index);
+                                    restartTimer();
+                                }}
+                                className={`
+                    relative overflow-hidden cursor-pointer rounded-full transition-all duration-300
+                    ${isActive ? "w-16 h-2 bg-white" : "w-6 h-2 bg-white/30"}
+                `}
+                            >
+                                {isActive && (
+                                    <div
+                                        key={currentIndex}
+                                        className="absolute inset-0 bg-white animate-progressBar"
+                                    />
+                                )}
+                            </div>
+                        );
+                    })}
+                </div>
             </section>
             <button
                 onClick={() =>
