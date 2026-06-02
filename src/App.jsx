@@ -68,6 +68,7 @@ import PageWrapper from "./components/PageWrapper";
 import {CartProvider} from "./components/CartContext";
 import {WishlistProvider} from "./components/WishlistContext";
 import { ToastProvider } from "./components/ToastContext";
+import CookieConsent from "./components/CookieConsent.jsx";
 
 const App = () => {
     const [chatOpen, setChatOpen] = useState(false);
@@ -175,6 +176,7 @@ const App = () => {
                         </Routes>
 
                         {/* ================= CHAT SYSTEM ================= */}
+                        <CookieConsent />
                         <ChatDrawer
                             open={chatOpen}
                             onClose={() => setChatOpen(false)}
