@@ -218,7 +218,7 @@ const Hero = () => {
                 <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-transparent to-black/20" />
 
                 {/* CONTENT */}
-                <div className="relative z-10 flex flex-col items-center text-center px-6 translate-y-40 md:translate-y-48">
+                <div className="relative z-10 flex flex-col items-center text-center px-6 translate-y-32 md:translate-y-40">
                     <h1 className="text-sm md:text-2xl tracking-[0.3em] uppercase font-light mb-6 opacity-90">
                         {currentSlide.label}
                     </h1>
