@@ -10,7 +10,7 @@ import { CartContext } from "../components/CartContext.jsx";
 import { useWishlist } from "../components/WishlistContext.jsx";
 import { db } from "../../firebase";
 import { collection, getDocs } from "firebase/firestore";
-import { useNavigate } from "react-router-dom";
+import {useNavigate, useSearchParams} from "react-router-dom";
 import {FiShoppingCart, FiHeart, FiX, FiChevronDown} from "react-icons/fi";
 import { ToastContext } from "../components/ToastContext";
 import { motion, AnimatePresence, useScroll, useTransform } from "framer-motion";
@@ -91,6 +91,8 @@ const Apparel = () => {
     const currentSort =
         sortOptions.find((o) => o.value === sortBy)?.label || "Newest";
 
+    const [searchParams] = useSearchParams();
+
     /* ---------------- FETCH ---------------- */
     useEffect(() => {
         const fetchProducts = async () => {
@@ -105,6 +107,14 @@ const Apparel = () => {
 
         fetchProducts();
     }, []);
+
+    useEffect(() => {
+        const category = searchParams.get("category");
+
+        if (category) {
+            setSelectedCategory(category);
+        }
+    }, [searchParams]);
 
     useEffect(() => {
         const handleClickOutside = (e) => {

@@ -6,6 +6,7 @@ import Hero from "../components/Hero";
 import ProductGrid from "../components/ProductGrid";
 import Footer from "../components/Footer";
 import ScrollDivider from "../components/ScrollDivider";
+import BrandBanner from "../components/BrandBanner.jsx";
 
 /* ---------------- CLEAN SECTION ---------------- */
 const ProductSection = ({ title, products, innerRef }) => {
@@ -107,6 +108,9 @@ const Home = () => {
                 title="Sunglasses"
                 products={shades}
             />
+
+            {/* BANNER */}
+            <BrandBanner />
 
             {/* FOOTER */}
             <Footer />

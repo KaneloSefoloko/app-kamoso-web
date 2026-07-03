@@ -57,6 +57,10 @@ import SearchPage from "./pages/SearchPage.jsx";
 import ChatDrawer from "./components/ChatDrawer";
 import ChatButton from "./components/ChatButton";
 
+import BlogGazette from "./pages/BlogGazette";
+import FromKamosoToKavanti from "./pages/gazette/FromKamosoToKavanti.jsx";
+import HowToStyleOversizedTshirts from "./pages/gazette/HowToStyleOversizedTshirts.jsx";
+
 // ================= ADMIN =================
 import AdminDashboard from "./pages/admin/AdminDashboard";
 import SlidesManager from "./pages/admin/SlidesManager";
@@ -156,6 +160,15 @@ const App = () => {
                                         </AccountLayout>
                                     }
                                 />
+
+                                <Route
+                                    path="/blog-gazette/the-story-behind-kavanti"
+                                    element={
+                                        <Layout>
+                                            <FromKamosoToKavanti />
+                                        </Layout>
+                                    }
+                                />
                             </Route>
 
                             {/* ================= ADMIN PROTECTED ================= */}
@@ -171,7 +184,14 @@ const App = () => {
                             <Route path="/track-my-order" element={<NotAvailable/>}/>
                             <Route path="/gallery" element={<NotAvailable/>}/>
                             <Route path="/careers-opportunities" element={<NotAvailable/>}/>
-                            <Route path="/blog-gazette" element={<NotAvailable/>}/>
+                            <Route path="/blog-gazette" element={<BlogGazette/>}/>
+                            <Route path="/blog-gazette/from-kamoso-to-kavanti"
+                                element={<Layout><FromKamosoToKavanti /></Layout>}
+                            />
+                            <Route
+                                path="/blog-gazette/how-to-style-oversized-t-shirts"
+                                element={<Layout><HowToStyleOversizedTshirts /></Layout>}
+                            />
 
                         </Routes>
 

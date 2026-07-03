@@ -288,7 +288,18 @@ const Hero = () => {
                 ref={nextSectionRef}
                 className="min-h-screen bg-white flex flex-col items-center justify-center px-4 md:px-10 lg:px-20 pt-24 md:pt-32"
             >
-                <h2 className="text-xl md:text-3xl font-semibold tracking-[0.2em] uppercase mb-10 text-center">
+
+                <h1 className="text-2xl md:text-6xl tracking-[0.3em] font-semibold mb-6 text-center uppercase">
+                    KAVANTI Clothing South Africa
+                </h1>
+
+                <p className="mb-10">
+                    Premium streetwear, t-shirts, hoodies, shades and accessories
+                    designed for today, tomorrow and always.
+                </p>
+
+
+                <h2 className="text-xl md:text-3xl font-semibold tracking-[0.2em] mb-10 text-center">
                     Discover Our Latest Collection
                 </h2>
 
@@ -303,6 +314,7 @@ const Hero = () => {
                             key={cat.id}
                             src={cat.src}
                             title={cat.title}
+                            link={cat.link}
                         />
                     ))}
                 </div>

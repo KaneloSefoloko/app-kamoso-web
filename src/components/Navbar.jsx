@@ -159,13 +159,17 @@ const Navbar = () => {
                 {/* RIGHT */}
                 <div className="flex items-center gap-4">
 
-                    <Link to={user ? "/orders" : "/signup"}>
+                    <Link to={user ? "/orders" : "/signup"}
+                          className="w-6 h-6 flex items-center justify-center"
+                    >
                         <FiUser className={navIconClass} />
                     </Link>
 
                     {/* SEARCH */}
                     <div className="relative" ref={searchRef}>
-                        <button onClick={() => setSearchOpen(!searchOpen)}>
+                        <button onClick={() => setSearchOpen(!searchOpen)}
+                                className="w-6 h-6 flex items-center justify-center"
+                        >
                             <FiSearch className={navIconClass} />
                         </button>
 
@@ -210,7 +214,7 @@ const Navbar = () => {
                     {/* WISHLIST */}
                     <div
                         onClick={() => setWishlistOpen(true)}
-                        className="relative cursor-pointer"
+                        className="relative w-6 h-6 flex items-center justify-center cursor-pointer"
                     >
                         {wishlist.length > 0 ? (
                             <HiHeart className={navIconClass} />
@@ -226,7 +230,7 @@ const Navbar = () => {
                     </div>
 
                     {/* CART */}
-                    <div onClick={() => setCartOpen(true)} className="relative cursor-pointer">
+                    <div onClick={() => setCartOpen(true)} className="relative w-6 h-6 flex items-center justify-center cursor-pointer">
                         <FiShoppingCart className="w-6 h-6 text-yellow-400" />
                         {cartCount > 0 && (
                             <span className="absolute -top-2 -right-2 bg-red-500 text-white text-xs rounded-full px-2">

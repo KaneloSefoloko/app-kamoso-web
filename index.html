@@ -1,22 +1,65 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8" />
+    <meta charset="UTF-8"/>
 
-    <!-- App identity -->
-    <link rel="icon" href="/assets/Image.png" />
-    <title>KAVANTI | Today | Tomorrow | Always</title>
+    <!-- Favicon -->
+    <link rel="icon" type="image/png" href="/assets/Image.png"/>
 
-    <!-- Responsive -->
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <!-- Title (VERY IMPORTANT) -->
+    <title>KAVANTI Clothing | Premium T-Shirts, Hoodies & Streetwear, Hair & Shades South Africa</title>
 
-    <!-- SEO / safety -->
-    <meta name="description" content="KAVANTI — Today | Tomorrow | Always" />
+    <!-- SEO -->
+    <meta
+            name="description"
+            content="Shop premium KAVANTI streetwear in South Africa. Discover quality t-shirts, hoodies, shades and fashion accessories designed for today, tomorrow and always."
+    />
+
+    <meta
+            name="keywords"
+            content="Kavanti, streetwear South Africa, hoodies SA, t shirts South Africa, sunglasses SA, fashion SA, hair SA"
+    />
+
+    <meta name="author" content="KAVANTI"/>
+
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+
+    <!-- Canonical -->
+    <link rel="canonical" href="https://kavanti.co.za/"/>
+
+    <!-- Open Graph -->
+    <meta property="og:type" content="website"/>
+    <meta property="og:title" content="KAVANTI Clothing"/>
+    <meta property="og:description" content="Premium t-shirts, hoodies, hair and shades."/>
+    <meta property="og:url" content="https://kavanti.co.za/"/>
+    <meta property="og:image" content="https://kavanti.co.za/assets/Image.png"/>
+
+    <!-- Twitter -->
+    <meta name="twitter:card" content="summary_large_image"/>
+    <meta name="twitter:title" content="KAVANTI Clothing"/>
+    <meta name="twitter:description" content="Premium streetwear in South Africa."/>
+    <meta name="twitter:image" content="https://kavanti.co.za/assets/Image.png"/>
+    <meta name="robots" content="index, follow">
 </head>
+
 <body>
+
 <div id="root"></div>
 
-<!-- Vite will inject the correct script in production -->
 <script type="module" src="/src/main.jsx"></script>
+<script type="application/ld+json">
+    {
+        "@context": "https://schema.org",
+        "@type": "ClothingStore",
+        "name": "KAVANTI",
+        "url": "https://kavanti.co.za",
+        "logo": "https://kavanti.co.za/assets/Image.png",
+        "description": "Premium t-shirts, hoodies, hair and shades in South Africa.",
+        "address": {
+            "@type": "PostalAddress",
+            "addressCountry": "ZA"
+        }
+    }
+</script>
 </body>
 </html>

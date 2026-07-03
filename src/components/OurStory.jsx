@@ -22,38 +22,22 @@ const OurStory = () => {
 
             {/* HERO */}
             <section
-                className="relative h-[70vh] md:h-[90vh] overflow-hidden bg-[#f8f8f6] flex items-center justify-center">
+                className="relative h-[70vh] md:h-[90vh] overflow-hidden bg-[#f6f6f3] flex items-center justify-center">
 
                 {/* SIGNATURE */}
                 <img
-                    src="https://res.cloudinary.com/dkwfi3iku/image/upload/v1775855831/signature_wt5dpo.svg"
+                    src="https://res.cloudinary.com/dkwfi3iku/image/upload/v1783082929/Photoroom_20260703_144807_h1boqf.png"
                     alt="Kavanti Signature"
-                    className="
-        w-[105vw]
-        md:w-[85vw]
-        max-w-none
-        h-auto
-        object-contain
-        opacity-[0.08]
-        select-none
-        pointer-events-none
-        translate-y-10
-        md:translate-y-16
-    "
+                    className="w-[105vw] md:w-[85vw] max-w-none h-auto object-contain opacity-[0.08]
+                    select-none pointer-events-none translate-y-10 md:translate-y-16"
                 />
 
                 {/* CONTENT */}
                 <div className="absolute inset-0 flex flex-col items-center justify-center text-center px-6">
-                    <p className="uppercase tracking-[0.3em] text-sm text-black/60 mb-4">
-                        KAVANTI
-                    </p>
-
-                    <h1 className="text-5xl md:text-7xl font-light leading-tight">
-                        Our Story
-                    </h1>
-                    <p className="text-black/60 text-base md:text-lg leading-relaxed max-w-2xl mx-auto">
-                        Built from ambition, identity, and the courage
-                        to stand out without permission.
+                    <p className="mt-8 text-lg text-gray-600 max-w-2xl">
+                        The evolution of a name inspired by progress,
+                        vision and the ambition to build a globally
+                        recognizable luxury brand.
                     </p>
                 </div>
             </section>
@@ -68,8 +52,7 @@ const OurStory = () => {
                         whileInView={{opacity: 1, x: 0}}
                         viewport={{once: true}}
                         transition={{duration: 0.8}}
-                        className="relative"
-                    >
+                        className="relative">
                         <img
                             src="/assets/Image.png"
                             alt="Kavanti Story"
@@ -82,49 +65,122 @@ const OurStory = () => {
                         initial={{opacity: 0, x: 40}}
                         whileInView={{opacity: 1, x: 0}}
                         viewport={{once: true}}
-                        transition={{duration: 0.8}}
-                    >
-                        <p className="uppercase tracking-[0.25em] text-sm text-gray-500 mb-4">
-                            Since 2023
-                        </p>
-
+                        transition={{duration: 0.8}}>
                         <h2 className="text-4xl md:text-5xl font-light leading-tight mb-8">
                             More Than Clothing
                         </h2>
 
                         <div className="space-y-6 text-gray-600 leading-relaxed text-base md:text-lg font-light">
                             <p>
-                                Kavanti was born in the middle of the kasi noise
-                                — founded in 2023 by Kanelo Sefoloko —
-                                where dreams often feel bigger than the chances
-                                available and far apart from the reality.
+                                When the brand was first launched in 2023,
+                                it carried a different name  <strong>Kamoso.</strong>
                             </p>
 
                             <p>
-                                The name stands for those who choose to rise anyway.
-                                Our designers are inspired by the streets we grew up on,
-                                the township culture, music, ambition,
-                                and everyday resilience, Kavanti represents
-                                identity, purpose, and confidence.
+                                A Sotho word associated with the future and
+                                a future-forward mindset.
                             </p>
 
                             <p>
-                                This is for the ones building something greater
-                                day by day. The ones who move with quiet
-                                confidence while leaving a mark everywhere they go.
+                                The name reflected the original vision of the
+                                brand: creating something that looked ahead
+                                rather than following what already existed.
                             </p>
-                            <br/>
+
                             <p>
-                                Wear Kavanti. Don't just move through the world — leave a mark with Kavanti.
+                                As the vision expanded, it became clear that
+                                the brand needed an identity capable of
+                                connecting with a wider audience while
+                                remaining true to its roots.
                             </p>
+
+                            <h2 className="text-3xl font-light pt-8">
+                                Inspired By Progress
+                            </h2>
+
+                            <p>
+                                The inspiration came from the Italian word
+                                <strong> Avanti</strong>.
+                            </p>
+
+                            <p>
+                                A word associated with moving forward,
+                                progress and advancement.
+                            </p>
+
+                            <p>
+                                The meaning aligned perfectly with the
+                                philosophy behind the brand.
+                            </p>
+
+                            <p>
+                                Rather than adopting the word directly,
+                                it was reimagined into something unique.
+                            </p>
+
+                            <p>
+                                By introducing the letter <strong>K</strong>,
+                                the name evolved into <strong>Kavanti</strong>.
+                            </p>
+
+                            <p>
+                                A distinctive and memorable identity built
+                                around one principle:
+                            </p>
+
+                            <div className="mt-10 border-l-2 border-black pl-6">
+                                <h2 className="text-2xl md:text-3xl font-light italic leading-relaxed">
+                                    More Than Fashion
+                                </h2>
+                            </div>
+
+                            <p>
+                                Kavanti is not simply a clothing brand.
+                            </p>
+
+                            <p>
+                                It represents a mindset.
+                            </p>
+
+                            <p>
+                                A belief in growth.
+                            </p>
+
+                            <p>
+                                A commitment to progress.
+                            </p>
+
+                            <p>
+                                The confidence to pursue a bigger vision.
+                            </p>
+
+                            <p>
+                                Every collection, product and decision
+                                is guided by those values.
+                            </p>
+
+                            <div className="mt-10 border-l-2 border-black pl-6">
+                                <h2 className="text-2xl md:text-3xl font-light italic leading-relaxed">
+                                    Future Forward
+                                </h2>
+                            </div>
+
+                            <p>
+                                The meaning of Kavanti can be understood
+                                through three ideas:
+                            </p>
+
+                            <ul className="space-y-3 pl-6 list-disc">
+                                <li>Future Forward</li>
+                                <li>Lead With Vision</li>
+                                <li>Move With Confidence</li>
+                            </ul>
                         </div>
 
                         {/* QUOTE */}
-                        <div className="mt-10 border-l-2 border-black pl-6">
-                            <p className="text-2xl md:text-3xl font-light italic leading-relaxed">
-                                “Today | Tomorrow | Always”
-                            </p>
-                        </div>
+                        <p className="text-2xl md:text-3xl font-light italic leading-relaxed">
+                            “Today | Tomorrow | Always”
+                        </p>
                     </motion.div>
                 </div>
             </section>
