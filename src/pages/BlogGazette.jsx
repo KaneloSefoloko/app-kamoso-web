@@ -7,23 +7,45 @@ const BlogGazette = () => {
 
             {/* HERO */}
             <section className="relative h-[90vh] overflow-hidden">
+
+                {/* Mobile Image */}
                 <img
                     src="https://res.cloudinary.com/dkwfi3iku/image/upload/v1783085742/Photoroom_20260703_153511_wl08qf.png"
                     alt="KAVANTI Gazette"
-                    className="absolute inset-0 w-full h-full object-cover object-center md:object-top"
+                    className="absolute inset-0 w-full h-full object-cover md:hidden"
+                />
 
+                {/* DESKTOP IMAGE */}
+                <img
+                    src="https://res.cloudinary.com/dkwfi3iku/image/upload/v1783113355/Photoroom_20260703_231531_axrl0e.png"
+                    alt="KAVANTI Gazette"
+                    className="absolute inset-0 hidden md:block w-full h-full object-cover object-center"
                 />
 
                 <div className="absolute inset-0 bg-black/40"/>
 
                 <div
-                    className="relative z-10 h-full flex flex-col items-center justify-center text-center px-6 text-white">
 
-                    <p className="uppercase tracking-[0.5em] text-xs md:text-sm mb-8">
+                    className="
+        relative z-10
+        h-full
+        flex flex-col
+        items-center
+        justify-center
+        text-center
+        px-6
+        text-white
+        mt-48
+        md:mt-60
+
+    ">
+
+
+                <p className="uppercase tracking-[0.5em] text-xs md:text-sm mb-8">
                         KAVANTI GAZETTE
                     </p>
 
-                    <h1 className="text-5xl md:text-8xl font-light leading-none">
+                    <h1 className="text-5xl md:text-6xl lg:text-5xl font-light leading-none">
                         Stories.
                         <br/>
                         Culture.
@@ -31,7 +53,7 @@ const BlogGazette = () => {
                         Vision.
                     </h1>
 
-                    <p className="max-w-2xl mt-10 text-lg text-white/80">
+                    <p className="max-w-2xl mt-8 text-lg md:text-base text-white/80">
                         Exploring African creativity, luxury streetwear
                         and the philosophy behind KAVANTI.
                     </p>
