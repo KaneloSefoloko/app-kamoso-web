@@ -104,7 +104,7 @@ const OurStory = () => {
                             <p>
                                 Founded in 2023 by <strong>Kanelo Sefoloko</strong> —
                                 KAVANTI merges contemporary fashion with timeless design,
-                                creating pieces inspired by ambition, culture and individuality
+                                creating pieces inspired by ambition, culture and individuality.
                             </p>
 
                             <p>
@@ -112,7 +112,7 @@ const OurStory = () => {
                                 the township culture, music, ambition,
                                 and everyday resilience, Kavanti represents
                                 identity, purpose, and confidence. From our local inspired designed
-                                <strong> Matatiele Too Fresh</strong> to <strong>Kavanti</strong>
+                                <strong> Matatiele Too Fresh</strong> to <strong>Kavanti</strong>.
                             </p>
 
                             <p>
