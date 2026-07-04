@@ -36,7 +36,7 @@ const Navbar = () => {
     const searchRef = useRef(null);
 
     const [products, setProducts] = useState([]);
-    const navIconClass = "w-6 h-6 text-white";
+    const navIconClass = "w-5 h-5 text-white";
 
     /* ---------------- FIREBASE PRODUCTS ---------------- */
     useEffect(() => {
