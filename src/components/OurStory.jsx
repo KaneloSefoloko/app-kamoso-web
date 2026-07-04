@@ -111,7 +111,7 @@ const OurStory = () => {
                                 The vision inspired by the streets we grew up on,
                                 the township culture, music, ambition,
                                 and everyday resilience, Kavanti represents
-                                identity, purpose, and confidence. From our local inspired designed
+                                identity, purpose, and confidence. From our local inspired brand,
                                 <strong> Matatiele Too Fresh</strong> to <strong>Kavanti</strong>.
                             </p>
 
