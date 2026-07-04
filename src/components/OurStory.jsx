@@ -22,7 +22,7 @@ const OurStory = () => {
 
             {/* HERO */}
             <section
-                className="relative h-[70vh] md:h-[90vh] overflow-hidden bg-[#f6f6f3] flex items-center justify-center">
+                className="relative h-[40vh] md:h-[90vh] overflow-hidden bg-[#f6f6f3] flex items-center justify-center">
 
                 {/* SIGNATURE */}
                 <img
@@ -33,8 +33,10 @@ const OurStory = () => {
                 />
 
                 {/* CONTENT */}
-                <div className="absolute inset-0 flex flex-col items-center justify-center text-center px-6">
-                    <p className="mt-8 text-lg text-gray-600 max-w-2xl">
+
+                <div className="absolute inset-0 flex flex-col items-center justify-start pt-34 md:pt-24 lg:pt-32 text-center px-6">
+
+                <p className="mt-8 text-lg text-gray-600 max-w-2xl">
                         The evolution of a name inspired by progress,
                         vision and the ambition to build a globally
                         recognizable luxury brand.
@@ -43,7 +45,7 @@ const OurStory = () => {
             </section>
 
             {/* STORY SECTION */}
-            <section className="py-24 px-5 md:px-10">
+            <section className="pt-2 pb-10 md:py-24 px-5 md:px-10">
                 <div className="max-w-6xl mx-auto grid md:grid-cols-2 gap-16 items-center">
 
                     {/* LEFT IMAGE */}
@@ -54,9 +56,9 @@ const OurStory = () => {
                         transition={{duration: 0.8}}
                         className="relative">
                         <img
-                            src="/assets/Image.png"
+                            src="https://res.cloudinary.com/dkwfi3iku/image/upload/v1783188720/Photoroom_20260704_200756_omqrot.jpg"
                             alt="Kavanti Story"
-                            className="relative rounded-[2rem] w-[80%] md:w-[70%] mx-auto h-[420px] object-contain shadow-2xl"
+                            className="w-[90%] md:w-[80%] h-[420px] mx-auto object-cover rounded-[2rem] shadow-2xl"
                         />
                     </motion.div>
 
@@ -66,6 +68,7 @@ const OurStory = () => {
                         whileInView={{opacity: 1, x: 0}}
                         viewport={{once: true}}
                         transition={{duration: 0.8}}>
+
                         <h2 className="text-4xl md:text-5xl font-light leading-tight mb-8">
                             More Than Clothing
                         </h2>
@@ -92,6 +95,30 @@ const OurStory = () => {
                                 the brand needed an identity capable of
                                 connecting with a wider audience while
                                 remaining true to its roots.
+                            </p>
+
+                            <h2 className="text-3xl font-light pt-8">
+                                Born From A Vision
+                            </h2>
+
+                            <p>
+                                Founded in 2023 by <strong>Kanelo Sefoloko</strong> —
+                                KAVANTI merges contemporary fashion with timeless design,
+                                creating pieces inspired by ambition, culture and individuality
+                            </p>
+
+                            <p>
+                                The vision inspired by the streets we grew up on,
+                                the township culture, music, ambition,
+                                and everyday resilience, Kavanti represents
+                                identity, purpose, and confidence. From our local inspired designed
+                                <strong> Matatiele Too Fresh</strong> to <strong>Kavanti</strong>
+                            </p>
+
+                            <p>
+                                This is for the ones building something greater
+                                day by day. The ones who move with quiet
+                                confidence while leaving a mark everywhere they go.
                             </p>
 
                             <h2 className="text-3xl font-light pt-8">
@@ -206,7 +233,7 @@ const OurStory = () => {
                         transition={{duration: 0.8}}
                         className="text-white text-4xl md:text-6xl font-light leading-tight"
                     >
-                        African streetwear built
+                        Global fashion built
                         for self-definition.
                     </motion.h2>
                 </div>
@@ -229,7 +256,7 @@ const OurStory = () => {
                         Kavanti exists to empower individuals to stand
                         confidently as they are — expressive,
                         intentional, and unapologetic.
-                        We aim to build a global streetwear identity rooted
+                        We aim to build a global fashion identity rooted
                         in African creativity and modern aspiration.
                     </p>
 

@@ -294,7 +294,7 @@ const Hero = () => {
                 </h1>
 
                 <p className="mb-10">
-                    Premium streetwear, t-shirts, hoodies, shades and accessories
+                    Premium fashion, t-shirts, hoodies, shades and accessories
                     designed for today, tomorrow and always.
                 </p>
 
@@ -305,7 +305,7 @@ const Hero = () => {
 
                 <p className="text-xl md:text-sm font-light tracking-[0.2em] uppercase mb-10 text-center">
                     Explore our curated selection of new arrivals. Find the perfect
-                    streetwear, casual, or accessory pieces to elevate your style.
+                    fashion, casual, or accessory pieces to elevate your style.
                 </p>
 
                 <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6 w-full">

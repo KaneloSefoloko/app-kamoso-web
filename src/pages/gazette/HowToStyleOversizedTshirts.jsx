@@ -22,7 +22,7 @@ const HowToStyleOversizedTshirts = () => {
                     </h1>
 
                     <p className="mt-10 max-w-2xl text-lg md:text-xl text-gray-600 leading-relaxed">
-                        The modern foundation of contemporary streetwear.
+                        The modern foundation of contemporary fashion.
                         A guide to proportion, layering and creating
                         effortless confidence through timeless style.
                     </p>
@@ -123,7 +123,7 @@ const HowToStyleOversizedTshirts = () => {
 
                             <p className="max-w-3xl text-xl text-gray-700 leading-relaxed">
                                 Black, white, cream, charcoal and earth tones
-                                create a refined streetwear wardrobe. Neutral
+                                create a refined fashion wardrobe. Neutral
                                 oversized tees are easier to layer and instantly
                                 communicate a more premium aesthetic. Simplicity
                                 often feels more luxurious than excessive graphics

@@ -54,7 +54,7 @@ const BlogGazette = () => {
                     </h1>
 
                     <p className="max-w-2xl mt-8 text-lg md:text-base text-white/80">
-                        Exploring African creativity, luxury streetwear
+                        Exploring Global creativity, luxury fashion
                         and the philosophy behind KAVANTI.
                     </p>
 
@@ -111,7 +111,7 @@ const BlogGazette = () => {
 
                         <p className="mt-8 text-lg text-gray-600 leading-relaxed">
                             How a vision born from ambition became a growing
-                            African streetwear identity built around confidence,
+                            Global fashion identity built around confidence,
                             quality and self-expression.
                         </p>
 
@@ -170,7 +170,7 @@ const BlogGazette = () => {
                         </h2>
 
                         <p className="mt-8 text-lg text-gray-600 leading-relaxed">
-                            Build effortless luxury streetwear looks with
+                            Build effortless luxury fashion looks with
                             oversized essentials.
                         </p>
 
