@@ -157,7 +157,7 @@ const Navbar = () => {
                 </div>
 
                 {/* RIGHT */}
-                <div className="flex items-center gap-4">
+                <div className="flex items-center gap-2 md:gap-4">
 
                     <Link to={user ? "/orders" : "/signup"}
                           className="w-6 h-6 flex items-center justify-center"
