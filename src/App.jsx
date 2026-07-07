@@ -71,8 +71,9 @@ import ScrollToTop from "./components/ScrollToTop";
 import PageWrapper from "./components/PageWrapper";
 import {CartProvider} from "./components/CartContext";
 import {WishlistProvider} from "./components/WishlistContext";
-import { ToastProvider } from "./components/ToastContext";
+import {ToastProvider} from "./components/ToastContext";
 import CookieConsent from "./components/CookieConsent.jsx";
+import AnalyticsTracker from "./components/AnalyticsTracker";
 
 const App = () => {
     const [chatOpen, setChatOpen] = useState(false);
@@ -82,137 +83,142 @@ const App = () => {
     ]);
 
     return (
-        <SafeErrorBoundary>
-            <UIProvider>
-                <ToastProvider>
-                <CartProvider>
-                    <WishlistProvider>
-                        <ScrollToTop/>
+        <>
+            <AnalyticsTracker/>
+            <SafeErrorBoundary>
+                <UIProvider>
+                    <ToastProvider>
+                        <CartProvider>
+                            <WishlistProvider>
+                                <ScrollToTop/>
 
-                        {/* NAVBAR */}
-                        <Navbar/>
+                                {/* NAVBAR */}
+                                <Navbar/>
 
-                        {/* MOBILE SIDEBAR */}
-                        <MobileSidebar/>
+                                {/* MOBILE SIDEBAR */}
+                                <MobileSidebar/>
 
-                        {/* ROUTES */}
-                        <Routes>
+                                {/* ROUTES */}
+                                <Routes>
 
-                            {/* ================= PUBLIC PAGES ================= */}
-                            <Route path="/" element={
-                                <PageWrapper>
-                                    <Layout><Home/></Layout>
-                                </PageWrapper>
-                            }/>
-                            <Route path="/category/:category" element={<Layout><CategoryPage/></Layout>}/>
-                            <Route path="/products/:productSlug" element={<Layout><ProductPage/></Layout>}/>
-                            <Route path="/our-story" element={<OurStory/>}/>
-                            <Route path="/new" element={<New/>}/>
-                            <Route path="/promos" element={<Layout><Promos/></Layout>}/>
-                            <Route path="/apparel" element={<Layout><Apparel/></Layout>}/>
-                            <Route path="/accessories" element={<Layout><Accessories/></Layout>}/>
-                            <Route path="/footwear" element={<Layout><Footwear/></Layout>}/>
+                                    {/* ================= PUBLIC PAGES ================= */}
+                                    <Route path="/" element={
+                                        <PageWrapper>
+                                            <Layout><Home/></Layout>
+                                        </PageWrapper>
+                                    }/>
+                                    <Route path="/category/:category" element={<Layout><CategoryPage/></Layout>}/>
+                                    <Route path="/products/:productSlug" element={<Layout><ProductPage/></Layout>}/>
+                                    <Route path="/our-story" element={<OurStory/>}/>
+                                    <Route path="/new" element={<New/>}/>
+                                    <Route path="/promos" element={<Layout><Promos/></Layout>}/>
+                                    <Route path="/apparel" element={<Layout><Apparel/></Layout>}/>
+                                    <Route path="/accessories" element={<Layout><Accessories/></Layout>}/>
+                                    <Route path="/footwear" element={<Layout><Footwear/></Layout>}/>
 
-                            {/* CART / AUTH */}
-                            <Route path="/cart" element={<CartPage/>}/>
-                            <Route path="/signup" element={<LoginSignup/>}/>
-                            <Route path="/login" element={<Login/>}/>
-                            <Route path="/forgot-password" element={<Layout><ForgotPassword/></Layout>}/>
-                            <Route path="/mfa-challenge" element={<MFAChallenge/>}/>
-                            <Route path="/setup-mfa" element={<Layout><SetupMFA/></Layout>}/>
+                                    {/* CART / AUTH */}
+                                    <Route path="/cart" element={<CartPage/>}/>
+                                    <Route path="/signup" element={<LoginSignup/>}/>
+                                    <Route path="/login" element={<Login/>}/>
+                                    <Route path="/forgot-password" element={<Layout><ForgotPassword/></Layout>}/>
+                                    <Route path="/mfa-challenge" element={<MFAChallenge/>}/>
+                                    <Route path="/setup-mfa" element={<Layout><SetupMFA/></Layout>}/>
 
-                            {/* SEARCH */}
-                            <Route path="/search" element={<SearchPage/>}/>
+                                    {/* SEARCH */}
+                                    <Route path="/search" element={<SearchPage/>}/>
 
-                            {/* ================= POLICIES ================= */}
-                            <Route path="/policies/privacy-policy" element={<Layout><PrivacyPolicy/></Layout>}/>
-                            <Route path="/policies/terms-of-service" element={<Layout><TermsOfService/></Layout>}/>
-                            <Route path="/shipping" element={<Layout><ShippingDeliveryInformation/></Layout>}/>
-                            <Route path="/collection" element={<Layout><CollectionPolicy/></Layout>}/>
-                            <Route path="/returns-policy" element={<Layout><ReturnPolicy/></Layout>}/>
+                                    {/* ================= POLICIES ================= */}
+                                    <Route path="/policies/privacy-policy" element={<Layout><PrivacyPolicy/></Layout>}/>
+                                    <Route path="/policies/terms-of-service"
+                                           element={<Layout><TermsOfService/></Layout>}/>
+                                    <Route path="/shipping" element={<Layout><ShippingDeliveryInformation/></Layout>}/>
+                                    <Route path="/collection" element={<Layout><CollectionPolicy/></Layout>}/>
+                                    <Route path="/returns-policy" element={<Layout><ReturnPolicy/></Layout>}/>
 
-                            {/* ================= OTHER PAGES ================= */}
-                            <Route path="/contact" element={<Layout><Contact/></Layout>}/>
-                            <Route path="/faqs" element={<Layout><FAQ/></Layout>}/>
-                            <Route path="/return" element={<Layout><LogReturn/></Layout>}/>
-                            <Route path="/payments" element={<Layout><Payments/></Layout>}/>
+                                    {/* ================= OTHER PAGES ================= */}
+                                    <Route path="/contact" element={<Layout><Contact/></Layout>}/>
+                                    <Route path="/faqs" element={<Layout><FAQ/></Layout>}/>
+                                    <Route path="/return" element={<Layout><LogReturn/></Layout>}/>
+                                    <Route path="/payments" element={<Layout><Payments/></Layout>}/>
 
-                            {/* CHECKOUT */}
-                            <Route path="/checkout" element={<Layout><Checkout/></Layout>}/>
-                            <Route path="/pay" element={<Layout><PaymentPage/></Layout>}/>
+                                    {/* CHECKOUT */}
+                                    <Route path="/checkout" element={<Layout><Checkout/></Layout>}/>
+                                    <Route path="/pay" element={<Layout><PaymentPage/></Layout>}/>
 
-                            {/* ================= USER PROTECTED ================= */}
-                            <Route element={<RequireAuth/>}>
-                                <Route
-                                    path="/orders"
-                                    element={
-                                        <AccountLayout>
-                                            <OrdersPage/>
-                                        </AccountLayout>
-                                    }
+                                    {/* ================= USER PROTECTED ================= */}
+                                    <Route element={<RequireAuth/>}>
+                                        <Route
+                                            path="/orders"
+                                            element={
+                                                <AccountLayout>
+                                                    <OrdersPage/>
+                                                </AccountLayout>
+                                            }
+                                        />
+
+                                        <Route
+                                            path="/account/profile"
+                                            element={
+                                                <AccountLayout>
+                                                    <AccountProfilePage/>
+                                                </AccountLayout>
+                                            }
+                                        />
+
+                                        <Route
+                                            path="/blog-gazette/the-story-behind-kavanti"
+                                            element={
+                                                <Layout>
+                                                    <FromKamosoToKavanti/>
+                                                </Layout>
+                                            }
+                                        />
+                                    </Route>
+
+                                    {/* ================= ADMIN PROTECTED ================= */}
+                                    <Route element={<ProtectedAdminRoute/>}>
+                                        <Route element={<AdminLayout/>}>
+                                            <Route path="/admin" element={<Layout><AdminDashboard/></Layout>}/>
+                                            <Route path="/admin/slides" element={<Layout><SlidesManager/></Layout>}/>
+                                            <Route path="/admin/products"
+                                                   element={<Layout><ProductsManager/></Layout>}/>
+                                        </Route>
+                                    </Route>
+
+                                    {/* ================= PLACEHOLDERS ================= */}
+                                    <Route path="/track-my-order" element={<NotAvailable/>}/>
+                                    <Route path="/gallery" element={<NotAvailable/>}/>
+                                    <Route path="/careers-opportunities" element={<NotAvailable/>}/>
+                                    <Route path="/blog-gazette" element={<BlogGazette/>}/>
+                                    <Route path="/blog-gazette/from-kamoso-to-kavanti"
+                                           element={<Layout><FromKamosoToKavanti/></Layout>}
+                                    />
+                                    <Route
+                                        path="/blog-gazette/how-to-style-oversized-t-shirts"
+                                        element={<Layout><HowToStyleOversizedTshirts/></Layout>}
+                                    />
+
+                                </Routes>
+
+                                {/* ================= CHAT SYSTEM ================= */}
+                                <CookieConsent/>
+                                <ChatDrawer
+                                    open={chatOpen}
+                                    onClose={() => setChatOpen(false)}
+                                    messages={messages}
+                                    setMessages={setMessages}
                                 />
 
-                                <Route
-                                    path="/account/profile"
-                                    element={
-                                        <AccountLayout>
-                                            <AccountProfilePage/>
-                                        </AccountLayout>
-                                    }
-                                />
+                                {!chatOpen && (
+                                    <ChatButton onClick={() => setChatOpen(true)}/>
+                                )}
 
-                                <Route
-                                    path="/blog-gazette/the-story-behind-kavanti"
-                                    element={
-                                        <Layout>
-                                            <FromKamosoToKavanti />
-                                        </Layout>
-                                    }
-                                />
-                            </Route>
-
-                            {/* ================= ADMIN PROTECTED ================= */}
-                            <Route element={<ProtectedAdminRoute/>}>
-                                <Route element={<AdminLayout/>}>
-                                    <Route path="/admin" element={<Layout><AdminDashboard/></Layout>}/>
-                                    <Route path="/admin/slides" element={<Layout><SlidesManager/></Layout>}/>
-                                    <Route path="/admin/products" element={<Layout><ProductsManager/></Layout>}/>
-                                </Route>
-                            </Route>
-
-                            {/* ================= PLACEHOLDERS ================= */}
-                            <Route path="/track-my-order" element={<NotAvailable/>}/>
-                            <Route path="/gallery" element={<NotAvailable/>}/>
-                            <Route path="/careers-opportunities" element={<NotAvailable/>}/>
-                            <Route path="/blog-gazette" element={<BlogGazette/>}/>
-                            <Route path="/blog-gazette/from-kamoso-to-kavanti"
-                                element={<Layout><FromKamosoToKavanti /></Layout>}
-                            />
-                            <Route
-                                path="/blog-gazette/how-to-style-oversized-t-shirts"
-                                element={<Layout><HowToStyleOversizedTshirts /></Layout>}
-                            />
-
-                        </Routes>
-
-                        {/* ================= CHAT SYSTEM ================= */}
-                        <CookieConsent />
-                        <ChatDrawer
-                            open={chatOpen}
-                            onClose={() => setChatOpen(false)}
-                            messages={messages}
-                            setMessages={setMessages}
-                        />
-
-                        {!chatOpen && (
-                            <ChatButton onClick={() => setChatOpen(true)}/>
-                        )}
-
-                    </WishlistProvider>
-                </CartProvider>
+                            </WishlistProvider>
+                        </CartProvider>
                     </ToastProvider>
-            </UIProvider>
-        </SafeErrorBoundary>
+                </UIProvider>
+            </SafeErrorBoundary>
+        </>
     );
 };
 
