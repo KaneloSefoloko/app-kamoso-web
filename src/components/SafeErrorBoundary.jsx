@@ -8,7 +8,7 @@ export default class SafeErrorBoundary extends React.Component {
     static getDerivedStateFromError() {
         return { hasError: true };
     }
-    componentDidCatch(error, info) {
+    componentDidCatch(error, _info) {
         // Sanitize logs; never include PII/tokens
         console.error('UI error:', { message: error?.message });
     }

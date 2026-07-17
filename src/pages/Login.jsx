@@ -4,7 +4,6 @@ import logo from "/assets/main.svg";
 import { useAuth } from "../context/AuthContext";
 import { getFriendlyAuthMessage } from "../utils/authErrors";
 import { CartContext } from "../components/CartContext";
-import { useUI } from "../components/UIContext.jsx";
 
 const Login = () => {
     const navigate = useNavigate();
@@ -15,8 +14,6 @@ const Login = () => {
     const [error, setError] = useState("");
     const [pending, setPending] = useState(false);
     const { cart } = useContext(CartContext);
-    const { cartOpen, setCartOpen } = useUI();
-
     function isValidEmail(value) {
         return /\S+@\S+\.\S+/.test(value);
     }

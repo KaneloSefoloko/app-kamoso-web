@@ -132,7 +132,7 @@ export default function CookieConsent() {
                         </div>
 
                         <p className="text-xs text-neutral-500 leading-relaxed mb-8">
-                            By selecting "Accept & Continue", you consent to
+                            By selecting &quot;Accept & Continue&quot;, you consent to
                             our use of cookies in accordance with our{" "}
                             <Link
                                 to="/policies/privacy-policy"

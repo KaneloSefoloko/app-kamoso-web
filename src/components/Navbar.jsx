@@ -6,7 +6,7 @@ import {
     FiMenu,
     FiX,
     FiUser,
-    FiChevronRight, FiHeart
+    FiChevronRight
 } from 'react-icons/fi';
 
 import { CartContext } from './CartContext';
