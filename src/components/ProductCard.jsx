@@ -21,7 +21,7 @@ const ProductCard = ({ product }) => {
         normalizeColor(variants[0]?.color?.value)
     );
 
-    const [selectedSize, setSelectedSize] = useState(
+    const [selectedSize] = useState(
         product.category?.toLowerCase() === "wig"
             ? product.sizes?.[0]?.size || product.sizes?.[0]
             : product.sizes?.[0] || ""

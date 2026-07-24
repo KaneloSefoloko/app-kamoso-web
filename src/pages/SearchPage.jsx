@@ -62,7 +62,7 @@ const SearchPage = () => {
         <div className="pt-32 px-4 max-w-7xl mx-auto min-h-screen">
 
             <h1 className="text-2xl font-semibold mb-6">
-                Search results for "{query}"
+                Search results for &quot{query}&quot
             </h1>
 
             {loading ? (

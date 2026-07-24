@@ -86,16 +86,6 @@ const CategoryPage = () => {
             colors: [...colors].filter(Boolean),
         };
     }, [baseProducts]);
-
-    const resolveSize = (product, selectedSize) => {
-        if (product.category?.toLowerCase() === "wig") {
-            const match = product.sizes?.find((s) => s.size === selectedSize);
-            return match || product.sizes?.[0];
-        }
-
-        return selectedSize || product.sizes?.[0] || "ONE_SIZE";
-    };
-
     useEffect(() => {
         const isWig = normalize(category).includes("wig");
 

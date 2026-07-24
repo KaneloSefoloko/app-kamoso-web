@@ -73,7 +73,7 @@ const Contact = () => {
                             <p className="text-gray-500">
                                 Unit 000, Greenbay <br />
                                 Firlands Minor Rd, Admirals Park <br />
-                                Gordon's Bay, 7135
+                                Gordon&apos;s Bay, 7135
                             </p>
                         </div>
                     </div>

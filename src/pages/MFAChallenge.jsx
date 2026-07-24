@@ -30,10 +30,8 @@ export default function MFAChallenge() {
         resolver.hints[0].uid,
         code
       );
-
-      const userCredential = await resolver.resolveSignIn(cred);
-
-      // Success → go to dashboard or orders page
+        await resolver.resolveSignIn(cred);
+// Success → go to dashboard or orders page
       navigate("/orders?locale=en&region_country=ZA", { replace: true });
 
     } catch (e) {

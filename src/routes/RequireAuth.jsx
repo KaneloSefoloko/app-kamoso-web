@@ -2,7 +2,7 @@ import React from "react";
 import { Navigate, Outlet, useLocation } from "react-router-dom";
 import { useAuth } from "../context/AuthContext";
 
-export default function RequireAuth({ children }) {
+export default function RequireAuth() {
     const { user, loading } = useAuth();
     const location = useLocation();
 

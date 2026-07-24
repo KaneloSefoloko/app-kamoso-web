@@ -1,6 +1,6 @@
 import React, { useEffect, useRef, useState } from "react";
 
-const ScrollDivider = ({ targetRef, label }) => {
+const ScrollDivider = ({ targetRef}) => {
     const [visible, setVisible] = useState(false);
     const selfRef = useRef(null);
 
